@@ -60,7 +60,7 @@ from cryptography.fernet import Fernet
 print(Fernet.generate_key().decode())
 ```
 
-Open `.env` and replace the placeholder values:
+Create `.env` file and replace the placeholder values:
 
 ```env
 FERNET_KEY=paste_your_generated_key_here
