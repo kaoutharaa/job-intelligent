@@ -47,7 +47,7 @@ docker compose version
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/job-intelligent.git
+git clone https://github.com/kaoutharaa/job-intelligent.git
 cd job-intelligent
 ```
 
