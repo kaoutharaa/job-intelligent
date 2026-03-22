@@ -1,4 +1,14 @@
-logs/
-test.py
+# Python
+__pycache__/
+*.pyc
+
+# Data files
+*.db
+*.csv
+*.json
+
+# Env
 .env
-*.env
+
+# Others
+.DS_Store
