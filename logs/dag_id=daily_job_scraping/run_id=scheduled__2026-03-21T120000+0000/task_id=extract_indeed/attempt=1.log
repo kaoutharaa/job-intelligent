@@ -1,0 +1,188 @@
+[2026-03-22T19:50:26.020+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T19:50:27.024+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [queued]>
+[2026-03-22T19:50:27.070+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [queued]>
+[2026-03-22T19:50:27.073+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T19:50:27.140+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_indeed> on 2026-03-21 12:00:00+00:00
+[2026-03-22T19:50:27.209+0000] {standard_task_runner.py:72} INFO - Started process 3274 to run task
+[2026-03-22T19:50:27.234+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_indeed', 'scheduled__2026-03-21T12:00:00+00:00', '--job-id', '29', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpxj8ajtgy']
+[2026-03-22T19:50:27.245+0000] {standard_task_runner.py:105} INFO - Job 29: Subtask extract_indeed
+[2026-03-22T19:50:27.488+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [running]> on host 696af1b356a2
+[2026-03-22T19:50:27.975+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_indeed' AIRFLOW_CTX_EXECUTION_DATE='2026-03-21T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-21T12:00:00+00:00'
+[2026-03-22T19:50:27.983+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T19:50:28.099+0000] {job_scraping_dag.py:55} INFO - [DAG] Starting Indeed extraction...
+[2026-03-22T19:50:28.105+0000] {scrapping_indeed.py:240} INFO - [Indeed] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-22T19:50:38.237+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Analyst] Starting session...
+[2026-03-22T19:50:38.549+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Scientist] Starting session...
+[2026-03-22T19:50:38.571+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Engineer] Starting session...
+[2026-03-22T19:51:23.134+0000] {scrapping_indeed.py:225} ERROR - [Indeed][Data Analyst] Error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x618d66e74b6a <unknown>
+#1 0x618d66887a32 <unknown>
+#2 0x618d6687e7ba <unknown>
+#3 0x618d6686f481 <unknown>
+#4 0x618d6687127c <unknown>
+#5 0x618d6686f979 <unknown>
+#6 0x618d6686f065 <unknown>
+#7 0x618d6686ec16 <unknown>
+#8 0x618d6686c731 <unknown>
+#9 0x618d6686cf80 <unknown>
+#10 0x618d6688b41d <unknown>
+#11 0x618d66925feb <unknown>
+#12 0x618d66925369 <unknown>
+#13 0x618d668cec0f <unknown>
+#14 0x618d668cf9d1 <unknown>
+#15 0x618d66e396b9 <unknown>
+#16 0x618d66e3c5c1 <unknown>
+#17 0x618d66e25e29 <unknown>
+#18 0x618d66e3d17e <unknown>
+#19 0x618d66e0c4b0 <unknown>
+#20 0x618d66e61578 <unknown>
+#21 0x618d66e6174b <unknown>
+#22 0x618d66e731a3 <unknown>
+#23 0x70eb7c361aa4 <unknown>
+#24 0x70eb7c3eea64 __clone
+
+[2026-03-22T19:51:23.251+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Analyst] Session closed — 0 jobs found.
+[2026-03-22T19:51:23.254+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:51:23.395+0000] {scrapping_indeed.py:225} ERROR - [Indeed][Data Scientist] Error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5a0fd65a7b6a <unknown>
+#1 0x5a0fd5fbaa32 <unknown>
+#2 0x5a0fd5fb17ba <unknown>
+#3 0x5a0fd5fa2481 <unknown>
+#4 0x5a0fd5fa427c <unknown>
+#5 0x5a0fd5fa2979 <unknown>
+#6 0x5a0fd5fa2065 <unknown>
+#7 0x5a0fd5fa1c16 <unknown>
+#8 0x5a0fd5f9f731 <unknown>
+#9 0x5a0fd5f9ff80 <unknown>
+#10 0x5a0fd5fbe41d <unknown>
+#11 0x5a0fd6058feb <unknown>
+#12 0x5a0fd6058369 <unknown>
+#13 0x5a0fd6001c0f <unknown>
+#14 0x5a0fd60029d1 <unknown>
+#15 0x5a0fd656c6b9 <unknown>
+#16 0x5a0fd656f5c1 <unknown>
+#17 0x5a0fd6558e29 <unknown>
+#18 0x5a0fd657017e <unknown>
+#19 0x5a0fd653f4b0 <unknown>
+#20 0x5a0fd6594578 <unknown>
+#21 0x5a0fd659474b <unknown>
+#22 0x5a0fd65a61a3 <unknown>
+#23 0x7141c8cd5aa4 <unknown>
+#24 0x7141c8d62a64 __clone
+
+[2026-03-22T19:51:23.512+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Scientist] Session closed — 0 jobs found.
+[2026-03-22T19:51:23.517+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Scientist' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:51:24.534+0000] {scrapping_indeed.py:167} INFO - [Indeed][Machine Learning Engineer] Starting session...
+[2026-03-22T19:51:24.732+0000] {scrapping_indeed.py:167} INFO - [Indeed][MLOps Engineer] Starting session...
+[2026-03-22T19:52:10.136+0000] {scrapping_indeed.py:186} INFO - [Indeed][Machine Learning Engineer] Page 1 → https://ma.indeed.com/jobs?q=Machine+Learning+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:52:10.447+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Engineer] Page 1 → https://ma.indeed.com/jobs?q=Data+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:52:12.135+0000] {scrapping_indeed.py:186} INFO - [Indeed][MLOps Engineer] Page 1 → https://ma.indeed.com/jobs?q=MLOps+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:52:29.097+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Machine Learning Engineer] No cards on page 1, stopping.
+[2026-03-22T19:52:29.809+0000] {scrapping_indeed.py:229} INFO - [Indeed][Machine Learning Engineer] Session closed — 0 jobs found.
+[2026-03-22T19:52:29.836+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Machine Learning Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:52:35.150+0000] {scrapping_indeed.py:204} WARNING - [Indeed][MLOps Engineer] No cards on page 1, stopping.
+[2026-03-22T19:52:35.996+0000] {scrapping_indeed.py:229} INFO - [Indeed][MLOps Engineer] Session closed — 0 jobs found.
+[2026-03-22T19:52:36.040+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:52:36.468+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Engineer] No cards on page 1, stopping.
+[2026-03-22T19:52:36.888+0000] {scrapping_indeed.py:167} INFO - [Indeed][Business Intelligence] Starting session...
+[2026-03-22T19:52:37.072+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Engineer] Session closed — 0 jobs found.
+[2026-03-22T19:52:37.105+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:52:40.473+0000] {scrapping_indeed.py:167} INFO - [Indeed][NLP Engineer] Starting session...
+[2026-03-22T19:52:40.978+0000] {scrapping_indeed.py:167} INFO - [Indeed][AI Engineer] Starting session...
+[2026-03-22T19:53:09.428+0000] {scrapping_indeed.py:186} INFO - [Indeed][AI Engineer] Page 1 → https://ma.indeed.com/jobs?q=AI+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:53:12.773+0000] {scrapping_indeed.py:186} INFO - [Indeed][Business Intelligence] Page 1 → https://ma.indeed.com/jobs?q=Business+Intelligence&l=Maroc&start=0&fromage=30
+[2026-03-22T19:53:25.893+0000] {scrapping_indeed.py:186} INFO - [Indeed][NLP Engineer] Page 1 → https://ma.indeed.com/jobs?q=NLP+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:53:41.737+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Business Intelligence] No cards on page 1, stopping.
+[2026-03-22T19:53:43.225+0000] {scrapping_indeed.py:229} INFO - [Indeed][Business Intelligence] Session closed — 0 jobs found.
+[2026-03-22T19:53:43.248+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Business Intelligence' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:53:46.109+0000] {scrapping_indeed.py:204} WARNING - [Indeed][NLP Engineer] No cards on page 1, stopping.
+[2026-03-22T19:53:46.622+0000] {scrapping_indeed.py:229} INFO - [Indeed][NLP Engineer] Session closed — 0 jobs found.
+[2026-03-22T19:53:46.661+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'NLP Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:53:47.564+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Architect] Starting session...
+[2026-03-22T19:53:48.918+0000] {scrapping_indeed.py:204} WARNING - [Indeed][AI Engineer] No cards on page 1, stopping.
+[2026-03-22T19:53:49.678+0000] {scrapping_indeed.py:229} INFO - [Indeed][AI Engineer] Session closed — 0 jobs found.
+[2026-03-22T19:53:49.692+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'AI Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:53:51.077+0000] {scrapping_indeed.py:167} INFO - [Indeed][Big Data Engineer] Starting session...
+[2026-03-22T19:54:20.063+0000] {scrapping_indeed.py:186} INFO - [Indeed][Big Data Engineer] Page 1 → https://ma.indeed.com/jobs?q=Big+Data+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T19:54:23.695+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Architect] Page 1 → https://ma.indeed.com/jobs?q=Data+Architect&l=Maroc&start=0&fromage=30
+[2026-03-22T19:54:48.760+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Architect] No cards on page 1, stopping.
+[2026-03-22T19:54:48.963+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Architect] Session closed — 0 jobs found.
+[2026-03-22T19:54:48.971+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Architect' → 0 unique jobs (grand total: 0)
+[2026-03-22T19:54:53.225+0000] {local_task_job_runner.py:127} ERROR - Received SIGTERM. Terminating subprocesses
+[2026-03-22T19:54:53.497+0000] {process_utils.py:132} INFO - Sending 15 to group 3274. PIDs of all processes in the group: [3274]
+[2026-03-22T19:54:53.510+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 3274
+[2026-03-22T19:54:53.522+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
+[2026-03-22T20:49:13.568+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T20:49:13.585+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [queued]>
+[2026-03-22T20:49:13.594+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [queued]>
+[2026-03-22T20:49:13.596+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T20:49:13.609+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_indeed> on 2026-03-21 12:00:00+00:00
+[2026-03-22T20:49:13.615+0000] {standard_task_runner.py:72} INFO - Started process 178 to run task
+[2026-03-22T20:49:13.620+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_indeed', 'scheduled__2026-03-21T12:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpv6bl1187']
+[2026-03-22T20:49:13.624+0000] {standard_task_runner.py:105} INFO - Job 2: Subtask extract_indeed
+[2026-03-22T20:49:13.704+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-21T12:00:00+00:00 [running]> on host 2c0c4d342a2d
+[2026-03-22T20:49:13.801+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_indeed' AIRFLOW_CTX_EXECUTION_DATE='2026-03-21T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-21T12:00:00+00:00'
+[2026-03-22T20:49:13.803+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T20:49:13.839+0000] {job_scraping_dag.py:55} INFO - [DAG] Starting Indeed extraction...
+[2026-03-22T20:49:13.841+0000] {scrapping_indeed.py:240} INFO - [Indeed] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-22T20:49:24.193+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Scientist] Starting session...
+[2026-03-22T20:49:24.197+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Engineer] Starting session...
+[2026-03-22T20:49:24.202+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Analyst] Starting session...
+[2026-03-22T20:50:00.942+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Analyst] Page 1 → https://ma.indeed.com/jobs?q=Data+Analyst&l=Maroc&start=0&fromage=30
+[2026-03-22T20:50:02.561+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Scientist] Page 1 → https://ma.indeed.com/jobs?q=Data+Scientist&l=Maroc&start=0&fromage=30
+[2026-03-22T20:50:16.128+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Engineer] Page 1 → https://ma.indeed.com/jobs?q=Data+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:50:25.472+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Scientist] No cards on page 1, stopping.
+[2026-03-22T20:50:25.620+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Scientist] Session closed — 0 jobs found.
+[2026-03-22T20:50:25.626+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Scientist' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:50:26.946+0000] {scrapping_indeed.py:167} INFO - [Indeed][Machine Learning Engineer] Starting session...
+[2026-03-22T20:50:36.341+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Analyst] No cards on page 1, stopping.
+[2026-03-22T20:50:36.431+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Analyst] Session closed — 0 jobs found.
+[2026-03-22T20:50:36.434+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:50:36.434+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Engineer] No cards on page 1, stopping.
+[2026-03-22T20:50:36.525+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:50:36.527+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:50:37.196+0000] {scrapping_indeed.py:167} INFO - [Indeed][MLOps Engineer] Starting session...
+[2026-03-22T20:50:37.282+0000] {scrapping_indeed.py:167} INFO - [Indeed][Business Intelligence] Starting session...
+[2026-03-22T20:51:08.565+0000] {scrapping_indeed.py:186} INFO - [Indeed][Business Intelligence] Page 1 → https://ma.indeed.com/jobs?q=Business+Intelligence&l=Maroc&start=0&fromage=30
+[2026-03-22T20:51:10.775+0000] {scrapping_indeed.py:186} INFO - [Indeed][Machine Learning Engineer] Page 1 → https://ma.indeed.com/jobs?q=Machine+Learning+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:51:12.473+0000] {scrapping_indeed.py:186} INFO - [Indeed][MLOps Engineer] Page 1 → https://ma.indeed.com/jobs?q=MLOps+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:51:28.165+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Business Intelligence] No cards on page 1, stopping.
+[2026-03-22T20:51:28.266+0000] {scrapping_indeed.py:229} INFO - [Indeed][Business Intelligence] Session closed — 0 jobs found.
+[2026-03-22T20:51:28.270+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Business Intelligence' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:51:28.949+0000] {scrapping_indeed.py:167} INFO - [Indeed][NLP Engineer] Starting session...
+[2026-03-22T20:51:33.923+0000] {scrapping_indeed.py:204} WARNING - [Indeed][MLOps Engineer] No cards on page 1, stopping.
+[2026-03-22T20:51:34.116+0000] {scrapping_indeed.py:229} INFO - [Indeed][MLOps Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:51:34.120+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:51:34.883+0000] {scrapping_indeed.py:167} INFO - [Indeed][AI Engineer] Starting session...
+[2026-03-22T20:51:36.938+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Machine Learning Engineer] No cards on page 1, stopping.
+[2026-03-22T20:51:37.032+0000] {scrapping_indeed.py:229} INFO - [Indeed][Machine Learning Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:51:37.036+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Machine Learning Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:51:37.609+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Architect] Starting session...
+[2026-03-22T20:52:01.363+0000] {scrapping_indeed.py:186} INFO - [Indeed][Data Architect] Page 1 → https://ma.indeed.com/jobs?q=Data+Architect&l=Maroc&start=0&fromage=30
+[2026-03-22T20:52:06.552+0000] {scrapping_indeed.py:186} INFO - [Indeed][NLP Engineer] Page 1 → https://ma.indeed.com/jobs?q=NLP+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:52:06.732+0000] {scrapping_indeed.py:186} INFO - [Indeed][AI Engineer] Page 1 → https://ma.indeed.com/jobs?q=AI+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:52:16.376+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Data Architect] No cards on page 1, stopping.
+[2026-03-22T20:52:16.457+0000] {scrapping_indeed.py:229} INFO - [Indeed][Data Architect] Session closed — 0 jobs found.
+[2026-03-22T20:52:16.459+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Data Architect' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:52:16.929+0000] {scrapping_indeed.py:167} INFO - [Indeed][Big Data Engineer] Starting session...
+[2026-03-22T20:52:21.863+0000] {scrapping_indeed.py:186} INFO - [Indeed][Big Data Engineer] Page 1 → https://ma.indeed.com/jobs?q=Big+Data+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-22T20:52:27.985+0000] {scrapping_indeed.py:204} WARNING - [Indeed][NLP Engineer] No cards on page 1, stopping.
+[2026-03-22T20:52:28.075+0000] {scrapping_indeed.py:229} INFO - [Indeed][NLP Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:52:28.078+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'NLP Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:52:28.483+0000] {scrapping_indeed.py:204} WARNING - [Indeed][AI Engineer] No cards on page 1, stopping.
+[2026-03-22T20:52:28.563+0000] {scrapping_indeed.py:229} INFO - [Indeed][AI Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:52:28.565+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'AI Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:52:38.241+0000] {scrapping_indeed.py:204} WARNING - [Indeed][Big Data Engineer] No cards on page 1, stopping.
+[2026-03-22T20:52:38.321+0000] {scrapping_indeed.py:229} INFO - [Indeed][Big Data Engineer] Session closed — 0 jobs found.
+[2026-03-22T20:52:38.323+0000] {scrapping_indeed.py:255} INFO - [Indeed] Merged 'Big Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-22T20:52:38.325+0000] {job_scraping_dag.py:57} INFO - [DAG] Indeed done — 0 jobs scraped.
+[2026-03-22T20:52:38.343+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-22T20:52:38.355+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-22T20:52:38.356+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=extract_indeed, run_id=scheduled__2026-03-21T12:00:00+00:00, execution_date=20260321T120000, start_date=20260322T204913, end_date=20260322T205238
+[2026-03-22T20:52:38.388+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-22T20:52:38.408+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-03-22T20:52:38.413+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

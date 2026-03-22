@@ -1,0 +1,471 @@
+[2026-03-20T10:39:55.252+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-20T10:39:55.306+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [queued]>
+[2026-03-20T10:39:55.345+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [queued]>
+[2026-03-20T10:39:55.376+0000] {taskinstance.py:2866} INFO - Starting attempt 4 of 6
+[2026-03-20T10:39:55.451+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_indeed> on 2026-03-20 10:22:21.869345+00:00
+[2026-03-20T10:39:55.478+0000] {standard_task_runner.py:72} INFO - Started process 480 to run task
+[2026-03-20T10:39:55.505+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_indeed', 'manual__2026-03-20T10:22:21.869345+00:00', '--job-id', '10', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpxtf4fp6g']
+[2026-03-20T10:39:55.515+0000] {standard_task_runner.py:105} INFO - Job 10: Subtask extract_indeed
+[2026-03-20T10:39:55.815+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [running]> on host 696af1b356a2
+[2026-03-20T10:39:56.150+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_indeed' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T10:22:21.869345+00:00' AIRFLOW_CTX_TRY_NUMBER='4' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T10:22:21.869345+00:00'
+[2026-03-20T10:39:56.155+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-20T10:39:56.208+0000] {job_scraping_dag.py:55} INFO - [DAG] Starting Indeed extraction...
+[2026-03-20T10:39:56.212+0000] {scrapping_indeed.py:305} INFO - [Indeed] Starting 68 keywords with 4 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-20T10:44:06.044+0000] {scrapping_indeed.py:222} INFO - [Indeed][Data Engineer] Starting session...
+[2026-03-20T10:44:06.065+0000] {scrapping_indeed.py:222} INFO - [Indeed][Data Analyst] Starting session...
+[2026-03-20T10:44:20.439+0000] {scrapping_indeed.py:242} INFO - [Indeed][Data Analyst] Page 1 → https://ma.indeed.com/jobs?q=Data+Analyst&l=Maroc&start=0&fromage=30
+[2026-03-20T10:44:22.296+0000] {scrapping_indeed.py:242} INFO - [Indeed][Data Engineer] Page 1 → https://ma.indeed.com/jobs?q=Data+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:44:37.292+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Data Analyst] No cards on page 1, stopping.
+[2026-03-20T10:44:37.492+0000] {scrapping_indeed.py:289} INFO - [Indeed][Data Analyst] Session closed — 0 jobs found.
+[2026-03-20T10:44:37.498+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Data Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:44:38.360+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Data Engineer] No cards on page 1, stopping.
+[2026-03-20T10:44:38.668+0000] {scrapping_indeed.py:289} INFO - [Indeed][Data Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:44:38.680+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:44:40.383+0000] {scrapping_indeed.py:222} INFO - [Indeed][Data Scientist] Starting session...
+[2026-03-20T10:44:56.206+0000] {scrapping_indeed.py:326} ERROR - [Indeed] Worker failed for 'Machine Learning Engineer': Message: Could not start a new session. New session request timed out 
+Host info: host: '11358a567dae', ip: '172.24.0.2'
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+    at org.openqa.selenium.grid.sessionqueue.local.LocalNewSessionQueue.addToQueue (LocalNewSessionQueue.java:226)
+    at org.openqa.selenium.grid.sessionqueue.NewSessionQueue.lambda$new$0 (NewSessionQueue.java:68)
+    at org.openqa.selenium.remote.http.Route$TemplatizedRoute.handle (Route.java:192)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.remote.http.Route$CombinedRoute.handle (Route.java:361)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.grid.sessionqueue.NewSessionQueue.execute (NewSessionQueue.java:128)
+    at org.openqa.selenium.remote.tracing.SpanWrappedHttpHandler.execute (SpanWrappedHttpHandler.java:87)
+    at org.openqa.selenium.remote.http.Filter$1.execute (Filter.java:63)
+    at org.openqa.selenium.remote.http.Route$CombinedRoute.handle (Route.java:361)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.grid.router.Router.execute (Router.java:89)
+    at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0 (EnsureSpecCompliantResponseHeaders.java:34)
+    at org.openqa.selenium.remote.http.Filter$1.execute (Filter.java:63)
+    at org.openqa.selenium.remote.http.Route$CombinedRoute.handle (Route.java:361)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.remote.http.Route$NestedRoute.handle (Route.java:271)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.remote.http.Route$CombinedRoute.handle (Route.java:361)
+    at org.openqa.selenium.remote.http.Route.execute (Route.java:69)
+    at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0 (AddWebDriverSpecHeaders.java:35)
+    at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0 (ErrorFilter.java:44)
+    at org.openqa.selenium.remote.http.Filter$1.execute (Filter.java:63)
+    at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0 (ErrorFilter.java:44)
+    at org.openqa.selenium.remote.http.Filter$1.execute (Filter.java:63)
+    at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0 (SeleniumHandler.java:49)
+    at java.util.concurrent.Executors$RunnableAdapter.call (Executors.java:572)
+    at java.util.concurrent.FutureTask.run (FutureTask.java:317)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1144)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+    at java.lang.Thread.run (Thread.java:1583)
+[2026-03-20T10:45:04.655+0000] {scrapping_indeed.py:222} INFO - [Indeed][Deep Learning Engineer] Starting session...
+[2026-03-20T10:45:05.650+0000] {scrapping_indeed.py:242} INFO - [Indeed][Data Scientist] Page 1 → https://ma.indeed.com/jobs?q=Data+Scientist&l=Maroc&start=0&fromage=30
+[2026-03-20T10:45:23.778+0000] {scrapping_indeed.py:242} INFO - [Indeed][Deep Learning Engineer] Page 1 → https://ma.indeed.com/jobs?q=Deep+Learning+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:45:24.710+0000] {scrapping_indeed.py:222} INFO - [Indeed][NLP Engineer] Starting session...
+[2026-03-20T10:45:29.234+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Data Scientist] No cards on page 1, stopping.
+[2026-03-20T10:45:30.038+0000] {scrapping_indeed.py:289} INFO - [Indeed][Data Scientist] Session closed — 0 jobs found.
+[2026-03-20T10:45:30.056+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Data Scientist' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:45:51.307+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Deep Learning Engineer] No cards on page 1, stopping.
+[2026-03-20T10:45:51.849+0000] {scrapping_indeed.py:289} INFO - [Indeed][Deep Learning Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:45:51.864+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Deep Learning Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:45:54.721+0000] {scrapping_indeed.py:222} INFO - [Indeed][Computer Vision Engineer] Starting session...
+[2026-03-20T10:46:03.166+0000] {scrapping_indeed.py:222} INFO - [Indeed][MLOps Engineer] Starting session...
+[2026-03-20T10:46:04.208+0000] {scrapping_indeed.py:242} INFO - [Indeed][NLP Engineer] Page 1 → https://ma.indeed.com/jobs?q=NLP+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:46:12.262+0000] {scrapping_indeed.py:222} INFO - [Indeed][AI Engineer] Starting session...
+[2026-03-20T10:46:18.224+0000] {scrapping_indeed.py:242} INFO - [Indeed][Computer Vision Engineer] Page 1 → https://ma.indeed.com/jobs?q=Computer+Vision+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:46:27.134+0000] {scrapping_indeed.py:242} INFO - [Indeed][MLOps Engineer] Page 1 → https://ma.indeed.com/jobs?q=MLOps+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:46:27.360+0000] {scrapping_indeed.py:262} WARNING - [Indeed][NLP Engineer] No cards on page 1, stopping.
+[2026-03-20T10:46:27.683+0000] {scrapping_indeed.py:289} INFO - [Indeed][NLP Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:46:27.701+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'NLP Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:46:35.303+0000] {scrapping_indeed.py:242} INFO - [Indeed][AI Engineer] Page 1 → https://ma.indeed.com/jobs?q=AI+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:46:36.615+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Computer Vision Engineer] No cards on page 1, stopping.
+[2026-03-20T10:46:37.126+0000] {scrapping_indeed.py:289} INFO - [Indeed][Computer Vision Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:46:37.132+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Computer Vision Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:46:40.749+0000] {scrapping_indeed.py:222} INFO - [Indeed][Business Intelligence] Starting session...
+[2026-03-20T10:46:52.552+0000] {scrapping_indeed.py:262} WARNING - [Indeed][MLOps Engineer] No cards on page 1, stopping.
+[2026-03-20T10:46:53.295+0000] {scrapping_indeed.py:289} INFO - [Indeed][MLOps Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:46:53.312+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:46:57.281+0000] {scrapping_indeed.py:262} WARNING - [Indeed][AI Engineer] No cards on page 1, stopping.
+[2026-03-20T10:46:57.441+0000] {scrapping_indeed.py:289} INFO - [Indeed][AI Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:46:57.446+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'AI Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:47:00.068+0000] {scrapping_indeed.py:242} INFO - [Indeed][Business Intelligence] Page 1 → https://ma.indeed.com/jobs?q=Business+Intelligence&l=Maroc&start=0&fromage=30
+[2026-03-20T10:47:01.240+0000] {scrapping_indeed.py:222} INFO - [Indeed][Software Engineer] Starting session...
+[2026-03-20T10:47:23.211+0000] {scrapping_indeed.py:242} INFO - [Indeed][Software Engineer] Page 1 → https://ma.indeed.com/jobs?q=Software+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:47:28.746+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Business Intelligence] No cards on page 1, stopping.
+[2026-03-20T10:47:29.060+0000] {scrapping_indeed.py:289} INFO - [Indeed][Business Intelligence] Session closed — 0 jobs found.
+[2026-03-20T10:47:29.068+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Business Intelligence' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:47:31.975+0000] {scrapping_indeed.py:222} INFO - [Indeed][Data Architect] Starting session...
+[2026-03-20T10:47:43.984+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Software Engineer] No cards on page 1, stopping.
+[2026-03-20T10:47:44.212+0000] {scrapping_indeed.py:289} INFO - [Indeed][Software Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:47:44.221+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Software Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:47:46.800+0000] {scrapping_indeed.py:222} INFO - [Indeed][Software Developer] Starting session...
+[2026-03-20T10:47:47.588+0000] {scrapping_indeed.py:222} INFO - [Indeed][BI Analyst] Starting session...
+[2026-03-20T10:47:50.605+0000] {scrapping_indeed.py:242} INFO - [Indeed][Data Architect] Page 1 → https://ma.indeed.com/jobs?q=Data+Architect&l=Maroc&start=0&fromage=30
+[2026-03-20T10:47:56.781+0000] {scrapping_indeed.py:242} INFO - [Indeed][Software Developer] Page 1 → https://ma.indeed.com/jobs?q=Software+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:48:10.339+0000] {scrapping_indeed.py:242} INFO - [Indeed][BI Analyst] Page 1 → https://ma.indeed.com/jobs?q=BI+Analyst&l=Maroc&start=0&fromage=30
+[2026-03-20T10:48:12.262+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Data Architect] No cards on page 1, stopping.
+[2026-03-20T10:48:12.774+0000] {scrapping_indeed.py:289} INFO - [Indeed][Data Architect] Session closed — 0 jobs found.
+[2026-03-20T10:48:12.783+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Data Architect' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:48:18.196+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Software Developer] No cards on page 1, stopping.
+[2026-03-20T10:48:18.697+0000] {scrapping_indeed.py:289} INFO - [Indeed][Software Developer] Session closed — 0 jobs found.
+[2026-03-20T10:48:18.722+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Software Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:48:22.088+0000] {scrapping_indeed.py:222} INFO - [Indeed][Frontend Developer] Starting session...
+[2026-03-20T10:48:39.301+0000] {scrapping_indeed.py:262} WARNING - [Indeed][BI Analyst] No cards on page 1, stopping.
+[2026-03-20T10:48:40.225+0000] {scrapping_indeed.py:289} INFO - [Indeed][BI Analyst] Session closed — 0 jobs found.
+[2026-03-20T10:48:40.236+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'BI Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:48:40.443+0000] {scrapping_indeed.py:242} INFO - [Indeed][Frontend Developer] Page 1 → https://ma.indeed.com/jobs?q=Frontend+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:48:42.585+0000] {scrapping_indeed.py:222} INFO - [Indeed][Backend Developer] Starting session...
+[2026-03-20T10:48:56.159+0000] {scrapping_indeed.py:222} INFO - [Indeed][Full Stack Developer] Starting session...
+[2026-03-20T10:48:58.290+0000] {scrapping_indeed.py:222} INFO - [Indeed][Web Developer] Starting session...
+[2026-03-20T10:49:06.057+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Frontend Developer] No cards on page 1, stopping.
+[2026-03-20T10:49:06.285+0000] {scrapping_indeed.py:289} INFO - [Indeed][Frontend Developer] Session closed — 0 jobs found.
+[2026-03-20T10:49:06.292+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Frontend Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:49:08.697+0000] {scrapping_indeed.py:242} INFO - [Indeed][Backend Developer] Page 1 → https://ma.indeed.com/jobs?q=Backend+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:49:13.729+0000] {scrapping_indeed.py:242} INFO - [Indeed][Full Stack Developer] Page 1 → https://ma.indeed.com/jobs?q=Full+Stack+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:49:22.887+0000] {scrapping_indeed.py:242} INFO - [Indeed][Web Developer] Page 1 → https://ma.indeed.com/jobs?q=Web+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:49:27.983+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Backend Developer] No cards on page 1, stopping.
+[2026-03-20T10:49:28.105+0000] {scrapping_indeed.py:289} INFO - [Indeed][Backend Developer] Session closed — 0 jobs found.
+[2026-03-20T10:49:28.108+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Backend Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:49:41.757+0000] {scrapping_indeed.py:222} INFO - [Indeed][Mobile Developer] Starting session...
+[2026-03-20T10:49:44.282+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Web Developer] No cards on page 1, stopping.
+[2026-03-20T10:49:44.486+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Full Stack Developer] No cards on page 1, stopping.
+[2026-03-20T10:49:44.897+0000] {scrapping_indeed.py:289} INFO - [Indeed][Full Stack Developer] Session closed — 0 jobs found.
+[2026-03-20T10:49:44.907+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Full Stack Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:49:44.909+0000] {scrapping_indeed.py:289} INFO - [Indeed][Web Developer] Session closed — 0 jobs found.
+[2026-03-20T10:49:44.920+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Web Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:49:45.648+0000] {scrapping_indeed.py:222} INFO - [Indeed][Android Developer] Starting session...
+[2026-03-20T10:50:03.164+0000] {scrapping_indeed.py:242} INFO - [Indeed][Mobile Developer] Page 1 → https://ma.indeed.com/jobs?q=Mobile+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:50:06.683+0000] {scrapping_indeed.py:242} INFO - [Indeed][Android Developer] Page 1 → https://ma.indeed.com/jobs?q=Android+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:50:12.300+0000] {scrapping_indeed.py:222} INFO - [Indeed][iOS Developer] Starting session...
+[2026-03-20T10:50:24.030+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Mobile Developer] No cards on page 1, stopping.
+[2026-03-20T10:50:25.076+0000] {scrapping_indeed.py:289} INFO - [Indeed][Mobile Developer] Session closed — 0 jobs found.
+[2026-03-20T10:50:25.080+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Mobile Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:50:27.452+0000] {scrapping_indeed.py:222} INFO - [Indeed][DevOps Engineer] Starting session...
+[2026-03-20T10:50:30.938+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Android Developer] No cards on page 1, stopping.
+[2026-03-20T10:50:31.127+0000] {scrapping_indeed.py:289} INFO - [Indeed][Android Developer] Session closed — 0 jobs found.
+[2026-03-20T10:50:31.133+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Android Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:50:32.382+0000] {scrapping_indeed.py:222} INFO - [Indeed][Cloud Engineer] Starting session...
+[2026-03-20T10:50:37.662+0000] {scrapping_indeed.py:242} INFO - [Indeed][iOS Developer] Page 1 → https://ma.indeed.com/jobs?q=iOS+Developer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:50:42.149+0000] {scrapping_indeed.py:222} INFO - [Indeed][Cloud Architect] Starting session...
+[2026-03-20T10:50:50.528+0000] {scrapping_indeed.py:242} INFO - [Indeed][Cloud Engineer] Page 1 → https://ma.indeed.com/jobs?q=Cloud+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:51:01.257+0000] {scrapping_indeed.py:262} WARNING - [Indeed][iOS Developer] No cards on page 1, stopping.
+[2026-03-20T10:51:01.618+0000] {scrapping_indeed.py:289} INFO - [Indeed][iOS Developer] Session closed — 0 jobs found.
+[2026-03-20T10:51:01.625+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'iOS Developer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:51:08.410+0000] {scrapping_indeed.py:242} INFO - [Indeed][DevOps Engineer] Page 1 → https://ma.indeed.com/jobs?q=DevOps+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:51:09.298+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Cloud Engineer] No cards on page 1, stopping.
+[2026-03-20T10:51:09.762+0000] {scrapping_indeed.py:289} INFO - [Indeed][Cloud Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:51:09.766+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Cloud Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:51:11.748+0000] {scrapping_indeed.py:222} INFO - [Indeed][Site Reliability Engineer] Starting session...
+[2026-03-20T10:51:15.858+0000] {scrapping_indeed.py:242} INFO - [Indeed][Cloud Architect] Page 1 → https://ma.indeed.com/jobs?q=Cloud+Architect&l=Maroc&start=0&fromage=30
+[2026-03-20T10:51:28.788+0000] {scrapping_indeed.py:262} WARNING - [Indeed][DevOps Engineer] No cards on page 1, stopping.
+[2026-03-20T10:51:29.087+0000] {scrapping_indeed.py:289} INFO - [Indeed][DevOps Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:51:29.092+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'DevOps Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:51:33.614+0000] {scrapping_indeed.py:222} INFO - [Indeed][Infrastructure Engineer] Starting session...
+[2026-03-20T10:51:37.316+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Cloud Architect] No cards on page 1, stopping.
+[2026-03-20T10:51:37.408+0000] {scrapping_indeed.py:289} INFO - [Indeed][Cloud Architect] Session closed — 0 jobs found.
+[2026-03-20T10:51:37.415+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Cloud Architect' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:51:42.946+0000] {scrapping_indeed.py:242} INFO - [Indeed][Site Reliability Engineer] Page 1 → https://ma.indeed.com/jobs?q=Site+Reliability+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:51:53.722+0000] {scrapping_indeed.py:242} INFO - [Indeed][Infrastructure Engineer] Page 1 → https://ma.indeed.com/jobs?q=Infrastructure+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:52:03.357+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Site Reliability Engineer] No cards on page 1, stopping.
+[2026-03-20T10:52:03.752+0000] {scrapping_indeed.py:289} INFO - [Indeed][Site Reliability Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:52:03.766+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Site Reliability Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:52:21.629+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Infrastructure Engineer] No cards on page 1, stopping.
+[2026-03-20T10:52:22.159+0000] {scrapping_indeed.py:289} INFO - [Indeed][Infrastructure Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:52:22.173+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Infrastructure Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:52:22.644+0000] {scrapping_indeed.py:222} INFO - [Indeed][Cybersecurity Engineer] Starting session...
+[2026-03-20T10:52:24.568+0000] {scrapping_indeed.py:222} INFO - [Indeed][Kubernetes Engineer] Starting session...
+[2026-03-20T10:52:34.853+0000] {scrapping_indeed.py:222} INFO - [Indeed][Platform Engineer] Starting session...
+[2026-03-20T10:52:59.554+0000] {scrapping_indeed.py:222} INFO - [Indeed][Security Analyst] Starting session...
+[2026-03-20T10:53:02.626+0000] {scrapping_indeed.py:242} INFO - [Indeed][Platform Engineer] Page 1 → https://ma.indeed.com/jobs?q=Platform+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:53:03.401+0000] {scrapping_indeed.py:242} INFO - [Indeed][Cybersecurity Engineer] Page 1 → https://ma.indeed.com/jobs?q=Cybersecurity+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:53:15.235+0000] {scrapping_indeed.py:242} INFO - [Indeed][Kubernetes Engineer] Page 1 → https://ma.indeed.com/jobs?q=Kubernetes+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:53:23.621+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Platform Engineer] No cards on page 1, stopping.
+[2026-03-20T10:53:23.886+0000] {scrapping_indeed.py:289} INFO - [Indeed][Platform Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:53:23.894+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Platform Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:53:28.256+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Cybersecurity Engineer] No cards on page 1, stopping.
+[2026-03-20T10:53:28.742+0000] {scrapping_indeed.py:289} INFO - [Indeed][Cybersecurity Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:53:28.748+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Cybersecurity Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:53:30.112+0000] {scrapping_indeed.py:222} INFO - [Indeed][Penetration Tester] Starting session...
+[2026-03-20T10:53:33.474+0000] {scrapping_indeed.py:242} INFO - [Indeed][Security Analyst] Page 1 → https://ma.indeed.com/jobs?q=Security+Analyst&l=Maroc&start=0&fromage=30
+[2026-03-20T10:53:41.953+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Kubernetes Engineer] No cards on page 1, stopping.
+[2026-03-20T10:53:42.174+0000] {scrapping_indeed.py:289} INFO - [Indeed][Kubernetes Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:53:42.178+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Kubernetes Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:53:44.730+0000] {scrapping_indeed.py:222} INFO - [Indeed][Ethical Hacker] Starting session...
+[2026-03-20T10:54:00.544+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Security Analyst] No cards on page 1, stopping.
+[2026-03-20T10:54:01.443+0000] {scrapping_indeed.py:289} INFO - [Indeed][Security Analyst] Session closed — 0 jobs found.
+[2026-03-20T10:54:01.448+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Security Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:54:03.927+0000] {scrapping_indeed.py:242} INFO - [Indeed][Penetration Tester] Page 1 → https://ma.indeed.com/jobs?q=Penetration+Tester&l=Maroc&start=0&fromage=30
+[2026-03-20T10:54:04.511+0000] {scrapping_indeed.py:222} INFO - [Indeed][SOC Analyst] Starting session...
+[2026-03-20T10:54:13.186+0000] {scrapping_indeed.py:222} INFO - [Indeed][Information Security] Starting session...
+[2026-03-20T10:54:16.519+0000] {scrapping_indeed.py:242} INFO - [Indeed][Ethical Hacker] Page 1 → https://ma.indeed.com/jobs?q=Ethical+Hacker&l=Maroc&start=0&fromage=30
+[2026-03-20T10:54:21.862+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Penetration Tester] No cards on page 1, stopping.
+[2026-03-20T10:54:22.425+0000] {scrapping_indeed.py:289} INFO - [Indeed][Penetration Tester] Session closed — 0 jobs found.
+[2026-03-20T10:54:22.429+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Penetration Tester' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:54:32.969+0000] {scrapping_indeed.py:222} INFO - [Indeed][Network Engineer] Starting session...
+[2026-03-20T10:54:33.752+0000] {scrapping_indeed.py:242} INFO - [Indeed][SOC Analyst] Page 1 → https://ma.indeed.com/jobs?q=SOC+Analyst&l=Maroc&start=0&fromage=30
+[2026-03-20T10:54:34.742+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Ethical Hacker] No cards on page 1, stopping.
+[2026-03-20T10:54:34.878+0000] {scrapping_indeed.py:289} INFO - [Indeed][Ethical Hacker] Session closed — 0 jobs found.
+[2026-03-20T10:54:34.883+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Ethical Hacker' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:54:35.998+0000] {scrapping_indeed.py:242} INFO - [Indeed][Information Security] Page 1 → https://ma.indeed.com/jobs?q=Information+Security&l=Maroc&start=0&fromage=30
+[2026-03-20T10:54:51.803+0000] {scrapping_indeed.py:262} WARNING - [Indeed][SOC Analyst] No cards on page 1, stopping.
+[2026-03-20T10:54:51.986+0000] {scrapping_indeed.py:289} INFO - [Indeed][SOC Analyst] Session closed — 0 jobs found.
+[2026-03-20T10:54:51.992+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'SOC Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:54:53.925+0000] {scrapping_indeed.py:242} INFO - [Indeed][Network Engineer] Page 1 → https://ma.indeed.com/jobs?q=Network+Engineer&l=Maroc&start=0&fromage=30
+[2026-03-20T10:54:56.016+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Information Security] No cards on page 1, stopping.
+[2026-03-20T10:54:56.383+0000] {scrapping_indeed.py:289} INFO - [Indeed][Information Security] Session closed — 0 jobs found.
+[2026-03-20T10:54:56.390+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Information Security' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:55:02.335+0000] {scrapping_indeed.py:222} INFO - [Indeed][Linux Administrator] Starting session...
+[2026-03-20T10:55:13.100+0000] {scrapping_indeed.py:222} INFO - [Indeed][System Administrator] Starting session...
+[2026-03-20T10:55:16.805+0000] {scrapping_indeed.py:262} WARNING - [Indeed][Network Engineer] No cards on page 1, stopping.
+[2026-03-20T10:55:17.061+0000] {scrapping_indeed.py:289} INFO - [Indeed][Network Engineer] Session closed — 0 jobs found.
+[2026-03-20T10:55:17.064+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Network Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-20T10:55:23.042+0000] {scrapping_indeed.py:222} INFO - [Indeed][System Engineer] Starting session...
+[2026-03-20T10:55:32.847+0000] {scrapping_indeed.py:222} INFO - [Indeed][IT Support] Starting session...
+[2026-03-20T19:38:17.597+0000] {scrapping_indeed.py:285} ERROR - [Indeed][Linux Administrator] Error: Message: Unable to execute request for an existing session: java.io.IOException: closed
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: java.io.IOException: closed
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.io.IOException: closed
+	at java.net.http/jdk.internal.net.http.ResponseSubscribers$HttpResponseInputStream.current(ResponseSubscribers.java:464)
+	at java.net.http/jdk.internal.net.http.ResponseSubscribers$HttpResponseInputStream.read(ResponseSubscribers.java:508)
+	at java.base/java.io.InputStream.read(InputStream.java:220)
+	at org.openqa.selenium.io.Read.toByteArray(Read.java:45)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpMessages.readResponseBody(JdkHttpMessages.java:198)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpMessages.extractContent(JdkHttpMessages.java:191)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpMessages.createResponse(JdkHttpMessages.java:165)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:478)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.ResponseTimerEvent.handle(ResponseTimerEvent.java:63)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.purgeTimeoutsAndReturnNextDeadline(HttpClientImpl.java:1788)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.run(HttpClientImpl.java:1345)
+
+[2026-03-20T19:38:17.841+0000] {scrapping_indeed.py:285} ERROR - [Indeed][System Administrator] Error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:3482/session/36dc523e4b4f3ac4bc60e00b93f72429/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:3482/session/36dc523e4b4f3ac4bc60e00b93f72429/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T19:38:18.195+0000] {scrapping_indeed.py:289} INFO - [Indeed][Linux Administrator] Session closed — 0 jobs found.
+[2026-03-20T19:38:18.209+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'Linux Administrator' → 0 unique jobs (grand total: 0)
+[2026-03-20T19:38:18.729+0000] {scrapping_indeed.py:285} ERROR - [Indeed][System Engineer] Error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:7618/session/277339da262414e92ce2970aad5af165/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:7618/session/277339da262414e92ce2970aad5af165/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T19:38:19.548+0000] {scrapping_indeed.py:285} ERROR - [Indeed][IT Support] Error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:14942/session/b6ee9dc4c0fcb5234f66b29112fd4c96/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:14942/session/b6ee9dc4c0fcb5234f66b29112fd4c96/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T19:38:20.752+0000] {job.py:229} INFO - Heartbeat recovered after 31366.49 seconds
+[2026-03-20T23:18:17.267+0000] {scrapping_indeed.py:326} ERROR - [Indeed] Worker failed for 'System Engineer': Message: Unable to execute request for an existing session: Timeout when executing request (DELETE http://localhost:7618/session/277339da262414e92ce2970aad5af165)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (DELETE http://localhost:7618/session/277339da262414e92ce2970aad5af165)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T23:18:17.337+0000] {local_task_job_runner.py:228} ERROR - Heartbeat time limit exceeded!
+[2026-03-20T23:18:17.382+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-20T23:18:17.547+0000] {scrapping_indeed.py:289} INFO - [Indeed][System Administrator] Session closed — 0 jobs found.
+[2026-03-20T23:18:17.614+0000] {scrapping_indeed.py:321} INFO - [Indeed] Merged 'System Administrator' → 0 unique jobs (grand total: 0)
+[2026-03-20T23:18:17.736+0000] {process_utils.py:132} INFO - Sending 15 to group 480. PIDs of all processes in the group: [480]
+[2026-03-20T23:18:17.762+0000] {scrapping_indeed.py:326} ERROR - [Indeed] Worker failed for 'Database Administrator': Message: Could not start a new session. Timed out creating session 
+Host info: host: '11358a567dae', ip: '172.24.0.2'
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+    at org.openqa.selenium.grid.sessionqueue.local.LocalNewSessionQueue.failDueToTimeout (LocalNewSessionQueue.java:514)
+    at org.openqa.selenium.grid.sessionqueue.local.LocalNewSessionQueue.retryAddToQueue (LocalNewSessionQueue.java:311)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.handleNewSessionRequest (LocalDistributor.java:636)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.lambda$run$1 (LocalDistributor.java:572)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1144)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+    at java.lang.Thread.run (Thread.java:1583)
+[2026-03-20T23:18:17.825+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 480
+[2026-03-20T23:18:17.902+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
+[2026-03-20T23:18:33.547+0000] {scrapping_indeed.py:222} INFO - [Indeed][UI Designer] Starting session...
+[2026-03-20T23:18:39.383+0000] {scrapping_indeed.py:222} INFO - [Indeed][Automation Tester] Starting session...
+[2026-03-20T23:18:40.782+0000] {local_task_job_runner.py:127} ERROR - Received SIGTERM. Terminating subprocesses
+[2026-03-20T23:18:41.636+0000] {process_utils.py:132} INFO - Sending 15 to group 480. PIDs of all processes in the group: [480]
+[2026-03-20T23:18:41.665+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 480
+[2026-03-20T23:18:41.743+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
