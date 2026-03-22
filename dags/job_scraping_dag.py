@@ -1,26 +1,27 @@
 """
 Airflow DAG — Projet Job Intelligent
-Daily pipeline: extract LinkedIn + Indeed in parallel → push to PostgreSQL.
+Daily pipeline: extract LinkedIn + France-Travail in parallel → push to PostgreSQL.
 
 Schedule: every day at 12:00 UTC
 Graph:
-    extract_linkedin ─┐
-                      ├─→ push_to_db
-    extract_indeed   ─┘
+    extract_linkedin       ─┐
+                            ├─→ push_to_db → PostgreSQL
+    extract_france_travail ─┘
 """
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import sys
+import json
+import os
 import logging
 
-# Make scrapers importable inside Airflow container
 sys.path.insert(0, "/opt/airflow/scrapers")
 
-from scrapping_linkedin import scrape_linkedin_jobs
-from scrapping_indeed   import scrape_indeed_jobs
-from db                 import push_to_postgres, get_stats
+from scrapping_linkedin       import scrape_linkedin_jobs
+from scrapping_france_travail import scrape_france_travail_jobs
+from db                       import push_to_postgres, get_stats
 
 log = logging.getLogger(__name__)
 
@@ -36,47 +37,37 @@ default_args = {
 # ─── TASK CALLABLES ────────────────────────────────────────────────────────────
 
 def run_linkedin(**context):
-    """
-    Task 1a: scrape LinkedIn jobs and push result to XCom
-    so push_to_db can retrieve it.
-    """
     log.info("[DAG] Starting LinkedIn extraction...")
     jobs = scrape_linkedin_jobs()
-    log.info(f"[DAG] LinkedIn done — {len(jobs)} jobs scraped.")
-    # XCom stores the result for the downstream push_to_db task
-    context["ti"].xcom_push(key="linkedin_jobs", value=jobs)
+    path = "/tmp/linkedin_jobs.json"
+    with open(path, "w") as f:
+        json.dump(jobs, f)
+    log.info(f"[DAG] LinkedIn done — {len(jobs)} jobs saved to {path}")
 
 
-def run_indeed(**context):
-    """
-    Task 1b: scrape Indeed jobs and push result to XCom.
-    Runs in parallel with run_linkedin.
-    """
-    log.info("[DAG] Starting Indeed extraction...")
-    jobs = scrape_indeed_jobs()
-    log.info(f"[DAG] Indeed done — {len(jobs)} jobs scraped.")
-    context["ti"].xcom_push(key="indeed_jobs", value=jobs)
+def run_france_travail(**context):
+    log.info("[DAG] Starting France-Travail extraction...")
+    jobs = scrape_france_travail_jobs()
+    path = "/tmp/france_travail_jobs.json"
+    with open(path, "w") as f:
+        json.dump(jobs, f)
+    log.info(f"[DAG] France-Travail done — {len(jobs)} jobs saved to {path}")
 
 
 def run_push(**context):
-    """
-    Task 2: pull results from both scrapers via XCom,
-    merge them, and push to PostgreSQL.
-    """
-    ti = context["ti"]
+    all_jobs = []
 
-    linkedin_jobs = ti.xcom_pull(key="linkedin_jobs", task_ids="extract_linkedin") or []
-    indeed_jobs   = ti.xcom_pull(key="indeed_jobs",   task_ids="extract_indeed")   or []
+    for path in ["/tmp/linkedin_jobs.json", "/tmp/france_travail_jobs.json"]:
+        if os.path.exists(path):
+            with open(path) as f:
+                jobs = json.load(f)
+                all_jobs.extend(jobs)
+                log.info(f"[DAG] Loaded {len(jobs)} jobs from {path}")
+        else:
+            log.warning(f"[DAG] File not found: {path}")
 
-    all_jobs = linkedin_jobs + indeed_jobs
-    log.info(
-        f"[DAG] Merging {len(linkedin_jobs)} LinkedIn + "
-        f"{len(indeed_jobs)} Indeed = {len(all_jobs)} total jobs."
-    )
-
+    log.info(f"[DAG] Total jobs to push: {len(all_jobs)}")
     push_to_postgres(all_jobs)
-
-    # Print DB stats after insertion
     get_stats()
 
 
@@ -85,11 +76,11 @@ def run_push(**context):
 with DAG(
     dag_id="daily_job_scraping",
     default_args=default_args,
-    description="Scrape LinkedIn + Indeed daily and push to PostgreSQL",
-    schedule_interval="0 12 * * *",    # every day at 12:00 UTC
+    description="Scrape LinkedIn + France-Travail daily and push to PostgreSQL",
+    schedule_interval="0 12 * * *",
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["scraping", "jobs", "linkedin", "indeed"],
+    tags=["scraping", "jobs", "linkedin", "france_travail"],
 ) as dag:
 
     extract_linkedin = PythonOperator(
@@ -98,10 +89,10 @@ with DAG(
         execution_timeout=timedelta(minutes=60),
     )
 
-    extract_indeed = PythonOperator(
-        task_id="extract_indeed",
-        python_callable=run_indeed,
-        execution_timeout=timedelta(minutes=60),
+    extract_france_travail = PythonOperator(
+        task_id="extract_france_travail",
+        python_callable=run_france_travail,
+        execution_timeout=timedelta(minutes=10),
     )
 
     push_to_db = PythonOperator(
@@ -110,5 +101,5 @@ with DAG(
         execution_timeout=timedelta(minutes=10),
     )
 
-    # LinkedIn and Indeed run in parallel → both feed into push_to_db
-    [extract_linkedin, extract_indeed] >> push_to_db
+    # Both run in parallel → feed into push_to_db
+    [extract_linkedin, extract_france_travail] >> push_to_db
