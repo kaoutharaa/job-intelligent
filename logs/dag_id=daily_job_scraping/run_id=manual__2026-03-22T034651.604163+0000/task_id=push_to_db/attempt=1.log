@@ -1,0 +1,26 @@
+[2026-03-22T03:50:42.809+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T03:50:42.832+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-22T03:46:51.604163+00:00 [queued]>
+[2026-03-22T03:50:42.843+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-22T03:46:51.604163+00:00 [queued]>
+[2026-03-22T03:50:42.846+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T03:50:42.865+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): push_to_db> on 2026-03-22 03:46:51.604163+00:00
+[2026-03-22T03:50:42.878+0000] {standard_task_runner.py:72} INFO - Started process 240 to run task
+[2026-03-22T03:50:42.883+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'push_to_db', 'manual__2026-03-22T03:46:51.604163+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp5l4ivngl']
+[2026-03-22T03:50:42.888+0000] {standard_task_runner.py:105} INFO - Job 11: Subtask push_to_db
+[2026-03-22T03:50:43.017+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.push_to_db manual__2026-03-22T03:46:51.604163+00:00 [running]> on host 4b2088b79302
+[2026-03-22T03:50:43.154+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='push_to_db' AIRFLOW_CTX_EXECUTION_DATE='2026-03-22T03:46:51.604163+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-22T03:46:51.604163+00:00'
+[2026-03-22T03:50:43.158+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T03:50:43.206+0000] {job_scraping_dag.py:72} INFO - [DAG] Merging 170 LinkedIn + 0 Indeed = 170 total jobs.
+[2026-03-22T03:50:43.245+0000] {db.py:207} INFO - [DB] Pushing 170 jobs to Supabase...
+[2026-03-22T03:50:44.270+0000] {db.py:231} ERROR - [DB] Erreur lot 1: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'contract_type' column of 'jobs' in the schema cache"}
+[2026-03-22T03:50:44.823+0000] {db.py:231} ERROR - [DB] Erreur lot 2: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'contract_type' column of 'jobs' in the schema cache"}
+[2026-03-22T03:50:44.827+0000] {db.py:237} INFO - [DB] Done - 0 inseres, 0 doublons ignores.
+[2026-03-22T03:50:44.399+0000] {logging_mixin.py:190} INFO - 
+--- DB Stats (Supabase) ------------------------------------------
+[2026-03-22T03:50:44.408+0000] {logging_mixin.py:190} INFO - Total jobs : 500
+[2026-03-22T03:50:44.414+0000] {logging_mixin.py:190} INFO - ------------------------------------------------------------------
+[2026-03-22T03:50:44.417+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-22T03:50:44.444+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-22T03:50:44.449+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=push_to_db, run_id=manual__2026-03-22T03:46:51.604163+00:00, execution_date=20260322T034651, start_date=20260322T035042, end_date=20260322T035044
+[2026-03-22T03:50:44.490+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-22T03:50:44.517+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-22T03:50:44.520+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

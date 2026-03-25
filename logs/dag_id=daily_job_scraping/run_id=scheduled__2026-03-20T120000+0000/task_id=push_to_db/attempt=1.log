@@ -1,0 +1,48 @@
+[2026-03-22T02:28:05.558+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T02:28:05.589+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [queued]>
+[2026-03-22T02:28:05.623+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [queued]>
+[2026-03-22T02:28:05.640+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T02:28:05.705+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): push_to_db> on 2026-03-20 12:00:00+00:00
+[2026-03-22T02:28:05.731+0000] {standard_task_runner.py:72} INFO - Started process 235 to run task
+[2026-03-22T02:28:05.739+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'push_to_db', 'scheduled__2026-03-20T12:00:00+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp18eijgb_']
+[2026-03-22T02:28:05.786+0000] {standard_task_runner.py:105} INFO - Job 4: Subtask push_to_db
+[2026-03-22T02:28:05.996+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [running]> on host e95b87d7f359
+[2026-03-22T02:28:06.199+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='push_to_db' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-20T12:00:00+00:00'
+[2026-03-22T02:28:06.201+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T02:28:06.297+0000] {job_scraping_dag.py:72} INFO - [DAG] Merging 183 LinkedIn + 0 Indeed = 183 total jobs.
+[2026-03-22T02:28:06.536+0000] {db.py:80} INFO - [DB] Done — 183 inserted, 0 skipped (duplicates/errors).
+[2026-03-22T02:28:06.557+0000] {logging_mixin.py:190} INFO - 
+─── DB Stats ─────────────────────────────────────
+[2026-03-22T02:28:06.558+0000] {logging_mixin.py:190} INFO - Total jobs : 166
+[2026-03-22T02:28:06.559+0000] {logging_mixin.py:190} INFO -   linkedin    : 166
+[2026-03-22T02:28:06.560+0000] {logging_mixin.py:190} INFO - ──────────────────────────────────────────────────
+[2026-03-22T02:28:06.562+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-22T02:28:06.584+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-22T02:28:06.587+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=push_to_db, run_id=scheduled__2026-03-20T12:00:00+00:00, execution_date=20260320T120000, start_date=20260322T022805, end_date=20260322T022806
+[2026-03-22T02:28:06.635+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-22T02:28:06.667+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-22T02:28:06.674+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-22T03:06:58.242+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T03:06:58.577+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [queued]>
+[2026-03-22T03:06:58.673+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [queued]>
+[2026-03-22T03:06:58.737+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T03:06:58.959+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): push_to_db> on 2026-03-20 12:00:00+00:00
+[2026-03-22T03:06:59.090+0000] {standard_task_runner.py:72} INFO - Started process 284 to run task
+[2026-03-22T03:06:59.144+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'push_to_db', 'scheduled__2026-03-20T12:00:00+00:00', '--job-id', '6', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpwfn7yvoq']
+[2026-03-22T03:06:59.225+0000] {standard_task_runner.py:105} INFO - Job 6: Subtask push_to_db
+[2026-03-22T03:07:00.027+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.push_to_db scheduled__2026-03-20T12:00:00+00:00 [running]> on host 6e9107eaa705
+[2026-03-22T03:07:01.486+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='push_to_db' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-20T12:00:00+00:00'
+[2026-03-22T03:07:01.491+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T03:07:01.986+0000] {job_scraping_dag.py:72} INFO - [DAG] Merging 191 LinkedIn + 0 Indeed = 191 total jobs.
+[2026-03-22T03:07:03.670+0000] {db.py:80} INFO - [DB] Done — 191 inserted, 0 skipped (duplicates/errors).
+[2026-03-22T03:07:03.798+0000] {logging_mixin.py:190} INFO - 
+─── DB Stats ─────────────────────────────────────
+[2026-03-22T03:07:03.831+0000] {logging_mixin.py:190} INFO - Total jobs : 171
+[2026-03-22T03:07:03.849+0000] {logging_mixin.py:190} INFO -   linkedin    : 171
+[2026-03-22T03:07:03.870+0000] {logging_mixin.py:190} INFO - ──────────────────────────────────────────────────
+[2026-03-22T03:07:03.885+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-22T03:07:03.986+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-22T03:07:03.995+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=push_to_db, run_id=scheduled__2026-03-20T12:00:00+00:00, execution_date=20260320T120000, start_date=20260322T030658, end_date=20260322T030703
+[2026-03-22T03:07:04.171+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-22T03:07:04.292+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-22T03:07:04.316+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
