@@ -1,0 +1,22 @@
+[2026-03-20T10:39:22.406+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-20T10:39:22.496+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [queued]>
+[2026-03-20T10:39:22.526+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [queued]>
+[2026-03-20T10:39:22.542+0000] {taskinstance.py:2866} INFO - Starting attempt 3 of 5
+[2026-03-20T10:39:22.601+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_indeed> on 2026-03-20 10:22:21.869345+00:00
+[2026-03-20T10:39:22.628+0000] {standard_task_runner.py:72} INFO - Started process 461 to run task
+[2026-03-20T10:39:22.736+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_indeed', 'manual__2026-03-20T10:22:21.869345+00:00', '--job-id', '8', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp77cg_uj5']
+[2026-03-20T10:39:22.939+0000] {standard_task_runner.py:105} INFO - Job 8: Subtask extract_indeed
+[2026-03-20T10:39:24.247+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_indeed manual__2026-03-20T10:22:21.869345+00:00 [running]> on host 696af1b356a2
+[2026-03-20T10:39:24.947+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_indeed' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T10:22:21.869345+00:00' AIRFLOW_CTX_TRY_NUMBER='3' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T10:22:21.869345+00:00'
+[2026-03-20T10:39:24.989+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-20T10:39:25.098+0000] {job_scraping_dag.py:55} INFO - [DAG] Starting Indeed extraction...
+[2026-03-20T10:39:25.107+0000] {scrapping_indeed.py:305} INFO - [Indeed] Starting 68 keywords with 4 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-20T10:39:48.464+0000] {local_task_job_runner.py:346} WARNING - State of this instance has been externally set to queued. Terminating instance.
+[2026-03-20T10:39:48.553+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-20T10:39:48.609+0000] {process_utils.py:132} INFO - Sending 15 to group 461. PIDs of all processes in the group: [461]
+[2026-03-20T10:39:48.620+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 461
+[2026-03-20T10:39:48.646+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
+[2026-03-20T10:40:48.652+0000] {process_utils.py:150} WARNING - process psutil.Process(pid=461, name='airflow task ru', status='sleeping', started='10:39:22') did not respond to SIGTERM. Trying SIGKILL
+[2026-03-20T10:40:48.678+0000] {process_utils.py:87} INFO - Sending the signal 9 to group 461
+[2026-03-20T10:40:48.758+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=461, name='airflow task ru', status='terminated', exitcode=<Negsignal.SIGKILL: -9>, started='10:39:22') (461) terminated with exit code -9
+[2026-03-20T10:40:48.761+0000] {standard_task_runner.py:190} ERROR - ('Job 8 was killed before it finished (likely due to running out of memory)', 'For more information, see https://airflow.apache.org/docs/apache-airflow/stable/troubleshooting.html#LocalTaskJob-killed')

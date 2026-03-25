@@ -1,0 +1,90 @@
+[2026-03-22T21:51:58.576+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-22T21:51:58.593+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-22T21:51:57.126793+00:00 [queued]>
+[2026-03-22T21:51:58.600+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-22T21:51:57.126793+00:00 [queued]>
+[2026-03-22T21:51:58.601+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-22T21:51:58.613+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_linkedin> on 2026-03-22 21:51:57.126793+00:00
+[2026-03-22T21:51:58.622+0000] {standard_task_runner.py:72} INFO - Started process 220 to run task
+[2026-03-22T21:51:58.625+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_linkedin', 'manual__2026-03-22T21:51:57.126793+00:00', '--job-id', '9', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp3b82lrn0']
+[2026-03-22T21:51:58.628+0000] {standard_task_runner.py:105} INFO - Job 9: Subtask extract_linkedin
+[2026-03-22T21:51:58.693+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-22T21:51:57.126793+00:00 [running]> on host a75d4f68a453
+[2026-03-22T21:51:58.799+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_linkedin' AIRFLOW_CTX_EXECUTION_DATE='2026-03-22T21:51:57.126793+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-22T21:51:57.126793+00:00'
+[2026-03-22T21:51:58.801+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-22T21:51:58.832+0000] {job_scraping_dag.py:40} INFO - [DAG] Starting LinkedIn extraction...
+[2026-03-22T21:51:58.833+0000] {scrapping_linkedin.py:202} INFO - [LinkedIn] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-22T21:52:02.323+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Analyst] Starting session...
+[2026-03-22T21:52:02.324+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Engineer] Starting session...
+[2026-03-22T21:52:02.325+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Scientist] Starting session...
+[2026-03-22T21:52:08.013+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:09.014+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:10.770+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Scientist] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Scientist&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:17.126+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Engineer] +70 jobs (keyword total: 70)
+[2026-03-22T21:52:17.768+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Analyst] +60 jobs (keyword total: 60)
+[2026-03-22T21:52:18.832+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Scientist] +60 jobs (keyword total: 60)
+[2026-03-22T21:52:19.252+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:19.358+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Analyst] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:21.025+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Scientist] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Scientist&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:26.343+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Engineer] +6 jobs (keyword total: 76)
+[2026-03-22T21:52:28.610+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Engineer] Session closed.
+[2026-03-22T21:52:28.612+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Engineer' → 76 unique jobs (grand total: 76)
+[2026-03-22T21:52:29.447+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Machine Learning Engineer] Starting session...
+[2026-03-22T21:52:29.514+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Scientist] +10 jobs (keyword total: 70)
+[2026-03-22T21:52:32.046+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Scientist] Session closed.
+[2026-03-22T21:52:32.055+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Scientist' → 49 unique jobs (grand total: 125)
+[2026-03-22T21:52:32.833+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][MLOps Engineer] Starting session...
+[2026-03-22T21:52:34.300+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Analyst] +0 jobs (keyword total: 60)
+[2026-03-22T21:52:35.590+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Machine Learning Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Machine%20Learning%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:37.359+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Analyst] Session closed.
+[2026-03-22T21:52:37.364+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Analyst' → 17 unique jobs (grand total: 142)
+[2026-03-22T21:52:37.962+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Business Intelligence] Starting session...
+[2026-03-22T21:52:38.061+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][MLOps Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=MLOps%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:44.651+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Machine Learning Engineer] +40 jobs (keyword total: 40)
+[2026-03-22T21:52:46.620+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Machine Learning Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Machine%20Learning%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:47.973+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Business Intelligence] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:52:48.075+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][MLOps Engineer] +2 jobs (keyword total: 2)
+[2026-03-22T21:52:50.797+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][MLOps Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=MLOps%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:54.669+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Machine Learning Engineer] +0 jobs (keyword total: 40)
+[2026-03-22T21:52:56.122+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Business Intelligence] +28 jobs (keyword total: 28)
+[2026-03-22T21:52:57.701+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Machine Learning Engineer] Session closed.
+[2026-03-22T21:52:57.703+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Machine Learning Engineer' → 1 unique jobs (grand total: 143)
+[2026-03-22T21:52:58.162+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Business Intelligence] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:52:58.327+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][NLP Engineer] Starting session...
+[2026-03-22T21:52:58.337+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][MLOps Engineer] +0 jobs (keyword total: 2)
+[2026-03-22T21:53:00.721+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][MLOps Engineer] Session closed.
+[2026-03-22T21:53:00.726+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 143)
+[2026-03-22T21:53:02.297+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][AI Engineer] Starting session...
+[2026-03-22T21:53:06.030+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Business Intelligence] +0 jobs (keyword total: 28)
+[2026-03-22T21:53:08.103+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][AI Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=AI%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:53:08.800+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Business Intelligence] Session closed.
+[2026-03-22T21:53:08.802+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Business Intelligence' → 9 unique jobs (grand total: 152)
+[2026-03-22T21:53:09.274+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Architect] Starting session...
+[2026-03-22T21:53:10.883+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][NLP Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=NLP%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:53:15.403+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][AI Engineer] +10 jobs (keyword total: 10)
+[2026-03-22T21:53:15.538+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Architect] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Architect&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:53:17.974+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][AI Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=AI%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:53:19.184+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][NLP Engineer] +19 jobs (keyword total: 19)
+[2026-03-22T21:53:21.179+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][NLP Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=NLP%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:53:25.052+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][AI Engineer] +0 jobs (keyword total: 10)
+[2026-03-22T21:53:26.747+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][AI Engineer] Session closed.
+[2026-03-22T21:53:26.751+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'AI Engineer' → 4 unique jobs (grand total: 156)
+[2026-03-22T21:53:27.329+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Big Data Engineer] Starting session...
+[2026-03-22T21:53:28.148+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][NLP Engineer] +0 jobs (keyword total: 19)
+[2026-03-22T21:53:29.911+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][NLP Engineer] Session closed.
+[2026-03-22T21:53:29.914+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'NLP Engineer' → 13 unique jobs (grand total: 169)
+[2026-03-22T21:53:32.245+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Architect] +35 jobs (keyword total: 35)
+[2026-03-22T21:53:33.956+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Big Data Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Big%20Data%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-22T21:53:34.848+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Architect] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Architect&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:53:42.103+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Big Data Engineer] +18 jobs (keyword total: 18)
+[2026-03-22T21:53:42.463+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Architect] +0 jobs (keyword total: 35)
+[2026-03-22T21:53:44.266+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Big Data Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Big%20Data%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-22T21:53:45.249+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Architect] Session closed.
+[2026-03-22T21:53:45.250+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Architect' → 3 unique jobs (grand total: 172)
+[2026-03-22T21:53:51.694+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Big Data Engineer] +0 jobs (keyword total: 18)
+[2026-03-22T21:53:53.645+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Big Data Engineer] Session closed.
+[2026-03-22T21:53:53.647+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Big Data Engineer' → 0 unique jobs (grand total: 172)
+[2026-03-22T21:53:53.652+0000] {job_scraping_dag.py:45} INFO - [DAG] LinkedIn done — 172 jobs saved to /tmp/linkedin_jobs.json
+[2026-03-22T21:53:53.653+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-22T21:53:53.664+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-22T21:53:53.666+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=extract_linkedin, run_id=manual__2026-03-22T21:51:57.126793+00:00, execution_date=20260322T215157, start_date=20260322T215158, end_date=20260322T215353
+[2026-03-22T21:53:53.720+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-22T21:53:53.742+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-22T21:53:53.746+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

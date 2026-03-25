@@ -1,0 +1,23 @@
+[2026-03-21T15:48:26.375+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-21T15:48:26.454+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-18T12:00:00+00:00 [queued]>
+[2026-03-21T15:48:27.203+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-18T12:00:00+00:00 [queued]>
+[2026-03-21T15:48:27.208+0000] {taskinstance.py:2866} INFO - Starting attempt 2 of 3
+[2026-03-21T15:48:27.252+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_indeed> on 2026-03-18 12:00:00+00:00
+[2026-03-21T15:48:27.285+0000] {standard_task_runner.py:72} INFO - Started process 204 to run task
+[2026-03-21T15:48:27.304+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_indeed', 'scheduled__2026-03-18T12:00:00+00:00', '--job-id', '20', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp2t2issir']
+[2026-03-21T15:48:27.325+0000] {standard_task_runner.py:105} INFO - Job 20: Subtask extract_indeed
+[2026-03-21T15:48:27.537+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_indeed scheduled__2026-03-18T12:00:00+00:00 [running]> on host 696af1b356a2
+[2026-03-21T15:48:28.147+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_indeed' AIRFLOW_CTX_EXECUTION_DATE='2026-03-18T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-18T12:00:00+00:00'
+[2026-03-21T15:48:28.151+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-21T15:48:28.184+0000] {job_scraping_dag.py:55} INFO - [DAG] Starting Indeed extraction...
+[2026-03-21T15:48:28.185+0000] {scrapping_indeed.py:240} INFO - [Indeed] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-21T15:52:13.975+0000] {local_task_job_runner.py:346} WARNING - State of this instance has been externally set to None. Terminating instance.
+[2026-03-21T15:52:14.026+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-21T15:52:14.056+0000] {process_utils.py:132} INFO - Sending 15 to group 204. PIDs of all processes in the group: [204]
+[2026-03-21T15:52:14.060+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 204
+[2026-03-21T15:52:14.084+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
+[2026-03-21T15:52:36.387+0000] {scrapping_indeed.py:167} INFO - [Indeed][Data Analyst] Starting session...
+[2026-03-21T15:53:14.101+0000] {process_utils.py:150} WARNING - process psutil.Process(pid=204, name='airflow task ru', status='sleeping', started='15:48:26') did not respond to SIGTERM. Trying SIGKILL
+[2026-03-21T15:53:14.104+0000] {process_utils.py:87} INFO - Sending the signal 9 to group 204
+[2026-03-21T15:53:14.158+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=204, name='airflow task ru', status='terminated', exitcode=<Negsignal.SIGKILL: -9>, started='15:48:26') (204) terminated with exit code -9
+[2026-03-21T15:53:14.160+0000] {standard_task_runner.py:190} ERROR - ('Job 20 was killed before it finished (likely due to running out of memory)', 'For more information, see https://airflow.apache.org/docs/apache-airflow/stable/troubleshooting.html#LocalTaskJob-killed')

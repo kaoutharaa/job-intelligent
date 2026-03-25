@@ -1,0 +1,61 @@
+[2026-03-21T15:48:26.330+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-21T15:48:26.413+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-19T12:00:00+00:00 [queued]>
+[2026-03-21T15:48:27.035+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-19T12:00:00+00:00 [queued]>
+[2026-03-21T15:48:27.042+0000] {taskinstance.py:2866} INFO - Starting attempt 2 of 3
+[2026-03-21T15:48:27.164+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_linkedin> on 2026-03-19 12:00:00+00:00
+[2026-03-21T15:48:27.211+0000] {standard_task_runner.py:72} INFO - Started process 200 to run task
+[2026-03-21T15:48:27.232+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_linkedin', 'scheduled__2026-03-19T12:00:00+00:00', '--job-id', '17', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpuufbmi5p']
+[2026-03-21T15:48:27.240+0000] {standard_task_runner.py:105} INFO - Job 17: Subtask extract_linkedin
+[2026-03-21T15:48:27.494+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-19T12:00:00+00:00 [running]> on host 696af1b356a2
+[2026-03-21T15:48:27.921+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_linkedin' AIRFLOW_CTX_EXECUTION_DATE='2026-03-19T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-19T12:00:00+00:00'
+[2026-03-21T15:48:27.933+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-21T15:48:28.006+0000] {job_scraping_dag.py:43} INFO - [DAG] Starting LinkedIn extraction...
+[2026-03-21T15:48:28.032+0000] {scrapping_linkedin.py:202} INFO - [LinkedIn] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-21T15:48:36.781+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Engineer] Starting session...
+[2026-03-21T15:48:36.785+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Analyst] Starting session...
+[2026-03-21T15:48:50.971+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-21T15:49:15.493+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-21T15:49:44.352+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Engineer] +60 jobs (keyword total: 60)
+[2026-03-21T15:49:46.235+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-21T15:49:55.798+0000] {scrapping_linkedin.py:182} INFO - [LinkedIn][Data Analyst] +60 jobs (keyword total: 60)
+[2026-03-21T15:49:57.938+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Analyst] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=25&f_TPR=r604800
+[2026-03-21T15:51:44.105+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Data Engineer] Unexpected error: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x62d4364eeb6a <unknown>
+#1 0x62d435f01a32 <unknown>
+#2 0x62d435ef87ba <unknown>
+#3 0x62d435ee9481 <unknown>
+#4 0x62d435eeb27c <unknown>
+#5 0x62d435ee9979 <unknown>
+#6 0x62d435ee9065 <unknown>
+#7 0x62d435ee8c16 <unknown>
+#8 0x62d435ee6731 <unknown>
+#9 0x62d435ee6f80 <unknown>
+#10 0x62d435f0541d <unknown>
+#11 0x62d435f9ffeb <unknown>
+#12 0x62d435f9f369 <unknown>
+#13 0x62d435f48c0f <unknown>
+#14 0x62d435f499d1 <unknown>
+#15 0x62d4364b36b9 <unknown>
+#16 0x62d4364b65c1 <unknown>
+#17 0x62d43649fe29 <unknown>
+#18 0x62d4364b717e <unknown>
+#19 0x62d4364864b0 <unknown>
+#20 0x62d4364db578 <unknown>
+#21 0x62d4364db74b <unknown>
+#22 0x62d4364ed1a3 <unknown>
+#23 0x727c8a4f5aa4 <unknown>
+#24 0x727c8a582a64 __clone
+
+[2026-03-21T15:51:44.368+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Engineer] Session closed.
+[2026-03-21T15:51:44.384+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Engineer' → 60 unique jobs (grand total: 60)
+[2026-03-21T15:52:08.749+0000] {local_task_job_runner.py:346} WARNING - State of this instance has been externally set to None. Terminating instance.
+[2026-03-21T15:52:08.757+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-21T15:52:08.765+0000] {process_utils.py:132} INFO - Sending 15 to group 200. PIDs of all processes in the group: [200]
+[2026-03-21T15:52:08.769+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 200
+[2026-03-21T15:52:08.779+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
+[2026-03-21T15:53:08.772+0000] {process_utils.py:150} WARNING - process psutil.Process(pid=200, name='airflow task ru', status='sleeping', started='15:48:26') did not respond to SIGTERM. Trying SIGKILL
+[2026-03-21T15:53:08.776+0000] {process_utils.py:87} INFO - Sending the signal 9 to group 200
+[2026-03-21T15:53:08.807+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=200, name='airflow task ru', status='terminated', exitcode=<Negsignal.SIGKILL: -9>, started='15:48:26') (200) terminated with exit code -9
+[2026-03-21T15:53:08.820+0000] {standard_task_runner.py:190} ERROR - ('Job 17 was killed before it finished (likely due to running out of memory)', 'For more information, see https://airflow.apache.org/docs/apache-airflow/stable/troubleshooting.html#LocalTaskJob-killed')

@@ -1,0 +1,535 @@
+[2026-03-20T10:44:34.802+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-20T10:44:34.861+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-18T12:00:00+00:00 [queued]>
+[2026-03-20T10:44:34.885+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-18T12:00:00+00:00 [queued]>
+[2026-03-20T10:44:34.889+0000] {taskinstance.py:2866} INFO - Starting attempt 2 of 3
+[2026-03-20T10:44:34.921+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_linkedin> on 2026-03-18 12:00:00+00:00
+[2026-03-20T10:44:34.939+0000] {standard_task_runner.py:72} INFO - Started process 542 to run task
+[2026-03-20T10:44:34.950+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_linkedin', 'scheduled__2026-03-18T12:00:00+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp09wr25cc']
+[2026-03-20T10:44:34.959+0000] {standard_task_runner.py:105} INFO - Job 11: Subtask extract_linkedin
+[2026-03-20T10:44:35.113+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_linkedin scheduled__2026-03-18T12:00:00+00:00 [running]> on host 696af1b356a2
+[2026-03-20T10:44:35.401+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_linkedin' AIRFLOW_CTX_EXECUTION_DATE='2026-03-18T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-18T12:00:00+00:00'
+[2026-03-20T10:44:35.404+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-20T10:44:35.431+0000] {job_scraping_dag.py:43} INFO - [DAG] Starting LinkedIn extraction...
+[2026-03-20T10:44:35.434+0000] {scrapping_linkedin.py:259} INFO - [LinkedIn] Starting 68 keywords with 4 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-20T10:44:42.033+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Data Analyst] Starting session...
+[2026-03-20T10:44:54.113+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:45:02.669+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Analyst] +70 jobs (keyword total: 70)
+[2026-03-20T10:45:04.913+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Analyst] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:45:09.372+0000] {scrapping_linkedin.py:239} ERROR - [LinkedIn][Data Analyst] Unexpected error: Message: javascript error: Cannot read properties of null (reading 'scrollHeight')
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x621274509b6a <unknown>
+#1 0x621273f1ca32 <unknown>
+#2 0x621273f23b62 <unknown>
+#3 0x621273f266d9 <unknown>
+#4 0x621273fbb409 <unknown>
+#5 0x621273fba369 <unknown>
+#6 0x621273f63c0f <unknown>
+#7 0x621273f649d1 <unknown>
+#8 0x6212744ce6b9 <unknown>
+#9 0x6212744d15c1 <unknown>
+#10 0x6212744bae29 <unknown>
+#11 0x6212744d217e <unknown>
+#12 0x6212744a14b0 <unknown>
+#13 0x6212744f6578 <unknown>
+#14 0x6212744f674b <unknown>
+#15 0x6212745081a3 <unknown>
+#16 0x739a4c2cbaa4 <unknown>
+#17 0x739a4c358a64 __clone
+
+[2026-03-20T10:45:09.587+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Data Analyst] Session closed.
+[2026-03-20T10:45:09.596+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Data Analyst' → 70 unique jobs (grand total: 70)
+[2026-03-20T10:45:12.094+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Machine Learning Engineer] Starting session...
+[2026-03-20T10:45:12.582+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Deep Learning Engineer] Starting session...
+[2026-03-20T10:45:16.171+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Data Engineer] Starting session...
+[2026-03-20T10:45:21.164+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Machine Learning Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Machine%20Learning%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:45:21.977+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Deep Learning Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Deep%20Learning%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:45:24.536+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:45:32.776+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Machine Learning Engineer] +54 jobs (keyword total: 54)
+[2026-03-20T10:45:35.661+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Machine Learning Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Machine%20Learning%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:45:38.310+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Engineer] +60 jobs (keyword total: 60)
+[2026-03-20T10:45:40.790+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:45:44.529+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][Deep Learning Engineer] No cards on page 1, stopping.
+[2026-03-20T10:45:44.874+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Deep Learning Engineer] Session closed.
+[2026-03-20T10:45:44.900+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Deep Learning Engineer' → 0 unique jobs (grand total: 70)
+[2026-03-20T10:45:45.058+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Machine Learning Engineer] +0 jobs (keyword total: 54)
+[2026-03-20T10:45:46.814+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Data Scientist] Starting session...
+[2026-03-20T10:45:46.834+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Machine Learning Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Machine%20Learning%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:45:51.753+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Engineer] +8 jobs (keyword total: 68)
+[2026-03-20T10:45:53.660+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:45:55.023+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Scientist] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Scientist&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:46:00.741+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][AI Engineer] Starting session...
+[2026-03-20T10:46:02.708+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Engineer] +0 jobs (keyword total: 68)
+[2026-03-20T10:46:05.394+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Data Engineer] Session closed.
+[2026-03-20T10:46:05.400+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Data Engineer' → 48 unique jobs (grand total: 118)
+[2026-03-20T10:46:06.954+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Scientist] +60 jobs (keyword total: 60)
+[2026-03-20T10:46:08.873+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][Machine Learning Engineer] No cards on page 3, stopping.
+[2026-03-20T10:46:09.078+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Scientist] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Scientist&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:46:09.121+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Machine Learning Engineer] Session closed.
+[2026-03-20T10:46:09.132+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Machine Learning Engineer' → 10 unique jobs (grand total: 128)
+[2026-03-20T10:46:10.858+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][AI Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=AI%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:46:14.974+0000] {scrapping_linkedin.py:239} ERROR - [LinkedIn][Data Scientist] Unexpected error: Message: javascript error: Cannot read properties of null (reading 'scrollHeight')
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5daf73b19b6a <unknown>
+#1 0x5daf7352ca32 <unknown>
+#2 0x5daf73533b62 <unknown>
+#3 0x5daf735366d9 <unknown>
+#4 0x5daf735cb409 <unknown>
+#5 0x5daf735ca369 <unknown>
+#6 0x5daf73573c0f <unknown>
+#7 0x5daf735749d1 <unknown>
+#8 0x5daf73ade6b9 <unknown>
+#9 0x5daf73ae15c1 <unknown>
+#10 0x5daf73acae29 <unknown>
+#11 0x5daf73ae217e <unknown>
+#12 0x5daf73ab14b0 <unknown>
+#13 0x5daf73b06578 <unknown>
+#14 0x5daf73b0674b <unknown>
+#15 0x5daf73b181a3 <unknown>
+#16 0x744d68adfaa4 <unknown>
+#17 0x744d68b6ca64 __clone
+
+[2026-03-20T10:46:15.154+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Data Scientist] Session closed.
+[2026-03-20T10:46:15.159+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Data Scientist' → 20 unique jobs (grand total: 148)
+[2026-03-20T10:46:21.165+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][AI Engineer] +7 jobs (keyword total: 7)
+[2026-03-20T10:46:22.978+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][AI Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=AI%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:46:31.499+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][MLOps Engineer] Starting session...
+[2026-03-20T10:46:31.507+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][AI Engineer] +0 jobs (keyword total: 7)
+[2026-03-20T10:46:34.185+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][AI Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=AI%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:46:37.911+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][MLOps Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=MLOps%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:46:44.095+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][AI Engineer] +0 jobs (keyword total: 7)
+[2026-03-20T10:46:47.458+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][AI Engineer] Session closed.
+[2026-03-20T10:46:47.479+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'AI Engineer' → 2 unique jobs (grand total: 150)
+[2026-03-20T10:46:48.804+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][MLOps Engineer] +2 jobs (keyword total: 2)
+[2026-03-20T10:46:51.198+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][MLOps Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=MLOps%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:46:56.286+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Business Intelligence] Starting session...
+[2026-03-20T10:46:59.380+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Computer Vision Engineer] Starting session...
+[2026-03-20T10:47:00.331+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][MLOps Engineer] +0 jobs (keyword total: 2)
+[2026-03-20T10:47:03.120+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][MLOps Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=MLOps%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:47:04.959+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Business Intelligence] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:47:05.796+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Computer Vision Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Computer%20Vision%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:47:11.228+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][MLOps Engineer] +0 jobs (keyword total: 2)
+[2026-03-20T10:47:14.670+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][MLOps Engineer] Session closed.
+[2026-03-20T10:47:14.678+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 150)
+[2026-03-20T10:47:15.387+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Business Intelligence] +31 jobs (keyword total: 31)
+[2026-03-20T10:47:17.382+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][NLP Engineer] Starting session...
+[2026-03-20T10:47:17.603+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Business Intelligence] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:47:18.369+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Computer Vision Engineer] +36 jobs (keyword total: 36)
+[2026-03-20T10:47:20.632+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Computer Vision Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Computer%20Vision%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:47:30.694+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Business Intelligence] +0 jobs (keyword total: 31)
+[2026-03-20T10:47:31.215+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Computer Vision Engineer] +0 jobs (keyword total: 36)
+[2026-03-20T10:47:31.394+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][NLP Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=NLP%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:47:32.711+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Business Intelligence] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:47:34.018+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Computer Vision Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Computer%20Vision%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:47:41.019+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][NLP Engineer] +18 jobs (keyword total: 18)
+[2026-03-20T10:47:41.341+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Business Intelligence] +0 jobs (keyword total: 31)
+[2026-03-20T10:47:43.042+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Computer Vision Engineer] +0 jobs (keyword total: 36)
+[2026-03-20T10:47:43.966+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Business Intelligence] Session closed.
+[2026-03-20T10:47:43.972+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Business Intelligence' → 14 unique jobs (grand total: 164)
+[2026-03-20T10:47:43.998+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][NLP Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=NLP%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:47:46.097+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Computer Vision Engineer] Session closed.
+[2026-03-20T10:47:46.103+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Computer Vision Engineer' → 0 unique jobs (grand total: 164)
+[2026-03-20T10:47:50.039+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][BI Analyst] Starting session...
+[2026-03-20T10:47:53.986+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][NLP Engineer] +0 jobs (keyword total: 18)
+[2026-03-20T10:47:55.973+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][NLP Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=NLP%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:47:59.350+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][BI Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=BI%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:48:04.012+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][NLP Engineer] +0 jobs (keyword total: 18)
+[2026-03-20T10:48:06.933+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][NLP Engineer] Session closed.
+[2026-03-20T10:48:06.969+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'NLP Engineer' → 13 unique jobs (grand total: 177)
+[2026-03-20T10:48:10.559+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Software Engineer] Starting session...
+[2026-03-20T10:48:19.008+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][BI Analyst] +14 jobs (keyword total: 14)
+[2026-03-20T10:48:20.428+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Software Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Software%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:48:21.131+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][BI Analyst] Page 2 → https://www.linkedin.com/jobs/search/?keywords=BI%20Analyst&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:48:30.875+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][BI Analyst] +0 jobs (keyword total: 14)
+[2026-03-20T10:48:33.693+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][BI Analyst] Page 3 → https://www.linkedin.com/jobs/search/?keywords=BI%20Analyst&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:48:35.985+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Software Engineer] +60 jobs (keyword total: 60)
+[2026-03-20T10:48:37.804+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Software Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Software%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:48:44.164+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][BI Analyst] +0 jobs (keyword total: 14)
+[2026-03-20T10:48:45.954+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][BI Analyst] Session closed.
+[2026-03-20T10:48:45.963+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'BI Analyst' → 4 unique jobs (grand total: 181)
+[2026-03-20T10:48:48.191+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Data Architect] Starting session...
+[2026-03-20T10:48:54.062+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Backend Developer] Starting session...
+[2026-03-20T10:48:58.774+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Architect] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Architect&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:49:04.112+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Backend Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Backend%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:49:06.715+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Software Developer] Starting session...
+[2026-03-20T10:49:07.668+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][Software Engineer] No cards on page 2, stopping.
+[2026-03-20T10:49:07.874+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Software Engineer] Session closed.
+[2026-03-20T10:49:07.879+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Software Engineer' → 9 unique jobs (grand total: 190)
+[2026-03-20T10:49:11.256+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Architect] +27 jobs (keyword total: 27)
+[2026-03-20T10:49:13.716+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Architect] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Data%20Architect&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:49:17.038+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Backend Developer] +32 jobs (keyword total: 32)
+[2026-03-20T10:49:17.641+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Software Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Software%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:49:20.024+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Backend Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Backend%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:49:24.189+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Architect] +0 jobs (keyword total: 27)
+[2026-03-20T10:49:26.732+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Data Architect] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Data%20Architect&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:49:28.273+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Backend Developer] +0 jobs (keyword total: 32)
+[2026-03-20T10:49:30.027+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Backend Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Backend%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:49:30.371+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Software Developer] +70 jobs (keyword total: 70)
+[2026-03-20T10:49:30.557+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Frontend Developer] Starting session...
+[2026-03-20T10:49:32.180+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Software Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Software%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:49:37.119+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Data Architect] +0 jobs (keyword total: 27)
+[2026-03-20T10:49:40.194+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Data Architect] Session closed.
+[2026-03-20T10:49:40.231+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Data Architect' → 3 unique jobs (grand total: 193)
+[2026-03-20T10:49:40.281+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Backend Developer] +0 jobs (keyword total: 32)
+[2026-03-20T10:49:40.904+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Frontend Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Frontend%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:49:43.422+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Backend Developer] Session closed.
+[2026-03-20T10:49:43.432+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Backend Developer' → 25 unique jobs (grand total: 218)
+[2026-03-20T10:49:45.647+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Software Developer] +0 jobs (keyword total: 70)
+[2026-03-20T10:49:47.628+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Full Stack Developer] Starting session...
+[2026-03-20T10:49:47.797+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Software Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Software%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:49:51.016+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Frontend Developer] +14 jobs (keyword total: 14)
+[2026-03-20T10:49:53.407+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Frontend Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Frontend%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:49:56.258+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Full Stack Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Full%20Stack%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:49:58.032+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Software Developer] +10 jobs (keyword total: 80)
+[2026-03-20T10:50:00.616+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Software Developer] Session closed.
+[2026-03-20T10:50:00.638+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Software Developer' → 15 unique jobs (grand total: 233)
+[2026-03-20T10:50:02.920+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Web Developer] Starting session...
+[2026-03-20T10:50:03.411+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Frontend Developer] +0 jobs (keyword total: 14)
+[2026-03-20T10:50:05.952+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Frontend Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Frontend%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:50:07.685+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Full Stack Developer] +28 jobs (keyword total: 28)
+[2026-03-20T10:50:09.204+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Full Stack Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Full%20Stack%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:50:12.181+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Web Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Web%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:50:13.896+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Frontend Developer] +0 jobs (keyword total: 14)
+[2026-03-20T10:50:16.823+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Frontend Developer] Session closed.
+[2026-03-20T10:50:16.831+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Frontend Developer' → 2 unique jobs (grand total: 235)
+[2026-03-20T10:50:19.350+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Full Stack Developer] +0 jobs (keyword total: 28)
+[2026-03-20T10:50:21.647+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Full Stack Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Full%20Stack%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:50:30.844+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Full Stack Developer] +0 jobs (keyword total: 28)
+[2026-03-20T10:50:34.048+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Full Stack Developer] Session closed.
+[2026-03-20T10:50:34.053+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Full Stack Developer' → 0 unique jobs (grand total: 235)
+[2026-03-20T10:50:39.941+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][Web Developer] No cards on page 1, stopping.
+[2026-03-20T10:50:40.559+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Web Developer] Session closed.
+[2026-03-20T10:50:40.565+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Web Developer' → 0 unique jobs (grand total: 235)
+[2026-03-20T10:50:40.618+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][iOS Developer] Starting session...
+[2026-03-20T10:50:49.781+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][iOS Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=iOS%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:51:01.415+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][iOS Developer] +24 jobs (keyword total: 24)
+[2026-03-20T10:51:03.963+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][iOS Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=iOS%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:51:12.981+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][iOS Developer] +0 jobs (keyword total: 24)
+[2026-03-20T10:51:13.904+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Mobile Developer] Starting session...
+[2026-03-20T10:51:14.626+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][iOS Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=iOS%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:51:22.244+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Android Developer] Starting session...
+[2026-03-20T10:51:24.026+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][iOS Developer] +0 jobs (keyword total: 24)
+[2026-03-20T10:51:25.344+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Mobile Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Mobile%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:51:27.302+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][iOS Developer] Session closed.
+[2026-03-20T10:51:27.311+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'iOS Developer' → 2 unique jobs (grand total: 237)
+[2026-03-20T10:51:29.463+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Android Developer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Android%20Developer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:51:31.528+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Cloud Engineer] Starting session...
+[2026-03-20T10:51:32.059+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][DevOps Engineer] Starting session...
+[2026-03-20T10:51:35.344+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Mobile Developer] +6 jobs (keyword total: 6)
+[2026-03-20T10:51:37.791+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Mobile Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Mobile%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:51:40.514+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][DevOps Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=DevOps%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:51:46.191+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cloud Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Cloud%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:51:47.947+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Mobile Developer] +0 jobs (keyword total: 6)
+[2026-03-20T10:51:50.800+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Mobile Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Mobile%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:51:51.407+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][DevOps Engineer] +18 jobs (keyword total: 18)
+[2026-03-20T10:51:52.366+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Android Developer] +14 jobs (keyword total: 14)
+[2026-03-20T10:51:53.297+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][DevOps Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=DevOps%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:51:54.355+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Android Developer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Android%20Developer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:52:04.633+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Android Developer] +0 jobs (keyword total: 14)
+[2026-03-20T10:52:07.078+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Android Developer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Android%20Developer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:52:07.135+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][DevOps Engineer] +0 jobs (keyword total: 18)
+[2026-03-20T10:52:08.808+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][DevOps Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=DevOps%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:52:14.915+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cloud Engineer] +60 jobs (keyword total: 60)
+[2026-03-20T10:52:14.975+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Mobile Developer] +0 jobs (keyword total: 6)
+[2026-03-20T10:52:16.805+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cloud Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Cloud%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:52:17.907+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Mobile Developer] Session closed.
+[2026-03-20T10:52:17.936+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Mobile Developer' → 1 unique jobs (grand total: 238)
+[2026-03-20T10:52:18.070+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Android Developer] +0 jobs (keyword total: 14)
+[2026-03-20T10:52:20.830+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Android Developer] Session closed.
+[2026-03-20T10:52:20.838+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Android Developer' → 1 unique jobs (grand total: 239)
+[2026-03-20T10:52:25.225+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Cloud Architect] Starting session...
+[2026-03-20T10:52:34.087+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][DevOps Engineer] No cards on page 3, stopping.
+[2026-03-20T10:52:34.341+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][DevOps Engineer] Session closed.
+[2026-03-20T10:52:34.351+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'DevOps Engineer' → 9 unique jobs (grand total: 248)
+[2026-03-20T10:52:35.162+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cloud Architect] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Cloud%20Architect&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:52:40.800+0000] {scrapping_linkedin.py:223} WARNING - [LinkedIn][Cloud Engineer] No cards on page 2, stopping.
+[2026-03-20T10:52:41.177+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Cloud Engineer] Session closed.
+[2026-03-20T10:52:41.182+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Cloud Engineer' → 7 unique jobs (grand total: 255)
+[2026-03-20T10:52:45.687+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cloud Architect] +12 jobs (keyword total: 12)
+[2026-03-20T10:52:48.278+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cloud Architect] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Cloud%20Architect&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:52:56.778+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Platform Engineer] Starting session...
+[2026-03-20T10:52:58.009+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cloud Architect] +0 jobs (keyword total: 12)
+[2026-03-20T10:53:00.544+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cloud Architect] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Cloud%20Architect&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:53:04.950+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Platform Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Platform%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:53:15.197+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Platform Engineer] +24 jobs (keyword total: 24)
+[2026-03-20T10:53:17.605+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Platform Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Platform%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:53:24.743+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cloud Architect] +0 jobs (keyword total: 12)
+[2026-03-20T10:53:26.772+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Cloud Architect] Session closed.
+[2026-03-20T10:53:26.779+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Cloud Architect' → 6 unique jobs (grand total: 261)
+[2026-03-20T10:53:28.197+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Platform Engineer] +0 jobs (keyword total: 24)
+[2026-03-20T10:53:30.332+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Platform Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Platform%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:53:31.553+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Site Reliability Engineer] Starting session...
+[2026-03-20T10:53:31.961+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Infrastructure Engineer] Starting session...
+[2026-03-20T10:53:40.023+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Platform Engineer] +0 jobs (keyword total: 24)
+[2026-03-20T10:53:40.224+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Site Reliability Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Site%20Reliability%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:53:41.828+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Platform Engineer] Session closed.
+[2026-03-20T10:53:41.839+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Platform Engineer' → 0 unique jobs (grand total: 261)
+[2026-03-20T10:53:46.056+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Infrastructure Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Infrastructure%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:53:51.785+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Site Reliability Engineer] +50 jobs (keyword total: 50)
+[2026-03-20T10:53:54.009+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Site Reliability Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Site%20Reliability%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:53:58.543+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Infrastructure Engineer] +15 jobs (keyword total: 15)
+[2026-03-20T10:54:01.549+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Infrastructure Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Infrastructure%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:54:05.209+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Site Reliability Engineer] +0 jobs (keyword total: 50)
+[2026-03-20T10:54:07.249+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Site Reliability Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Site%20Reliability%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:54:10.511+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Infrastructure Engineer] +0 jobs (keyword total: 15)
+[2026-03-20T10:54:13.329+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Infrastructure Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Infrastructure%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:54:17.361+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Site Reliability Engineer] +0 jobs (keyword total: 50)
+[2026-03-20T10:54:20.381+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Site Reliability Engineer] Session closed.
+[2026-03-20T10:54:20.392+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Site Reliability Engineer' → 1 unique jobs (grand total: 262)
+[2026-03-20T10:54:22.080+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Cybersecurity Engineer] Starting session...
+[2026-03-20T10:54:23.910+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Security Analyst] Starting session...
+[2026-03-20T10:54:28.333+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Infrastructure Engineer] +0 jobs (keyword total: 15)
+[2026-03-20T10:54:31.068+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Security Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Security%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:54:31.356+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Infrastructure Engineer] Session closed.
+[2026-03-20T10:54:31.363+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Infrastructure Engineer' → 3 unique jobs (grand total: 265)
+[2026-03-20T10:54:39.668+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Security Analyst] +1 jobs (keyword total: 1)
+[2026-03-20T10:54:39.821+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cybersecurity Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Cybersecurity%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:54:41.464+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Security Analyst] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Security%20Analyst&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:54:54.286+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Kubernetes Engineer] Starting session...
+[2026-03-20T10:54:58.007+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Penetration Tester] Starting session...
+[2026-03-20T10:54:58.138+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Security Analyst] +0 jobs (keyword total: 1)
+[2026-03-20T10:55:00.256+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Security Analyst] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Security%20Analyst&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:55:05.477+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cybersecurity Engineer] +9 jobs (keyword total: 9)
+[2026-03-20T10:55:06.460+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Kubernetes Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Kubernetes%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:55:08.071+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cybersecurity Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Cybersecurity%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:55:08.122+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Penetration Tester] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Penetration%20Tester&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T10:55:08.852+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Security Analyst] +0 jobs (keyword total: 1)
+[2026-03-20T10:55:11.770+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Security Analyst] Session closed.
+[2026-03-20T10:55:11.776+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Security Analyst' → 1 unique jobs (grand total: 266)
+[2026-03-20T10:55:16.417+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cybersecurity Engineer] +0 jobs (keyword total: 9)
+[2026-03-20T10:55:18.668+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Cybersecurity Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Cybersecurity%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T10:55:20.476+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Ethical Hacker] Starting session...
+[2026-03-20T10:55:21.600+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Kubernetes Engineer] +17 jobs (keyword total: 17)
+[2026-03-20T10:55:22.237+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Penetration Tester] +4 jobs (keyword total: 4)
+[2026-03-20T10:55:24.138+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Kubernetes Engineer] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Kubernetes%20Engineer&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:55:25.091+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Penetration Tester] Page 2 → https://www.linkedin.com/jobs/search/?keywords=Penetration%20Tester&location=Maroc&start=25&f_TPR=r604800
+[2026-03-20T10:55:28.306+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Cybersecurity Engineer] +0 jobs (keyword total: 9)
+[2026-03-20T10:55:31.384+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Cybersecurity Engineer] Session closed.
+[2026-03-20T10:55:31.386+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Cybersecurity Engineer' → 7 unique jobs (grand total: 273)
+[2026-03-20T10:55:32.263+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Kubernetes Engineer] +0 jobs (keyword total: 17)
+[2026-03-20T10:55:33.558+0000] {scrapping_linkedin.py:234} INFO - [LinkedIn][Penetration Tester] +0 jobs (keyword total: 4)
+[2026-03-20T10:55:33.790+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Kubernetes Engineer] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Kubernetes%20Engineer&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T19:38:16.586+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Penetration Tester] Page 3 → https://www.linkedin.com/jobs/search/?keywords=Penetration%20Tester&location=Maroc&start=50&f_TPR=r604800
+[2026-03-20T19:38:17.172+0000] {scrapping_linkedin.py:205} INFO - [LinkedIn][Ethical Hacker] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Ethical%20Hacker&location=Maroc&start=0&f_TPR=r604800
+[2026-03-20T19:38:17.431+0000] {scrapping_linkedin.py:239} ERROR - [LinkedIn][Kubernetes Engineer] Unexpected error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:17918/session/aa0417306898dd8e0cecd9f2881a12dc/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:17918/session/aa0417306898dd8e0cecd9f2881a12dc/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T19:38:17.746+0000] {scrapping_linkedin.py:279} ERROR - [LinkedIn] Worker failed for 'SOC Analyst': Message: Could not start a new session. Timed out creating session 
+Host info: host: '11358a567dae', ip: '172.24.0.2'
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+    at org.openqa.selenium.grid.sessionqueue.local.LocalNewSessionQueue.failDueToTimeout (LocalNewSessionQueue.java:514)
+    at org.openqa.selenium.grid.sessionqueue.local.LocalNewSessionQueue.retryAddToQueue (LocalNewSessionQueue.java:311)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.handleNewSessionRequest (LocalDistributor.java:636)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.lambda$run$1 (LocalDistributor.java:572)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1144)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+    at java.lang.Thread.run (Thread.java:1583)
+[2026-03-20T19:38:19.892+0000] {job.py:229} INFO - Heartbeat recovered after 31365.96 seconds
+[2026-03-20T23:18:18.039+0000] {scrapping_linkedin.py:239} ERROR - [LinkedIn][Penetration Tester] Unexpected error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:21036/session/ec85cbeacef9d7066332d3af7981f41d/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:21036/session/ec85cbeacef9d7066332d3af7981f41d/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T23:18:18.647+0000] {scrapping_linkedin.py:239} ERROR - [LinkedIn][Ethical Hacker] Unexpected error: Message: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:15723/session/d17c3e0e5dc0802a5b85e4cbf654ba9c/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (POST http://localhost:15723/session/d17c3e0e5dc0802a5b85e4cbf654ba9c/url)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T23:18:18.850+0000] {scrapping_linkedin.py:279} ERROR - [LinkedIn] Worker failed for 'Kubernetes Engineer': Message: Unable to execute request for an existing session: Timeout when executing request (DELETE http://localhost:17918/session/aa0417306898dd8e0cecd9f2881a12dc)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+java.lang.RuntimeException: Unable to execute request for an existing session: Timeout when executing request (DELETE http://localhost:17918/session/aa0417306898dd8e0cecd9f2881a12dc)
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+	at org.openqa.selenium.grid.router.HandleSession.execute(HandleSession.java:216)
+	at org.openqa.selenium.remote.http.Route$PredicatedRoute.handle(Route.java:398)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.grid.router.Router.execute(Router.java:89)
+	at org.openqa.selenium.grid.web.EnsureSpecCompliantResponseHeaders.lambda$apply$0(EnsureSpecCompliantResponseHeaders.java:34)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$NestedRoute.handle(Route.java:271)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.http.Route$CombinedRoute.handle(Route.java:361)
+	at org.openqa.selenium.remote.http.Route.execute(Route.java:69)
+	at org.openqa.selenium.remote.AddWebDriverSpecHeaders.lambda$apply$0(AddWebDriverSpecHeaders.java:35)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.remote.ErrorFilter.lambda$apply$0(ErrorFilter.java:44)
+	at org.openqa.selenium.remote.http.Filter$1.execute(Filter.java:63)
+	at org.openqa.selenium.netty.server.SeleniumHandler.lambda$channelRead0$0(SeleniumHandler.java:49)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:953)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.execute0(JdkHttpClient.java:463)
+	at org.openqa.selenium.remote.http.AddSeleniumUserAgent.lambda$apply$0(AddSeleniumUserAgent.java:44)
+	at org.openqa.selenium.remote.http.Filter.lambda$andFinally$1(Filter.java:55)
+	at org.openqa.selenium.remote.http.jdk.JdkHttpClient.lambda$executeAsync$2(JdkHttpClient.java:389)
+	... 5 more
+
+[2026-03-20T23:18:20.082+0000] {scrapping_linkedin.py:279} ERROR - [LinkedIn] Worker failed for 'Network Engineer': Message: Could not start a new session. No nodes support the capabilities in the request 
+Host info: host: '11358a567dae', ip: '172.24.0.2'
+Build info: version: '4.41.0', revision: '9fc754f90a'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.6.87.2-microsoft-standard-WSL2', java.version: '21.0.10'
+Driver info: driver.version: unknown
+Stacktrace:
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.lambda$checkMatchingSlot$7 (LocalDistributor.java:609)
+    at java.util.stream.ForEachOps$ForEachOp$OfRef.accept (ForEachOps.java:184)
+    at java.util.stream.ReferencePipeline$2$1.accept (ReferencePipeline.java:179)
+    at java.util.ArrayList$ArrayListSpliterator.forEachRemaining (ArrayList.java:1708)
+    at java.util.stream.AbstractPipeline.copyInto (AbstractPipeline.java:509)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto (AbstractPipeline.java:499)
+    at java.util.stream.ForEachOps$ForEachOp.evaluateSequential (ForEachOps.java:151)
+    at java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential (ForEachOps.java:174)
+    at java.util.stream.AbstractPipeline.evaluate (AbstractPipeline.java:234)
+    at java.util.stream.ReferencePipeline.forEach (ReferencePipeline.java:596)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.checkMatchingSlot (LocalDistributor.java:604)
+    at org.openqa.selenium.grid.distributor.local.LocalDistributor$NewSessionRunnable.run (LocalDistributor.java:584)
+    at org.openqa.selenium.concurrent.GuardedRunnable.lambda$guard$0 (GuardedRunnable.java:35)
+    at java.util.concurrent.Executors$RunnableAdapter.call (Executors.java:572)
+    at java.util.concurrent.FutureTask.runAndReset (FutureTask.java:358)
+    at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run (ScheduledThreadPoolExecutor.java:305)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1144)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+    at java.lang.Thread.run (Thread.java:1583)
+[2026-03-20T23:18:23.304+0000] {job.py:229} INFO - Heartbeat recovered after 13203.91 seconds
+[2026-03-20T23:18:29.052+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Penetration Tester] Session closed.
+[2026-03-20T23:18:29.180+0000] {scrapping_linkedin.py:187} INFO - [LinkedIn][Information Security] Starting session...
+[2026-03-20T23:18:29.239+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Penetration Tester' → 0 unique jobs (grand total: 273)
+[2026-03-20T23:18:29.445+0000] {scrapping_linkedin.py:243} INFO - [LinkedIn][Ethical Hacker] Session closed.
+[2026-03-20T23:18:29.615+0000] {scrapping_linkedin.py:274} INFO - [LinkedIn] Merged 'Ethical Hacker' → 0 unique jobs (grand total: 273)
+[2026-03-20T23:18:40.644+0000] {local_task_job_runner.py:127} ERROR - Received SIGTERM. Terminating subprocesses
+[2026-03-20T23:18:40.702+0000] {process_utils.py:132} INFO - Sending 15 to group 542. PIDs of all processes in the group: [542]
+[2026-03-20T23:18:40.746+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 542
+[2026-03-20T23:18:41.396+0000] {taskinstance.py:3093} ERROR - Received SIGTERM. Terminating subprocesses.
