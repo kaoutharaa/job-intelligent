@@ -19,3 +19,35 @@ CREATE TABLE IF NOT EXISTS jobs (
 CREATE INDEX IF NOT EXISTS idx_jobs_source  ON jobs(source);
 CREATE INDEX IF NOT EXISTS idx_jobs_keyword ON jobs(search_keyword);
 CREATE INDEX IF NOT EXISTS idx_jobs_scraped ON jobs(scraped_at);
+
+
+
+--SQL — A executer UNE FOIS dans Supabase SQL Editor
+ 
+CREATE TABLE IF NOT EXISTS jobs_clean (
+     id              BIGSERIAL PRIMARY KEY,
+     title           TEXT,
+     title_raw       TEXT,
+     company         TEXT,
+     location        TEXT,
+     date_posted     TEXT,
+     category        TEXT,
+     skills          TEXT,
+     job_url         TEXT,
+     search_keyword  TEXT,
+     scraped_at      TEXT,
+     source          TEXT,
+     created_at      TIMESTAMPTZ DEFAULT NOW()
+ );
+
+-- Index pour Power BI et le moteur de recommandation
+CREATE INDEX IF NOT EXISTS idx_jobs_clean_category  ON jobs_clean(category);
+CREATE INDEX IF NOT EXISTS idx_jobs_clean_source    ON jobs_clean(source);
+CREATE INDEX IF NOT EXISTS idx_jobs_clean_date      ON jobs_clean(date_posted);
+
+
+GRANT ALL ON TABLE jobs_clean TO anon;
+GRANT ALL ON TABLE jobs_clean TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO anon;
+GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO authenticated;
+

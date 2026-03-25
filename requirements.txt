@@ -1,10 +1,8 @@
 selenium==4.18.1
-pandas==2.2.1
+pandas
 beautifulsoup4==4.12.3
-pandas==2.2.1
 apscheduler
 numpy
 matplotlib
 seaborn
-psycopg2-binary==2.9.9
-sqlalchemy==2.0.27
+psycopg2-binary

@@ -1,0 +1,29 @@
+[2026-03-24T22:41:11.606+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-24T22:41:11.651+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-24T22:36:45.776542+00:00 [queued]>
+[2026-03-24T22:41:11.669+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-24T22:36:45.776542+00:00 [queued]>
+[2026-03-24T22:41:11.671+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-24T22:41:11.709+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): push_to_db> on 2026-03-24 22:36:45.776542+00:00
+[2026-03-24T22:41:11.725+0000] {standard_task_runner.py:72} INFO - Started process 1761 to run task
+[2026-03-24T22:41:11.732+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'push_to_db', 'manual__2026-03-24T22:36:45.776542+00:00', '--job-id', '50', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmp5e9by2c3']
+[2026-03-24T22:41:11.743+0000] {standard_task_runner.py:105} INFO - Job 50: Subtask push_to_db
+[2026-03-24T22:41:11.907+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.push_to_db manual__2026-03-24T22:36:45.776542+00:00 [running]> on host 8c995635ce4e
+[2026-03-24T22:41:12.170+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='push_to_db' AIRFLOW_CTX_EXECUTION_DATE='2026-03-24T22:36:45.776542+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-24T22:36:45.776542+00:00'
+[2026-03-24T22:41:12.178+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-24T22:41:12.217+0000] {job_scraping_dag.py:65} INFO - [DAG] Loaded 177 jobs from /tmp/linkedin_jobs.json
+[2026-03-24T22:41:12.225+0000] {job_scraping_dag.py:65} INFO - [DAG] Loaded 79 jobs from /tmp/france_travail_jobs.json
+[2026-03-24T22:41:12.228+0000] {job_scraping_dag.py:69} INFO - [DAG] Total jobs to push: 256
+[2026-03-24T22:41:12.263+0000] {db.py:92} INFO - [DB] Pushing 256 jobs to Supabase...
+[2026-03-24T22:41:13.528+0000] {db.py:110} INFO - [DB] Lot 1: 100/256 inseres
+[2026-03-24T22:41:14.094+0000] {db.py:110} INFO - [DB] Lot 2: 200/256 inseres
+[2026-03-24T22:41:14.858+0000] {db.py:110} INFO - [DB] Lot 3: 256/256 inseres
+[2026-03-24T22:41:14.863+0000] {db.py:122} INFO - [DB] Done - 256 inseres, 0 doublons ignores.
+[2026-03-24T22:41:15.381+0000] {logging_mixin.py:190} INFO - 
+--- DB Stats (Supabase) ------------------------------------------
+[2026-03-24T22:41:15.400+0000] {logging_mixin.py:190} INFO - Total jobs : 1938
+[2026-03-24T22:41:15.434+0000] {logging_mixin.py:190} INFO - ------------------------------------------------------------------
+[2026-03-24T22:41:15.442+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-24T22:41:15.488+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-24T22:41:15.491+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=push_to_db, run_id=manual__2026-03-24T22:36:45.776542+00:00, execution_date=20260324T223645, start_date=20260324T224111, end_date=20260324T224115
+[2026-03-24T22:41:15.599+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-24T22:41:15.710+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-03-24T22:41:15.720+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

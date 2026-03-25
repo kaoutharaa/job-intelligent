@@ -1,0 +1,24 @@
+[2026-03-25T08:34:07.733+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-25T08:34:07.769+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:34:07.787+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.push_to_db manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:34:07.791+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-25T08:34:07.821+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): push_to_db> on 2026-03-25 08:31:41.985332+00:00
+[2026-03-25T08:34:07.844+0000] {standard_task_runner.py:72} INFO - Started process 234 to run task
+[2026-03-25T08:34:07.851+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'push_to_db', 'manual__2026-03-25T08:31:41.985332+00:00', '--job-id', '58', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpdunq0obl']
+[2026-03-25T08:34:07.867+0000] {standard_task_runner.py:105} INFO - Job 58: Subtask push_to_db
+[2026-03-25T08:34:08.044+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.push_to_db manual__2026-03-25T08:31:41.985332+00:00 [running]> on host dcaa3875dea4
+[2026-03-25T08:34:08.268+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='push_to_db' AIRFLOW_CTX_EXECUTION_DATE='2026-03-25T08:31:41.985332+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-25T08:31:41.985332+00:00'
+[2026-03-25T08:34:08.272+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-25T08:34:08.299+0000] {job_scraping_dag.py:65} INFO - [DAG] Loaded 0 jobs from /tmp/linkedin_jobs.json
+[2026-03-25T08:34:08.301+0000] {job_scraping_dag.py:65} INFO - [DAG] Loaded 82 jobs from /tmp/france_travail_jobs.json
+[2026-03-25T08:34:08.303+0000] {job_scraping_dag.py:69} INFO - [DAG] Total jobs to push: 82
+[2026-03-25T08:34:08.355+0000] {db.py:92} INFO - [DB] Pushing 82 jobs to Supabase...
+[2026-03-25T08:34:08.379+0000] {db.py:119} ERROR - [DB] Connexion Supabase echouee: HTTPSConnectionPool(host='egegkouscvcqylndljxp.supabase.co', port=443): Max retries exceeded with url: /rest/v1/jobs (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7cdf9356e110>: Failed to resolve 'egegkouscvcqylndljxp.supabase.co' ([Errno -2] Name or service not known)"))
+[2026-03-25T08:34:08.381+0000] {db.py:122} INFO - [DB] Done - 0 inseres, 0 doublons ignores.
+[2026-03-25T08:34:08.397+0000] {db.py:162} ERROR - [DB] Stats error: HTTPSConnectionPool(host='egegkouscvcqylndljxp.supabase.co', port=443): Max retries exceeded with url: /rest/v1/jobs (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7cdf934b60d0>: Failed to resolve 'egegkouscvcqylndljxp.supabase.co' ([Errno -2] Name or service not known)"))
+[2026-03-25T08:34:08.398+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-25T08:34:08.445+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-25T08:34:08.448+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=push_to_db, run_id=manual__2026-03-25T08:31:41.985332+00:00, execution_date=20260325T083141, start_date=20260325T083407, end_date=20260325T083408
+[2026-03-25T08:34:08.577+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-25T08:34:08.632+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-03-25T08:34:08.637+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

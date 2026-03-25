@@ -1,0 +1,343 @@
+[2026-03-25T08:31:48.907+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-25T08:31:48.992+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:31:49.033+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:31:49.035+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-25T08:31:49.130+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_linkedin> on 2026-03-25 08:31:41.985332+00:00
+[2026-03-25T08:31:49.165+0000] {standard_task_runner.py:72} INFO - Started process 188 to run task
+[2026-03-25T08:31:49.199+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_linkedin', 'manual__2026-03-25T08:31:41.985332+00:00', '--job-id', '54', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpqgks0gp2']
+[2026-03-25T08:31:49.225+0000] {standard_task_runner.py:105} INFO - Job 54: Subtask extract_linkedin
+[2026-03-25T08:31:49.694+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_linkedin manual__2026-03-25T08:31:41.985332+00:00 [running]> on host dcaa3875dea4
+[2026-03-25T08:31:50.788+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_linkedin' AIRFLOW_CTX_EXECUTION_DATE='2026-03-25T08:31:41.985332+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-25T08:31:41.985332+00:00'
+[2026-03-25T08:31:50.803+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-25T08:31:51.267+0000] {job_scraping_dag.py:40} INFO - [DAG] Starting LinkedIn extraction...
+[2026-03-25T08:31:51.315+0000] {scrapping_linkedin.py:202} INFO - [LinkedIn] Starting 10 keywords with 3 parallel workers | SELENIUM_URL=http://selenium:4444/wd/hub
+[2026-03-25T08:32:22.359+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Scientist] Starting session...
+[2026-03-25T08:32:22.372+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Engineer] Starting session...
+[2026-03-25T08:32:22.361+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Analyst] Starting session...
+[2026-03-25T08:32:28.562+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Analyst] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Analyst&location=Maroc&start=0&f_TPR=r604800
+[2026-03-25T08:32:28.715+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Engineer] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Engineer&location=Maroc&start=0&f_TPR=r604800
+[2026-03-25T08:32:29.151+0000] {scrapping_linkedin.py:155} INFO - [LinkedIn][Data Scientist] Page 1 → https://www.linkedin.com/jobs/search/?keywords=Data%20Scientist&location=Maroc&start=0&f_TPR=r604800
+[2026-03-25T08:33:01.471+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Data Analyst] Unexpected error: Message: unknown error: net::ERR_CONNECTION_REFUSED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x61ee8c9f0b6a <unknown>
+#1 0x61ee8c403a32 <unknown>
+#2 0x61ee8c3fa7ba <unknown>
+#3 0x61ee8c3eb481 <unknown>
+#4 0x61ee8c3ed27c <unknown>
+#5 0x61ee8c3eb979 <unknown>
+#6 0x61ee8c3eb065 <unknown>
+#7 0x61ee8c3eac16 <unknown>
+#8 0x61ee8c3e8731 <unknown>
+#9 0x61ee8c3e8f80 <unknown>
+#10 0x61ee8c40741d <unknown>
+#11 0x61ee8c4a1feb <unknown>
+#12 0x61ee8c4a1369 <unknown>
+#13 0x61ee8c44ac0f <unknown>
+#14 0x61ee8c44b9d1 <unknown>
+#15 0x61ee8c9b56b9 <unknown>
+#16 0x61ee8c9b85c1 <unknown>
+#17 0x61ee8c9a1e29 <unknown>
+#18 0x61ee8c9b917e <unknown>
+#19 0x61ee8c9884b0 <unknown>
+#20 0x61ee8c9dd578 <unknown>
+#21 0x61ee8c9dd74b <unknown>
+#22 0x61ee8c9ef1a3 <unknown>
+#23 0x746872442aa4 <unknown>
+#24 0x7468724cfa64 __clone
+
+[2026-03-25T08:33:02.267+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Data Scientist] Unexpected error: Message: unknown error: net::ERR_CONNECTION_REFUSED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x56b6456f1b6a <unknown>
+#1 0x56b645104a32 <unknown>
+#2 0x56b6450fb7ba <unknown>
+#3 0x56b6450ec481 <unknown>
+#4 0x56b6450ee27c <unknown>
+#5 0x56b6450ec979 <unknown>
+#6 0x56b6450ec065 <unknown>
+#7 0x56b6450ebc16 <unknown>
+#8 0x56b6450e9731 <unknown>
+#9 0x56b6450e9f80 <unknown>
+#10 0x56b64510841d <unknown>
+#11 0x56b6451a2feb <unknown>
+#12 0x56b6451a2369 <unknown>
+#13 0x56b64514bc0f <unknown>
+#14 0x56b64514c9d1 <unknown>
+#15 0x56b6456b66b9 <unknown>
+#16 0x56b6456b95c1 <unknown>
+#17 0x56b6456a2e29 <unknown>
+#18 0x56b6456ba17e <unknown>
+#19 0x56b6456894b0 <unknown>
+#20 0x56b6456de578 <unknown>
+#21 0x56b6456de74b <unknown>
+#22 0x56b6456f01a3 <unknown>
+#23 0x73c5005fbaa4 <unknown>
+#24 0x73c500688a64 __clone
+
+[2026-03-25T08:33:02.522+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Data Engineer] Unexpected error: Message: unknown error: net::ERR_CONNECTION_REFUSED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5ee8517efb6a <unknown>
+#1 0x5ee851202a32 <unknown>
+#2 0x5ee8511f97ba <unknown>
+#3 0x5ee8511ea481 <unknown>
+#4 0x5ee8511ec27c <unknown>
+#5 0x5ee8511ea979 <unknown>
+#6 0x5ee8511ea065 <unknown>
+#7 0x5ee8511e9c16 <unknown>
+#8 0x5ee8511e7731 <unknown>
+#9 0x5ee8511e7f80 <unknown>
+#10 0x5ee85120641d <unknown>
+#11 0x5ee8512a0feb <unknown>
+#12 0x5ee8512a0369 <unknown>
+#13 0x5ee851249c0f <unknown>
+#14 0x5ee85124a9d1 <unknown>
+#15 0x5ee8517b46b9 <unknown>
+#16 0x5ee8517b75c1 <unknown>
+#17 0x5ee8517a0e29 <unknown>
+#18 0x5ee8517b817e <unknown>
+#19 0x5ee8517874b0 <unknown>
+#20 0x5ee8517dc578 <unknown>
+#21 0x5ee8517dc74b <unknown>
+#22 0x5ee8517ee1a3 <unknown>
+#23 0x780f4f406aa4 <unknown>
+#24 0x780f4f493a64 __clone
+
+[2026-03-25T08:33:03.097+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Analyst] Session closed.
+[2026-03-25T08:33:03.159+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Analyst' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:03.281+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Engineer] Session closed.
+[2026-03-25T08:33:03.317+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:03.463+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Scientist] Session closed.
+[2026-03-25T08:33:03.474+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Scientist' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:12.704+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][MLOps Engineer] Starting session...
+[2026-03-25T08:33:12.706+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Machine Learning Engineer] Starting session...
+[2026-03-25T08:33:13.979+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Machine Learning Engineer] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5b67fe20eb6a <unknown>
+#1 0x5b67fdc21a32 <unknown>
+#2 0x5b67fdc187ba <unknown>
+#3 0x5b67fdc09481 <unknown>
+#4 0x5b67fdc0b27c <unknown>
+#5 0x5b67fdc09979 <unknown>
+#6 0x5b67fdc09065 <unknown>
+#7 0x5b67fdc08c16 <unknown>
+#8 0x5b67fdc06731 <unknown>
+#9 0x5b67fdc06f80 <unknown>
+#10 0x5b67fdc2541d <unknown>
+#11 0x5b67fdcbffeb <unknown>
+#12 0x5b67fdcbf369 <unknown>
+#13 0x5b67fdc68c0f <unknown>
+#14 0x5b67fdc699d1 <unknown>
+#15 0x5b67fe1d36b9 <unknown>
+#16 0x5b67fe1d65c1 <unknown>
+#17 0x5b67fe1bfe29 <unknown>
+#18 0x5b67fe1d717e <unknown>
+#19 0x5b67fe1a64b0 <unknown>
+#20 0x5b67fe1fb578 <unknown>
+#21 0x5b67fe1fb74b <unknown>
+#22 0x5b67fe20d1a3 <unknown>
+#23 0x7de5ba052aa4 <unknown>
+#24 0x7de5ba0dfa64 __clone
+
+[2026-03-25T08:33:14.972+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Machine Learning Engineer] Session closed.
+[2026-03-25T08:33:14.984+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Machine Learning Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:15.578+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][MLOps Engineer] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x6514d5126b6a <unknown>
+#1 0x6514d4b39a32 <unknown>
+#2 0x6514d4b307ba <unknown>
+#3 0x6514d4b21481 <unknown>
+#4 0x6514d4b2327c <unknown>
+#5 0x6514d4b21979 <unknown>
+#6 0x6514d4b21065 <unknown>
+#7 0x6514d4b20c16 <unknown>
+#8 0x6514d4b1e731 <unknown>
+#9 0x6514d4b1ef80 <unknown>
+#10 0x6514d4b3d41d <unknown>
+#11 0x6514d4bd7feb <unknown>
+#12 0x6514d4bd7369 <unknown>
+#13 0x6514d4b80c0f <unknown>
+#14 0x6514d4b819d1 <unknown>
+#15 0x6514d50eb6b9 <unknown>
+#16 0x6514d50ee5c1 <unknown>
+#17 0x6514d50d7e29 <unknown>
+#18 0x6514d50ef17e <unknown>
+#19 0x6514d50be4b0 <unknown>
+#20 0x6514d5113578 <unknown>
+#21 0x6514d511374b <unknown>
+#22 0x6514d51251a3 <unknown>
+#23 0x7fcd506ddaa4 <unknown>
+#24 0x7fcd5076aa64 __clone
+
+[2026-03-25T08:33:15.839+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][MLOps Engineer] Session closed.
+[2026-03-25T08:33:15.849+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'MLOps Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:21.324+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Business Intelligence] Starting session...
+[2026-03-25T08:33:23.528+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Business Intelligence] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5bac06bbfb6a <unknown>
+#1 0x5bac065d2a32 <unknown>
+#2 0x5bac065c97ba <unknown>
+#3 0x5bac065ba481 <unknown>
+#4 0x5bac065bc27c <unknown>
+#5 0x5bac065ba979 <unknown>
+#6 0x5bac065ba065 <unknown>
+#7 0x5bac065b9c16 <unknown>
+#8 0x5bac065b7731 <unknown>
+#9 0x5bac065b7f80 <unknown>
+#10 0x5bac065d641d <unknown>
+#11 0x5bac06670feb <unknown>
+#12 0x5bac06670369 <unknown>
+#13 0x5bac06619c0f <unknown>
+#14 0x5bac0661a9d1 <unknown>
+#15 0x5bac06b846b9 <unknown>
+#16 0x5bac06b875c1 <unknown>
+#17 0x5bac06b70e29 <unknown>
+#18 0x5bac06b8817e <unknown>
+#19 0x5bac06b574b0 <unknown>
+#20 0x5bac06bac578 <unknown>
+#21 0x5bac06bac74b <unknown>
+#22 0x5bac06bbe1a3 <unknown>
+#23 0x7555efc5aaa4 <unknown>
+#24 0x7555efce7a64 __clone
+
+[2026-03-25T08:33:24.270+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Business Intelligence] Session closed.
+[2026-03-25T08:33:24.279+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Business Intelligence' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:28.483+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][AI Engineer] Starting session...
+[2026-03-25T08:33:29.176+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][NLP Engineer] Starting session...
+[2026-03-25T08:33:30.702+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][AI Engineer] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x6069fbab1b6a <unknown>
+#1 0x6069fb4c4a32 <unknown>
+#2 0x6069fb4bb7ba <unknown>
+#3 0x6069fb4ac481 <unknown>
+#4 0x6069fb4ae27c <unknown>
+#5 0x6069fb4ac979 <unknown>
+#6 0x6069fb4ac065 <unknown>
+#7 0x6069fb4abc16 <unknown>
+#8 0x6069fb4a9731 <unknown>
+#9 0x6069fb4a9f80 <unknown>
+#10 0x6069fb4c841d <unknown>
+#11 0x6069fb562feb <unknown>
+#12 0x6069fb562369 <unknown>
+#13 0x6069fb50bc0f <unknown>
+#14 0x6069fb50c9d1 <unknown>
+#15 0x6069fba766b9 <unknown>
+#16 0x6069fba795c1 <unknown>
+#17 0x6069fba62e29 <unknown>
+#18 0x6069fba7a17e <unknown>
+#19 0x6069fba494b0 <unknown>
+#20 0x6069fba9e578 <unknown>
+#21 0x6069fba9e74b <unknown>
+#22 0x6069fbab01a3 <unknown>
+#23 0x7d531d222aa4 <unknown>
+#24 0x7d531d2afa64 __clone
+
+[2026-03-25T08:33:31.097+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][AI Engineer] Session closed.
+[2026-03-25T08:33:31.108+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'AI Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:31.343+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][NLP Engineer] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x571ef7394b6a <unknown>
+#1 0x571ef6da7a32 <unknown>
+#2 0x571ef6d9e7ba <unknown>
+#3 0x571ef6d8f481 <unknown>
+#4 0x571ef6d9127c <unknown>
+#5 0x571ef6d8f979 <unknown>
+#6 0x571ef6d8f065 <unknown>
+#7 0x571ef6d8ec16 <unknown>
+#8 0x571ef6d8c731 <unknown>
+#9 0x571ef6d8cf80 <unknown>
+#10 0x571ef6dab41d <unknown>
+#11 0x571ef6e45feb <unknown>
+#12 0x571ef6e45369 <unknown>
+#13 0x571ef6deec0f <unknown>
+#14 0x571ef6def9d1 <unknown>
+#15 0x571ef73596b9 <unknown>
+#16 0x571ef735c5c1 <unknown>
+#17 0x571ef7345e29 <unknown>
+#18 0x571ef735d17e <unknown>
+#19 0x571ef732c4b0 <unknown>
+#20 0x571ef7381578 <unknown>
+#21 0x571ef738174b <unknown>
+#22 0x571ef73931a3 <unknown>
+#23 0x7690177f0aa4 <unknown>
+#24 0x76901787da64 __clone
+
+[2026-03-25T08:33:31.616+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][NLP Engineer] Session closed.
+[2026-03-25T08:33:31.626+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'NLP Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:33:35.454+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Data Architect] Starting session...
+[2026-03-25T08:33:36.271+0000] {scrapping_linkedin.py:138} INFO - [LinkedIn][Big Data Engineer] Starting session...
+[2026-03-25T08:33:38.041+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Big Data Engineer] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x62fc4c056b6a <unknown>
+#1 0x62fc4ba69a32 <unknown>
+#2 0x62fc4ba607ba <unknown>
+#3 0x62fc4ba51481 <unknown>
+#4 0x62fc4ba5327c <unknown>
+#5 0x62fc4ba51979 <unknown>
+#6 0x62fc4ba51065 <unknown>
+#7 0x62fc4ba50c16 <unknown>
+#8 0x62fc4ba4e731 <unknown>
+#9 0x62fc4ba4ef80 <unknown>
+#10 0x62fc4ba6d41d <unknown>
+#11 0x62fc4bb07feb <unknown>
+#12 0x62fc4bb07369 <unknown>
+#13 0x62fc4bab0c0f <unknown>
+#14 0x62fc4bab19d1 <unknown>
+#15 0x62fc4c01b6b9 <unknown>
+#16 0x62fc4c01e5c1 <unknown>
+#17 0x62fc4c007e29 <unknown>
+#18 0x62fc4c01f17e <unknown>
+#19 0x62fc4bfee4b0 <unknown>
+#20 0x62fc4c043578 <unknown>
+#21 0x62fc4c04374b <unknown>
+#22 0x62fc4c0551a3 <unknown>
+#23 0x75d1cb90aaa4 <unknown>
+#24 0x75d1cb997a64 __clone
+
+[2026-03-25T08:33:38.539+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Big Data Engineer] Session closed.
+[2026-03-25T08:33:38.606+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Big Data Engineer' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:34:02.299+0000] {scrapping_linkedin.py:187} ERROR - [LinkedIn][Data Architect] Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=145.0.7632.116)
+Stacktrace:
+#0 0x5f2721f46b6a <unknown>
+#1 0x5f2721959a32 <unknown>
+#2 0x5f27219507ba <unknown>
+#3 0x5f2721941481 <unknown>
+#4 0x5f272194327c <unknown>
+#5 0x5f2721941979 <unknown>
+#6 0x5f2721941065 <unknown>
+#7 0x5f2721940c16 <unknown>
+#8 0x5f272193e731 <unknown>
+#9 0x5f272193ef80 <unknown>
+#10 0x5f272195d41d <unknown>
+#11 0x5f27219f7feb <unknown>
+#12 0x5f27219f7369 <unknown>
+#13 0x5f27219a0c0f <unknown>
+#14 0x5f27219a19d1 <unknown>
+#15 0x5f2721f0b6b9 <unknown>
+#16 0x5f2721f0e5c1 <unknown>
+#17 0x5f2721ef7e29 <unknown>
+#18 0x5f2721f0f17e <unknown>
+#19 0x5f2721ede4b0 <unknown>
+#20 0x5f2721f33578 <unknown>
+#21 0x5f2721f3374b <unknown>
+#22 0x5f2721f451a3 <unknown>
+#23 0x71eedc7baaa4 <unknown>
+#24 0x71eedc847a64 __clone
+
+[2026-03-25T08:34:02.593+0000] {scrapping_linkedin.py:191} INFO - [LinkedIn][Data Architect] Session closed.
+[2026-03-25T08:34:02.607+0000] {scrapping_linkedin.py:217} INFO - [LinkedIn] Merged 'Data Architect' → 0 unique jobs (grand total: 0)
+[2026-03-25T08:34:02.612+0000] {job_scraping_dag.py:45} INFO - [DAG] LinkedIn done — 0 jobs saved to /tmp/linkedin_jobs.json
+[2026-03-25T08:34:02.637+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-25T08:34:02.667+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-25T08:34:02.671+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=extract_linkedin, run_id=manual__2026-03-25T08:31:41.985332+00:00, execution_date=20260325T083141, start_date=20260325T083148, end_date=20260325T083402
+[2026-03-25T08:34:02.739+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-25T08:34:02.865+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-03-25T08:34:02.881+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

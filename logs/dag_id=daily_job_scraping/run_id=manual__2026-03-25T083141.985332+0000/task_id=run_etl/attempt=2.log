@@ -1,0 +1,71 @@
+[2026-03-25T08:39:18.602+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-25T08:39:18.644+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.run_etl manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:39:18.657+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.run_etl manual__2026-03-25T08:31:41.985332+00:00 [queued]>
+[2026-03-25T08:39:18.659+0000] {taskinstance.py:2866} INFO - Starting attempt 2 of 3
+[2026-03-25T08:39:18.685+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): run_etl> on 2026-03-25 08:31:41.985332+00:00
+[2026-03-25T08:39:18.703+0000] {standard_task_runner.py:72} INFO - Started process 308 to run task
+[2026-03-25T08:39:18.712+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'run_etl', 'manual__2026-03-25T08:31:41.985332+00:00', '--job-id', '61', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpmsuk85i8']
+[2026-03-25T08:39:18.725+0000] {standard_task_runner.py:105} INFO - Job 61: Subtask run_etl
+[2026-03-25T08:39:18.923+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.run_etl manual__2026-03-25T08:31:41.985332+00:00 [running]> on host dcaa3875dea4
+[2026-03-25T08:39:19.100+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='run_etl' AIRFLOW_CTX_EXECUTION_DATE='2026-03-25T08:31:41.985332+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-25T08:31:41.985332+00:00'
+[2026-03-25T08:39:19.105+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-25T08:39:19.128+0000] {job_scraping_dag.py:76} INFO - [DAG] Starting ETL pipeline...
+[2026-03-25T08:39:19.283+0000] {EDA.py:361} INFO - === JobRadar ETL Pipeline demarre ===
+[2026-03-25T08:39:19.284+0000] {EDA.py:112} INFO - [ETL] Extraction depuis Supabase jobs...
+[2026-03-25T08:39:20.813+0000] {EDA.py:139} INFO - [ETL] Page 1: 1000 lignes recuperees
+[2026-03-25T08:39:21.459+0000] {EDA.py:139} INFO - [ETL] Page 2: 1938 lignes recuperees
+[2026-03-25T08:39:21.496+0000] {EDA.py:150} INFO - [ETL] Extract termine - 1938 lignes depuis Supabase `jobs`
+[2026-03-25T08:39:21.509+0000] {EDA.py:212} INFO - [ETL] Transformation en cours...
+[2026-03-25T08:39:23.075+0000] {EDA.py:205} INFO - [ETL] Deduplication: 1938 -> 800 lignes (1138 supprimees)
+[2026-03-25T08:39:23.083+0000] {EDA.py:243} INFO - [ETL] Transform termine - 800 lignes propres
+[2026-03-25T08:39:23.108+0000] {EDA.py:271} INFO - [ETL] Connexion a Supabase REST API (table: jobs_clean)...
+[2026-03-25T08:39:23.517+0000] {EDA.py:281} INFO - [ETL] Table jobs_clean videe.
+[2026-03-25T08:39:24.340+0000] {EDA.py:299} INFO - [ETL] Lot 1: 100/800 lignes
+[2026-03-25T08:39:24.800+0000] {EDA.py:299} INFO - [ETL] Lot 2: 200/800 lignes
+[2026-03-25T08:39:25.305+0000] {EDA.py:299} INFO - [ETL] Lot 3: 300/800 lignes
+[2026-03-25T08:39:25.778+0000] {EDA.py:299} INFO - [ETL] Lot 4: 400/800 lignes
+[2026-03-25T08:39:26.208+0000] {EDA.py:299} INFO - [ETL] Lot 5: 500/800 lignes
+[2026-03-25T08:39:26.592+0000] {EDA.py:299} INFO - [ETL] Lot 6: 600/800 lignes
+[2026-03-25T08:39:27.042+0000] {EDA.py:299} INFO - [ETL] Lot 7: 700/800 lignes
+[2026-03-25T08:39:27.488+0000] {EDA.py:299} INFO - [ETL] Lot 8: 800/800 lignes
+[2026-03-25T08:39:27.493+0000] {EDA.py:304} INFO - [ETL] SUCCES — 800 lignes dans jobs_clean
+[2026-03-25T08:39:27.676+0000] {EDA.py:314} INFO - [ETL] SQLite backup - 800 lignes -> /opt/airflow/scrapers/data/jobradar.db
+[2026-03-25T08:39:27.754+0000] {EDA.py:318} INFO - [ETL] CSV Power BI -> /opt/airflow/scrapers/data/jobradar_clean.csv
+[2026-03-25T08:39:27.849+0000] {EDA.py:323} INFO - [ETL] JSON NLP -> /opt/airflow/scrapers/data/jobradar_clean.json
+[2026-03-25T08:39:27.852+0000] {logging_mixin.py:190} INFO - 
+--- ETL Summary --------------------------------------------------
+[2026-03-25T08:39:27.854+0000] {logging_mixin.py:190} INFO - Total jobs propres : 800
+[2026-03-25T08:39:27.856+0000] {logging_mixin.py:190} INFO - Entreprises        : 290
+[2026-03-25T08:39:27.858+0000] {logging_mixin.py:190} INFO - Stockage           : Supabase jobs_clean + SQLite backup + CSV + JSON
+[2026-03-25T08:39:27.860+0000] {logging_mixin.py:190} INFO - 
+Par categorie:
+[2026-03-25T08:39:27.866+0000] {logging_mixin.py:190} INFO - category
+Other             275
+Data & AI         267
+Software Dev       89
+Management         77
+IT & Systems       49
+DevOps & Cloud     26
+Cybersecurity      17
+[2026-03-25T08:39:27.868+0000] {logging_mixin.py:190} INFO - 
+Top localisations:
+[2026-03-25T08:39:27.872+0000] {logging_mixin.py:190} INFO - location
+Casablanca                149
+Rabat                     121
+Casablanca et priphrie     61
+Mchouar de Casablanca      60
+Casablanca-Settat          57
+[2026-03-25T08:39:27.873+0000] {logging_mixin.py:190} INFO - 
+Par source:
+[2026-03-25T08:39:27.877+0000] {logging_mixin.py:190} INFO - source
+linkedin          258
+france_travail     76
+[2026-03-25T08:39:27.880+0000] {logging_mixin.py:190} INFO - ------------------------------------------------------------------
+[2026-03-25T08:39:27.882+0000] {EDA.py:368} INFO - === Termine en 8s ===
+[2026-03-25T08:39:27.884+0000] {job_scraping_dag.py:80} INFO - [DAG] ETL done.
+[2026-03-25T08:39:27.889+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-25T08:39:27.923+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-25T08:39:27.924+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=run_etl, run_id=manual__2026-03-25T08:31:41.985332+00:00, execution_date=20260325T083141, start_date=20260325T083918, end_date=20260325T083927
+[2026-03-25T08:39:27.998+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-25T08:39:28.038+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-25T08:39:28.048+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

@@ -1,0 +1,68 @@
+[2026-03-24T19:40:23.118+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-03-24T19:40:23.278+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: daily_job_scraping.extract_france_travail scheduled__2026-03-23T12:00:00+00:00 [queued]>
+[2026-03-24T19:40:23.342+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: daily_job_scraping.extract_france_travail scheduled__2026-03-23T12:00:00+00:00 [queued]>
+[2026-03-24T19:40:23.357+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 3
+[2026-03-24T19:40:23.437+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): extract_france_travail> on 2026-03-23 12:00:00+00:00
+[2026-03-24T19:40:23.609+0000] {standard_task_runner.py:72} INFO - Started process 316 to run task
+[2026-03-24T19:40:23.647+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'daily_job_scraping', 'extract_france_travail', 'scheduled__2026-03-23T12:00:00+00:00', '--job-id', '24', '--raw', '--subdir', 'DAGS_FOLDER/job_scraping_dag.py', '--cfg-path', '/tmp/tmpmnj2n3zv']
+[2026-03-24T19:40:23.753+0000] {standard_task_runner.py:105} INFO - Job 24: Subtask extract_france_travail
+[2026-03-24T19:40:25.484+0000] {task_command.py:467} INFO - Running <TaskInstance: daily_job_scraping.extract_france_travail scheduled__2026-03-23T12:00:00+00:00 [running]> on host cef8f2d38bab
+[2026-03-24T19:40:26.403+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='job_intelligent' AIRFLOW_CTX_DAG_ID='daily_job_scraping' AIRFLOW_CTX_TASK_ID='extract_france_travail' AIRFLOW_CTX_EXECUTION_DATE='2026-03-23T12:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-03-23T12:00:00+00:00'
+[2026-03-24T19:40:26.466+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-03-24T19:40:26.721+0000] {job_scraping_dag.py:174} INFO - [DAG] Starting France-Travail extraction...
+[2026-03-24T19:40:26.730+0000] {scrapping_france_travail.py:200} INFO - [FranceTravail] Starting 10 keywords...
+[2026-03-24T19:40:26.771+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Data Scientist'
+[2026-03-24T19:40:26.863+0000] {scrapping_france_travail.py:70} INFO - [FranceTravail] Refreshing access token...
+[2026-03-24T19:40:27.520+0000] {scrapping_france_travail.py:93} INFO - [FranceTravail] Token obtained successfully.
+[2026-03-24T19:40:28.427+0000] {scrapping_france_travail.py:135} WARNING - [FranceTravail][Data Scientist] Error 206: {"resultats":[{"id":"0677012","intitule":"Alternance - data scientist F/H (H/F)","description":"En tant qu'alternant Data Scientist, vous rejoindrez l'équipe PHARE (Appui et Expertise - Demandes Clien
+[2026-03-24T19:40:28.477+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Data Scientist] No more results at page 1.
+[2026-03-24T19:40:28.525+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Data Scientist' done → 0 jobs (grand total: 0)
+[2026-03-24T19:40:29.578+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Data Engineer'
+[2026-03-24T19:40:30.698+0000] {scrapping_france_travail.py:135} WARNING - [FranceTravail][Data Engineer] Error 206: {"resultats":[{"id":"205WSMH","intitule":"Data Engineer (H/F)","description":"Qui sommes-nous ? \n\nHello, moi c'est Dorian. Je suis chargé de recrutement au sein de l'entreprise Keepcod. Bon, je ne v
+[2026-03-24T19:40:30.732+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Data Engineer] No more results at page 1.
+[2026-03-24T19:40:30.737+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Data Engineer' done → 0 jobs (grand total: 0)
+[2026-03-24T19:40:31.755+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Data Analyst'
+[2026-03-24T19:40:32.362+0000] {scrapping_france_travail.py:135} WARNING - [FranceTravail][Data Analyst] Error 206: {"resultats":[{"id":"205XYDS","intitule":"Data analyst (H/F)","description":"Manpower TOULOUSE GDS COMPTES AERO recherche pour son client, AIRBUS, un Data analyst (H/F).\nInfo équipe : Expert en donné
+[2026-03-24T19:40:32.372+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Data Analyst] No more results at page 1.
+[2026-03-24T19:40:32.378+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Data Analyst' done → 0 jobs (grand total: 0)
+[2026-03-24T19:40:33.389+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Machine Learning Engineer'
+[2026-03-24T19:40:33.981+0000] {scrapping_france_travail.py:218} INFO - [FranceTravail][Machine Learning Engineer] Page 1 → +36 jobs (keyword total: 36)
+[2026-03-24T19:40:34.945+0000] {scrapping_france_travail.py:131} INFO - [FranceTravail][Machine Learning Engineer] No results (204).
+[2026-03-24T19:40:34.979+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Machine Learning Engineer] No more results at page 2.
+[2026-03-24T19:40:35.055+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Machine Learning Engineer' done → 36 jobs (grand total: 36)
+[2026-03-24T19:40:36.217+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'MLOps Engineer'
+[2026-03-24T19:40:36.910+0000] {scrapping_france_travail.py:218} INFO - [FranceTravail][MLOps Engineer] Page 1 → +1 jobs (keyword total: 1)
+[2026-03-24T19:40:38.004+0000] {scrapping_france_travail.py:131} INFO - [FranceTravail][MLOps Engineer] No results (204).
+[2026-03-24T19:40:38.031+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][MLOps Engineer] No more results at page 2.
+[2026-03-24T19:40:38.063+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'MLOps Engineer' done → 1 jobs (grand total: 37)
+[2026-03-24T19:40:39.119+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Business Intelligence'
+[2026-03-24T19:40:39.711+0000] {scrapping_france_travail.py:135} WARNING - [FranceTravail][Business Intelligence] Error 206: {"resultats":[{"id":"0674878","intitule":"Business Developer Lyon (H/F)","description":"Un acteur national, au rayonnement international,\nUn développement et une croissance exponentielle depuis plusi
+[2026-03-24T19:40:39.737+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Business Intelligence] No more results at page 1.
+[2026-03-24T19:40:39.771+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Business Intelligence' done → 0 jobs (grand total: 37)
+[2026-03-24T19:40:40.824+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'NLP Engineer'
+[2026-03-24T19:40:41.479+0000] {scrapping_france_travail.py:131} INFO - [FranceTravail][NLP Engineer] No results (204).
+[2026-03-24T19:40:41.530+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][NLP Engineer] No more results at page 1.
+[2026-03-24T19:40:41.650+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'NLP Engineer' done → 0 jobs (grand total: 37)
+[2026-03-24T19:40:43.024+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'AI Engineer'
+[2026-03-24T19:40:44.340+0000] {scrapping_france_travail.py:218} INFO - [FranceTravail][AI Engineer] Page 1 → +10 jobs (keyword total: 10)
+[2026-03-24T19:40:45.403+0000] {scrapping_france_travail.py:131} INFO - [FranceTravail][AI Engineer] No results (204).
+[2026-03-24T19:40:45.468+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][AI Engineer] No more results at page 2.
+[2026-03-24T19:40:45.520+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'AI Engineer' done → 10 jobs (grand total: 47)
+[2026-03-24T19:40:46.573+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Data Architect'
+[2026-03-24T19:40:44.922+0000] {scrapping_france_travail.py:218} INFO - [FranceTravail][Data Architect] Page 1 → +32 jobs (keyword total: 32)
+[2026-03-24T19:40:46.437+0000] {scrapping_france_travail.py:131} INFO - [FranceTravail][Data Architect] No results (204).
+[2026-03-24T19:40:46.503+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Data Architect] No more results at page 2.
+[2026-03-24T19:40:46.557+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Data Architect' done → 32 jobs (grand total: 79)
+[2026-03-24T19:40:47.631+0000] {scrapping_france_travail.py:203} INFO - [FranceTravail] Searching: 'Big Data Engineer'
+[2026-03-24T19:40:48.454+0000] {scrapping_france_travail.py:135} WARNING - [FranceTravail][Big Data Engineer] Error 206: {"resultats":[{"id":"0629470","intitule":"Big Data Engineer / Développeur Big Data H/F","description":"\n             Ce que vous allez faire si vous nous rejoignez :Sous la responsabilité du Responsa
+[2026-03-24T19:40:48.542+0000] {scrapping_france_travail.py:211} INFO - [FranceTravail][Big Data Engineer] No more results at page 1.
+[2026-03-24T19:40:48.630+0000] {scrapping_france_travail.py:227} INFO - [FranceTravail] 'Big Data Engineer' done → 0 jobs (grand total: 79)
+[2026-03-24T19:40:49.640+0000] {scrapping_france_travail.py:235} INFO - [FranceTravail] Finished — 79 unique jobs collected.
+[2026-03-24T19:40:49.739+0000] {job_scraping_dag.py:179} INFO - [DAG] France-Travail done — 79 jobs saved to /tmp/france_travail_jobs.json
+[2026-03-24T19:40:49.774+0000] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-24T19:40:49.922+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-03-24T19:40:50.055+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=daily_job_scraping, task_id=extract_france_travail, run_id=scheduled__2026-03-23T12:00:00+00:00, execution_date=20260323T120000, start_date=20260324T194023, end_date=20260324T194050
+[2026-03-24T19:40:50.626+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-03-24T19:40:51.019+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-03-24T19:40:51.126+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2026-03-24T19:40:51.397+0000] {standard_task_runner.py:217} INFO - Process not found (most likely exited), stop collecting metrics
