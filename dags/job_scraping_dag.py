@@ -1,12 +1,13 @@
 """
-Airflow DAG — Projet Job Intelligent
-Daily pipeline: extract LinkedIn + France-Travail in parallel → push to PostgreSQL.
+Airflow DAG — Projet Job Intelligent (Medallion Architecture)
+
+Daily pipeline:
+
+    extract_linkedin  ──► push_linkedin_bronze  ──► bronze_to_silver_linkedin ──┐
+                                                                                  ├──► silver_to_gold
+    extract_ft        ──► push_ft_bronze        ──► bronze_to_silver_ft       ──┘
 
 Schedule: every day at 12:00 UTC
-Graph:
-    extract_linkedin       ─┐
-                            ├─→ push_to_db → PostgreSQL
-    extract_france_travail ─┘
 """
 
 from airflow import DAG
@@ -19,13 +20,22 @@ import logging
 
 sys.path.insert(0, "/opt/airflow/scrapers")
 
-from scrapping_linkedin import scrape_linkedin_jobs
-from scrapping_france_travail import scrape_france_travail_jobs
-from db import push_to_postgres, get_stats
+from scrapping_linkedin        import scrape_linkedin_jobs
+from scrapping_france_travail  import scrape_france_travail_jobs
+from db                        import (
+    push_linkedin_to_bronze,
+    push_ft_to_bronze,
+    get_stats,
+)
+from eda_pipeline import (
+    bronze_to_silver_linkedin,
+    bronze_to_silver_france_travail,
+    silver_to_gold,
+)
 
 log = logging.getLogger(__name__)
 
-# ─── DAG DEFAULT ARGS ──────────────────────────────────────────────────────────
+# ─── DEFAULT ARGS ──────────────────────────────────────────────────────────────
 
 default_args = {
     "owner":          "job_intelligent",
@@ -33,87 +43,129 @@ default_args = {
     "retry_delay":    timedelta(minutes=5),
     "email_on_retry": False,
 }
- 
+
 # ─── TASK CALLABLES ────────────────────────────────────────────────────────────
 
-def run_linkedin(**context):
-    log.info("[DAG] Starting LinkedIn extraction...")
+def run_extract_linkedin(**context):
+    log.info("[DAG] Extracting LinkedIn jobs...")
     jobs = scrape_linkedin_jobs()
     path = "/tmp/linkedin_jobs.json"
     with open(path, "w") as f:
         json.dump(jobs, f)
-    log.info(f"[DAG] LinkedIn done — {len(jobs)} jobs saved to {path}")
+    log.info(f"[DAG] LinkedIn: {len(jobs)} jobs saved to {path}")
 
 
-def run_france_travail(**context):
-    log.info("[DAG] Starting France-Travail extraction...")
+def run_extract_france_travail(**context):
+    log.info("[DAG] Extracting France-Travail jobs...")
     jobs = scrape_france_travail_jobs()
-    path = "/tmp/france_travail_jobs.json"
+    path = "/tmp/ft_jobs.json"
     with open(path, "w") as f:
         json.dump(jobs, f)
-    log.info(f"[DAG] France-Travail done — {len(jobs)} jobs saved to {path}")
+    log.info(f"[DAG] France-Travail: {len(jobs)} jobs saved to {path}")
 
 
-def run_push(**context):
-    all_jobs = []
+def run_push_linkedin_bronze(**context):
+    path = "/tmp/linkedin_jobs.json"
+    if not os.path.exists(path):
+        log.warning(f"[DAG] {path} not found — skipping bronze push.")
+        return
+    with open(path) as f:
+        jobs = json.load(f)
+    log.info(f"[DAG] Pushing {len(jobs)} LinkedIn jobs to bronze...")
+    push_linkedin_to_bronze(jobs)
 
-    for path in ["/tmp/linkedin_jobs.json", "/tmp/france_travail_jobs.json"]:
-        if os.path.exists(path):
-            with open(path) as f:
-                jobs = json.load(f)
-                all_jobs.extend(jobs)
-                log.info(f"[DAG] Loaded {len(jobs)} jobs from {path}")
-        else:
-            log.warning(f"[DAG] File not found: {path}")
 
-    log.info(f"[DAG] Total jobs to push: {len(all_jobs)}")
-    push_to_postgres(all_jobs)
+def run_push_ft_bronze(**context):
+    path = "/tmp/ft_jobs.json"
+    if not os.path.exists(path):
+        log.warning(f"[DAG] {path} not found — skipping bronze push.")
+        return
+    with open(path) as f:
+        jobs = json.load(f)
+    log.info(f"[DAG] Pushing {len(jobs)} France-Travail jobs to bronze...")
+    push_ft_to_bronze(jobs)
+
+
+def run_bronze_to_silver_linkedin(**context):
+    log.info("[DAG] Bronze → Silver: LinkedIn")
+    bronze_to_silver_linkedin()
+
+
+def run_bronze_to_silver_ft(**context):
+    log.info("[DAG] Bronze → Silver: France-Travail")
+    bronze_to_silver_france_travail()
+
+
+def run_silver_to_gold(**context):
+    log.info("[DAG] Silver → Gold: merging all sources")
+    silver_to_gold()
     get_stats()
 
-
-
-def run_etl(**context):
-    log.info("[DAG] Starting ETL pipeline...")
-    sys.path.insert(0, "/opt/airflow/scrapers")
-    from EDA import run_pipeline
-    run_pipeline()
-    log.info("[DAG] ETL done.")
 
 # ─── DAG DEFINITION ────────────────────────────────────────────────────────────
 
 with DAG(
     dag_id="daily_job_scraping",
     default_args=default_args,
-    description="Scrape LinkedIn + France-Travail daily and push to PostgreSQL",
+    description="Medallion pipeline: Bronze → Silver → Gold",
     schedule_interval="0 12 * * *",
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["scraping", "jobs", "linkedin", "france_travail"],
+    tags=["scraping", "medallion", "etl"],
 ) as dag:
 
+    # ── EXTRACT ────────────────────────────────────────────────────────────────
     extract_linkedin = PythonOperator(
         task_id="extract_linkedin",
-        python_callable=run_linkedin,
+        python_callable=run_extract_linkedin,
         execution_timeout=timedelta(minutes=60),
     )
 
     extract_france_travail = PythonOperator(
         task_id="extract_france_travail",
-        python_callable=run_france_travail,
+        python_callable=run_extract_france_travail,
         execution_timeout=timedelta(minutes=10),
     )
 
-    push_to_db = PythonOperator(
-        task_id="push_to_db",
-        python_callable=run_push,
+    # ── BRONZE ─────────────────────────────────────────────────────────────────
+    push_linkedin_bronze = PythonOperator(
+        task_id="push_linkedin_bronze",
+        python_callable=run_push_linkedin_bronze,
         execution_timeout=timedelta(minutes=10),
     )
 
-    run_etl_task = PythonOperator(
-    task_id="run_etl",
-    python_callable=run_etl,
-    execution_timeout=timedelta(minutes=15),
-)
+    push_ft_bronze = PythonOperator(
+        task_id="push_ft_bronze",
+        python_callable=run_push_ft_bronze,
+        execution_timeout=timedelta(minutes=10),
+    )
 
-    # Both run in parallel → feed into push_to_db
-    [extract_linkedin, extract_france_travail] >> push_to_db >>run_etl_task
+    # ── SILVER ─────────────────────────────────────────────────────────────────
+    silver_linkedin = PythonOperator(
+        task_id="bronze_to_silver_linkedin",
+        python_callable=run_bronze_to_silver_linkedin,
+        execution_timeout=timedelta(minutes=10),
+    )
+
+    silver_ft = PythonOperator(
+        task_id="bronze_to_silver_france_travail",
+        python_callable=run_bronze_to_silver_ft,
+        execution_timeout=timedelta(minutes=10),
+    )
+
+    # ── GOLD ───────────────────────────────────────────────────────────────────
+    gold = PythonOperator(
+        task_id="silver_to_gold",
+        python_callable=run_silver_to_gold,
+        execution_timeout=timedelta(minutes=10),
+    )
+
+    # ── PIPELINE FLOW ──────────────────────────────────────────────────────────
+    #
+    # extract_linkedin  ──► push_linkedin_bronze ──► bronze_to_silver_linkedin ──┐
+    #                                                                              ├──► silver_to_gold
+    # extract_ft        ──► push_ft_bronze       ──► bronze_to_silver_ft       ──┘
+    #
+
+    extract_linkedin       >> push_linkedin_bronze >> silver_linkedin >> gold
+    extract_france_travail >> push_ft_bronze       >> silver_ft      >> gold

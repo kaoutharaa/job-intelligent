@@ -2,15 +2,10 @@
 France-Travail API Scraper — Projet Job Intelligent
 Uses the official France-Travail (Pôle Emploi) API — no scraping, no blocks.
 
-Requirements (handled by Docker):
-    requests pandas
-
-Setup:
-    Set these environment variables in docker-compose.yml:
-        FT_CLIENT_ID=your_client_id
-        FT_CLIENT_SECRET=your_client_secret
-
-API Docs: https://francetravail.io/data/api/offres-emploi
+NOTE: This version is configured for the INITIAL DATA LOAD (31 days back).
+      After populating the database, change:
+        - publieeDepuis: 31  →  publieeDepuis: 7   (back to 7 days)
+        - MAX_PAGES = 3      →  MAX_PAGES = 2      (back to 2 pages)
 """
 
 import os
@@ -29,23 +24,51 @@ FT_CLIENT_SECRET = os.getenv("FT_CLIENT_SECRET", "")
 TOKEN_URL  = "https://entreprise.francetravail.fr/connexion/oauth2/access_token"
 SEARCH_URL = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search"
 
-# Same keywords as LinkedIn scraper
+# ── EXPANDED KEYWORDS matching TITLE_MAP from ETL pipeline ────────────────────
 KEYWORDS = [
+    # Data & AI
     "Data Scientist",
     "Data Engineer",
     "Data Analyst",
     "Machine Learning Engineer",
+    "Deep Learning Engineer",
     "MLOps Engineer",
+    "BI Analyst",
     "Business Intelligence",
-    "NLP Engineer",
-    "AI Engineer",
     "Data Architect",
-    "Big Data Engineer",
+    "NLP Engineer",
+    "Computer Vision Engineer",
+    "AI Engineer",
+
+    # Software Development
+    "Software Engineer",
+    "Backend Developer",
+    "Frontend Developer",
+    "Full Stack Developer",
+    "Software Developer",
+
+    # DevOps & Cloud
+    "DevOps Engineer",
+    "Cloud Engineer",
+
+    # Cybersecurity
+    "Cybersecurity Engineer",
+    "Security Analyst",
+
+    # Management
+    "Product Manager",
+    "Scrum Master",
+    "Chef de projet",
+
+    # French variants — important for Morocco/France market
+    "Ingénieur Data",
+    "Analyste Data",
+    "Développeur",
+    "Consultant Data",
 ]
 
-# France-Travail uses range parameter: "0-49" = 50 results max per call
-RESULTS_PER_PAGE = 50
-MAX_PAGES        = 3    # up to 150 results per keyword
+RESULTS_PER_PAGE = 50   # max per API call
+MAX_PAGES        = 3    # up to 150 results per keyword (initial load)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -102,8 +125,7 @@ def search_jobs(keyword: str, start: int = 0) -> list[dict]:
     Returns a list of normalized job dicts matching the unified schema.
     """
     token = get_token()
-
-    end = start + RESULTS_PER_PAGE - 1
+    end   = start + RESULTS_PER_PAGE - 1
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -111,9 +133,10 @@ def search_jobs(keyword: str, start: int = 0) -> list[dict]:
     }
 
     params = {
-        "motsCles": keyword,
-        "range":    f"{start}-{end}",
-        "sort":     "1",           # sort by date (most recent first)
+        "motsCles":      keyword,
+        "range":         f"{start}-{end}",
+        "sort":          "1",    # most recent first
+        "publieeDepuis": 7,     # last 31 days — change to 7 for daily runs
     }
 
     try:
@@ -137,39 +160,36 @@ def search_jobs(keyword: str, start: int = 0) -> list[dict]:
         )
         return []
 
-    data     = response.json()
-    results  = data.get("resultats", [])
-    jobs     = []
+    data    = response.json()
+    results = data.get("resultats", [])
+    jobs    = []
 
     for item in results:
-        # Extract salary info if available
+        # Salary
         salary = ""
         if "salaire" in item and item["salaire"]:
-            sal = item["salaire"]
-            libelle = sal.get("libelle", "")
-            if libelle:
-                salary = libelle
+            salary = item["salaire"].get("libelle", "")
 
-        # Extract location
+        # Location
         location = ""
         if "lieuTravail" in item:
             location = item["lieuTravail"].get("libelle", "")
 
-        # Extract contract type
+        # Contract type
         contract_type = item.get("typeContratLibelle", "")
 
-        # Build job URL
+        # Job URL
         job_id  = item.get("id", "")
-        job_url = f"https://candidat.francetravail.fr/offres/recherche/detail/{job_id}" if job_id else ""
-
-        # Date posted
-        date_posted = item.get("dateCreation", "")
+        job_url = (
+            f"https://candidat.francetravail.fr/offres/recherche/detail/{job_id}"
+            if job_id else ""
+        )
 
         jobs.append({
             "title":          item.get("intitule", ""),
             "company":        item.get("entreprise", {}).get("nom", ""),
             "location":       location,
-            "date_posted":    date_posted,
+            "date_posted":    item.get("dateCreation", ""),
             "job_url":        job_url,
             "search_keyword": keyword,
             "scraped_at":     datetime.utcnow().isoformat(),
@@ -197,7 +217,7 @@ def scrape_france_travail_jobs() -> list[dict]:
     all_jobs: list[dict] = []
     seen_urls: set[str]  = set()
 
-    log.info(f"[FranceTravail] Starting {len(KEYWORDS)} keywords...")
+    log.info(f"[FranceTravail] Starting {len(KEYWORDS)} keywords (31 days back)...")
 
     for keyword in KEYWORDS:
         log.info(f"[FranceTravail] Searching: '{keyword}'")
@@ -211,7 +231,6 @@ def scrape_france_travail_jobs() -> list[dict]:
                 log.info(f"[FranceTravail][{keyword}] No more results at page {page + 1}.")
                 break
 
-            # Deduplicate by job URL
             new = [j for j in jobs if j["job_url"] not in seen_urls]
             seen_urls.update(j["job_url"] for j in new)
             keyword_jobs.extend(new)
@@ -220,8 +239,7 @@ def scrape_france_travail_jobs() -> list[dict]:
                 f"+{len(new)} jobs (keyword total: {len(keyword_jobs)})"
             )
 
-            # Respect API rate limits — small delay between pages
-            time.sleep(0.5)
+            time.sleep(0.5)  # respect API rate limits
 
         all_jobs.extend(keyword_jobs)
         log.info(
@@ -229,8 +247,7 @@ def scrape_france_travail_jobs() -> list[dict]:
             f"{len(keyword_jobs)} jobs (grand total: {len(all_jobs)})"
         )
 
-        # Small delay between keywords
-        time.sleep(1)
+        time.sleep(1)  # small delay between keywords
 
     log.info(f"[FranceTravail] Finished — {len(all_jobs)} unique jobs collected.")
     return all_jobs
@@ -269,7 +286,7 @@ def save_results(jobs: list[dict]) -> None:
 
 if __name__ == "__main__":
     start_time = datetime.utcnow()
-    log.info("=== France-Travail API Scraper — Projet Job Intelligent ===")
+    log.info("=== France-Travail API Scraper (INITIAL LOAD — 31 days) ===")
     log.info(f"Keywords: {len(KEYWORDS)} | Pages: {MAX_PAGES} | Results/page: {RESULTS_PER_PAGE}")
 
     jobs = scrape_france_travail_jobs()

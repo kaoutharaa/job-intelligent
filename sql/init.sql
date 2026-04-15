@@ -1,53 +1,111 @@
--- Unified jobs table — Projet Job Intelligent
--- Runs automatically when PostgreSQL container starts for the first time.
+-- =============================================================================
+-- MEDALLION ARCHITECTURE — Projet Job Intelligent
+-- =============================================================================
+-- BRONZE : raw data, one table per source, no indexes, no transformation
+-- SILVER : cleaned data, one table per source, light indexes
+-- GOLD   : unified, enriched, fully indexed for Power BI and NLP
+-- =============================================================================
 
-CREATE TABLE IF NOT EXISTS jobs (
+-- ─── BRONZE LAYER ─────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS bronze_linkedin (
     id             SERIAL PRIMARY KEY,
-    title          VARCHAR(255),
-    company        VARCHAR(255),
-    location       VARCHAR(255),
-    date_posted    VARCHAR(100),
-    job_url        TEXT UNIQUE,        -- deduplication key across all sources
-    search_keyword VARCHAR(100),
-    scraped_at     TIMESTAMP,
-    salary         VARCHAR(255),       -- Indeed only, empty string for LinkedIn
-    contract_type  VARCHAR(100),       -- Indeed only, empty string for LinkedIn
-    source         VARCHAR(50)         -- 'linkedin' or 'indeed'
+    title          TEXT,
+    company        TEXT,
+    location       TEXT,
+    date_posted    TEXT,
+    job_url        TEXT UNIQUE,
+    search_keyword TEXT,
+    scraped_at     TEXT,
+    salary         TEXT,
+    contract_type  TEXT,
+    source         TEXT DEFAULT 'linkedin',
+    ingested_at    TIMESTAMP DEFAULT NOW()
 );
 
--- Index for fast filtering by source and keyword in Power BI
-CREATE INDEX IF NOT EXISTS idx_jobs_source  ON jobs(source);
-CREATE INDEX IF NOT EXISTS idx_jobs_keyword ON jobs(search_keyword);
-CREATE INDEX IF NOT EXISTS idx_jobs_scraped ON jobs(scraped_at);
+CREATE TABLE IF NOT EXISTS bronze_france_travail (
+    id             SERIAL PRIMARY KEY,
+    title          TEXT,
+    company        TEXT,
+    location       TEXT,
+    date_posted    TEXT,
+    job_url        TEXT UNIQUE,
+    search_keyword TEXT,
+    scraped_at     TEXT,
+    salary         TEXT,
+    contract_type  TEXT,
+    source         TEXT DEFAULT 'france_travail',
+    ingested_at    TIMESTAMP DEFAULT NOW()
+);
 
+-- ─── SILVER LAYER ─────────────────────────────────────────────────────────────
 
+CREATE TABLE IF NOT EXISTS silver_linkedin (
+    id             SERIAL PRIMARY KEY,
+    title          TEXT,
+    title_raw      TEXT,
+    company        TEXT,
+    location       TEXT,
+    date_posted    DATE,
+    job_url        TEXT UNIQUE,
+    search_keyword TEXT,
+    scraped_at     TIMESTAMP,
+    salary         TEXT,
+    contract_type  TEXT,
+    skills         TEXT,
+    category       TEXT,
+    source         TEXT DEFAULT 'linkedin',
+    processed_at   TIMESTAMP DEFAULT NOW()
+);
 
---SQL — A executer UNE FOIS dans Supabase SQL Editor
- 
-CREATE TABLE IF NOT EXISTS jobs_clean (
-     id              BIGSERIAL PRIMARY KEY,
-     title           TEXT,
-     title_raw       TEXT,
-     company         TEXT,
-     location        TEXT,
-     date_posted     TEXT,
-     category        TEXT,
-     skills          TEXT,
-     job_url         TEXT,
-     search_keyword  TEXT,
-     scraped_at      TEXT,
-     source          TEXT,
-     created_at      TIMESTAMPTZ DEFAULT NOW()
- );
+CREATE INDEX IF NOT EXISTS idx_silver_linkedin_category ON silver_linkedin(category);
+CREATE INDEX IF NOT EXISTS idx_silver_linkedin_date     ON silver_linkedin(date_posted);
 
--- Index pour Power BI et le moteur de recommandation
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_category  ON jobs_clean(category);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_source    ON jobs_clean(source);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_date      ON jobs_clean(date_posted);
+CREATE TABLE IF NOT EXISTS silver_france_travail (
+    id             SERIAL PRIMARY KEY,
+    title          TEXT,
+    title_raw      TEXT,
+    company        TEXT,
+    location       TEXT,
+    date_posted    DATE,
+    job_url        TEXT UNIQUE,
+    search_keyword TEXT,
+    scraped_at     TIMESTAMP,
+    salary         TEXT,
+    contract_type  TEXT,
+    skills         TEXT,
+    category       TEXT,
+    source         TEXT DEFAULT 'france_travail',
+    processed_at   TIMESTAMP DEFAULT NOW()
+);
 
+CREATE INDEX IF NOT EXISTS idx_silver_ft_category ON silver_france_travail(category);
+CREATE INDEX IF NOT EXISTS idx_silver_ft_date     ON silver_france_travail(date_posted);
 
-GRANT ALL ON TABLE jobs_clean TO anon;
-GRANT ALL ON TABLE jobs_clean TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO anon;
-GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO authenticated;
+-- ─── GOLD LAYER ───────────────────────────────────────────────────────────────
 
+CREATE TABLE IF NOT EXISTS gold_jobs (
+    id             SERIAL PRIMARY KEY,
+    title          TEXT,
+    title_raw      TEXT,
+    company        TEXT,
+    location       TEXT,
+    date_posted    DATE,
+    job_url        TEXT UNIQUE,
+    search_keyword TEXT,
+    scraped_at     TIMESTAMP,
+    salary         TEXT,
+    contract_type  TEXT,
+    skills         TEXT,
+    category       TEXT,
+    source         TEXT,
+    processed_at   TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gold_category  ON gold_jobs(category);
+CREATE INDEX IF NOT EXISTS idx_gold_source    ON gold_jobs(source);
+CREATE INDEX IF NOT EXISTS idx_gold_date      ON gold_jobs(date_posted);
+CREATE INDEX IF NOT EXISTS idx_gold_location  ON gold_jobs(location);
+CREATE INDEX IF NOT EXISTS idx_gold_title     ON gold_jobs(title);
+CREATE INDEX IF NOT EXISTS idx_gold_keyword   ON gold_jobs(search_keyword);
+CREATE INDEX IF NOT EXISTS idx_gold_scraped   ON gold_jobs(scraped_at);

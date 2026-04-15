@@ -2,13 +2,10 @@
 LinkedIn Job Scraper — Projet Job Intelligent
 Docker version: connects to Selenium Grid container instead of local chromedriver.
 
-Requirements (handled by Docker):
-    selenium pandas beautifulsoup4
-
-Local usage (outside Docker):
-    pip install selenium pandas beautifulsoup4
-    Set SELENIUM_URL=http://localhost:4444/wd/hub
-    Run: python scrapping_linkedin.py
+NOTE: This version is configured for the INITIAL DATA LOAD (30 days back).
+      After populating the database, change:
+        - f_TPR=r2592000  →  f_TPR=r604800   (back to 7 days)
+        - MAX_PAGES = 3   →  MAX_PAGES = 2   (back to 2 pages)
 """
 
 from selenium import webdriver
@@ -29,23 +26,52 @@ from datetime import datetime
 
 SELENIUM_URL = os.getenv("SELENIUM_URL", "http://localhost:4444/wd/hub")
 
-# ── DATA-ONLY KEYWORDS (reduced for testing) ───────────────────────────────────
+# ── EXPANDED KEYWORDS matching TITLE_MAP from ETL pipeline ────────────────────
 KEYWORDS = [
+    # Data & AI
     "Data Scientist",
     "Data Engineer",
     "Data Analyst",
     "Machine Learning Engineer",
+    "Deep Learning Engineer",
     "MLOps Engineer",
+    "BI Analyst",
     "Business Intelligence",
-    "NLP Engineer",
-    "AI Engineer",
     "Data Architect",
-    "Big Data Engineer",
+    "NLP Engineer",
+    "Computer Vision Engineer",
+    "AI Engineer",
+
+    # Software Development
+    "Software Engineer",
+    "Backend Developer",
+    "Frontend Developer",
+    "Full Stack Developer",
+    "Software Developer",
+
+    # DevOps & Cloud
+    "DevOps Engineer",
+    "Cloud Engineer",
+
+    # Cybersecurity
+    "Cybersecurity Engineer",
+    "Security Analyst",
+
+    # Management
+    "Product Manager",
+    "Scrum Master",
+    "Chef de projet",
+
+    # French variants — important for Morocco market
+    "Ingénieur Data",
+    "Analyste Data",
+    "Développeur",
+    "Consultant Data",
 ]
 
 LOCATION    = "Maroc"
-MAX_PAGES   = 2      # 25 jobs per page → up to 50 jobs per keyword
-MAX_WORKERS = 3      # parallel browser instances
+MAX_PAGES   = 3      # 25 jobs per page → up to 75 jobs per keyword (initial load)
+MAX_WORKERS = 4      # parallel browser instances
 
 logging.basicConfig(
     level=logging.INFO,
@@ -87,7 +113,8 @@ def build_url(keyword: str, location: str, start: int = 0) -> str:
     loc = location.replace(" ", "%20")
     return (
         f"https://www.linkedin.com/jobs/search/"
-        f"?keywords={kw}&location={loc}&start={start}&f_TPR=r604800"
+        f"?keywords={kw}&location={loc}&start={start}"
+        f"&f_TPR=r604800"   # 30 days — change to r604800 for daily runs
     )
 
 
@@ -255,7 +282,7 @@ def save_results(jobs: list[dict]) -> None:
 
 if __name__ == "__main__":
     start_time = datetime.utcnow()
-    log.info("=== LinkedIn Job Scraper (TEST MODE) — Projet Job Intelligent ===")
+    log.info("=== LinkedIn Job Scraper (INITIAL LOAD — 30 days) ===")
     log.info(f"Keywords: {len(KEYWORDS)} | Workers: {MAX_WORKERS} | Pages: {MAX_PAGES} | Selenium: {SELENIUM_URL}")
 
     jobs = scrape_linkedin_jobs()
