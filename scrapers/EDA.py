@@ -1,4 +1,4 @@
-"""
+""""
 JobRadar - Pipeline ETL avec Supabase REST API
 FIXED VERSION:
   - Extract: lit depuis Supabase `jobs` (plus de CSV locaux)
@@ -166,8 +166,8 @@ def standardize_title(title: str) -> str:
             return standard
     return title.title()
 
-def extract_skills(title: str, company: str = "") -> str:
-    text = f"{title} {company}".lower()
+def extract_skills(title: str, company: str = "", keyword: str = "") -> str:
+    text = f"{title} {company} {keyword}".lower()
     return ", ".join([s for s in SKILLS_LIST if s in text])
 
 def normalize_location(loc: str) -> str:
@@ -211,6 +211,11 @@ def transform(raw: pd.DataFrame) -> pd.DataFrame:
 
     log.info("[ETL] Transformation en cours...")
     df = raw.copy()
+    df = df.drop(columns=["salary"], errors="ignore")
+
+    print("salary is deleted")
+
+ 
 
     for col in ["title", "company", "location", "date_posted", "job_url"]:
         if col in df.columns:
@@ -220,7 +225,7 @@ def transform(raw: pd.DataFrame) -> pd.DataFrame:
     df["location_clean"] = df["location"].apply(normalize_location)
     df["date_clean"]     = df["date_posted"].apply(parse_date)
     df["skills"]         = df.apply(
-        lambda r: extract_skills(r["title"], r.get("company", "")), axis=1
+        lambda r: extract_skills(r["title"], r.get("company", ""),r.get("search_keyword", "")), axis=1
     )
     df["category"] = df["title_standard"].apply(categorize)
     df = deduplicate(df)
@@ -385,5 +390,3 @@ if __name__ == "__main__":
         run_scheduled()
     else:
         run_pipeline()
-
- 
