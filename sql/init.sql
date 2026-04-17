@@ -22,23 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_jobs_scraped ON jobs(scraped_at);
 
 
 
---SQL — A executer UNE FOIS dans Supabase SQL Editor
  
-CREATE TABLE IF NOT EXISTS jobs_clean (
-     id              BIGSERIAL PRIMARY KEY,
-     title           TEXT,
-     title_raw       TEXT,
-     company         TEXT,
-     location        TEXT,
-     date_posted     TEXT,
-     category        TEXT,
-     skills          TEXT,
-     job_url         TEXT,
-     search_keyword  TEXT,
-     scraped_at      TEXT,
-     source          TEXT,
-     created_at      TIMESTAMPTZ DEFAULT NOW()
- );
 
 -- Index pour Power BI et le moteur de recommandation
 CREATE INDEX IF NOT EXISTS idx_jobs_clean_category  ON jobs_clean(category);

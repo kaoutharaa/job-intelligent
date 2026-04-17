@@ -1,5 +1,3 @@
-
-
 # ─── SHARED AIRFLOW CONFIG ─────────────────────────────────────────────────────
 x-airflow-common: &airflow-common
   build:

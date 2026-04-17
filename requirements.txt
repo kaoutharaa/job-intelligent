@@ -53,9 +53,4 @@ pytest-cov>=4.0.0
 # ─────────────────────────────────────────────────────────────────────────────
 python-json-logger>=2.0.0
 
-# ─────────────────────────────────────────────────────────────────────────────
-# OPTIONAL: ADVANCED ANALYTICS & NLP
-# ─────────────────────────────────────────────────────────────────────────────
-# scikit-learn>=1.2.0  # For ML predictions in Gold layer
-# nltk>=3.8  # For NLP processing
-# spacy>=3.5.0  # For NLP in Silver layer
+ 

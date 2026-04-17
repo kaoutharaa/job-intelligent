@@ -15,8 +15,7 @@ import pandas as pd
 log = logging.getLogger(__name__)
 
 # ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
-# Set these in your docker-compose.yml as environment variables
-# OR hardcode here for local dev
+ 
 
 SUPABASE_API_URL = os.getenv("SUPABASE_API_URL", "https://egegkouscvcqylndljxp.supabase.co")
 SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY", "votre_anon_key_ici")
