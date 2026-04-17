@@ -22,8 +22,8 @@ x-airflow-common: &airflow-common
     DB_NAME: job_intelligent
     DB_USER: admin
     DB_PASS: password
-    SUPABASE_API_URL: "https://egegkouscvcqylndljxp.supabase.co"
-    SUPABASE_API_KEY: "sb_publishable_Q2hyipulXlvHMIZXeUeVbA_Tlv1ANDs"
+    SUPABASE_API_URL: ${SUPABASE_API_URL}
+    SUPABASE_API_KEY: ${SUPABASE_API_KEY}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./scrapers:/opt/airflow/scrapers

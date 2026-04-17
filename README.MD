@@ -9,22 +9,26 @@ Automated data pipeline that scrapes tech job listings from **LinkedIn** and **F
 ```
 job_intelligent/
 ├── dags/
-│   └── job_scraping_dag.py        # Airflow DAG — daily pipeline
+│   └── medallion_pipeline_dag.py   # Airflow DAG — Bronze/Silver/Gold pipeline
 ├── scrapers/
-│   ├── scrapping_linkedin.py      # LinkedIn scraper
+│   ├── scrapping_linkedin.py       # LinkedIn scraper
 │   ├── scrapping_france_travail.py # France-Travail scraper
-│   ├── etl_pipeline.py            # ETL — clean + push to jobs_clean
-│   ├── db.py                      # Supabase REST push helper
-│   └── data/                      # Local outputs (CSV, JSON, SQLite)
-│       ├── jobradar_clean.csv     # Power BI ready
-│       ├── jobradar_clean.json    # NLP ready
-│       └── jobradar.db            # SQLite backup
+│   ├── silver_transformation.py    # Bronze → Silver ETL
+│   ├── gold_transformation.py      # Silver → Gold aggregations
+│   ├── db.py                       # Supabase REST push helper
+│   ├── config.py                   # Shared pipeline configuration
+│   ├── utils.py                    # Shared helper functions
+│   └── data/                       # Local exports
+│       ├── jobradar_clean.csv      # Power BI ready
+│       ├── jobradar_clean.json     # NLP ready
+│       └── jobradar.db             # SQLite backup
 ├── sql/
-│   └── init.sql                   # Airflow PostgreSQL init
-├── docker-compose.yml             # All services
-├── Dockerfile.airflow             # Custom Airflow image
-├── requirements.txt               # Python dependencies
-└── .env                           # Secret keys (never commit)
+│   ├── init.sql                    # Airflow PostgreSQL init
+│   └── medallion_schema.sql        # Supabase medallion table schema
+├── docker-compose.yml              # All services
+├── Dockerfile.airflow              # Custom Airflow image
+├── requirements.txt                # Python dependencies
+└── .env                            # Secret keys (never commit)
 ```
 
 ---
@@ -38,7 +42,8 @@ France-Travail  ──┘                                                   ─�
 ```
 
 - `jobs` table — raw scraped data, append-only, managed by Airflow
-- `jobs_clean` table — deduplicated, standardized, enriched with skills & categories
+- `silver_jobs` table — cleaned, validated and enriched Silver data
+- `gold_*` tables — aggregated analytics results for BI and reporting
 
 ---
 
@@ -95,51 +100,20 @@ print(Fernet.generate_key().decode())
 
 ### 3. Create Supabase tables
 
-Run these once in your **Supabase SQL Editor**:
+Run the current medallion schema in your **Supabase SQL Editor** by copying the contents of `sql/medallion_schema.sql` or uploading it.
 
-```sql
--- Raw jobs table (managed by Airflow)
-CREATE TABLE IF NOT EXISTS jobs (
-    id             BIGSERIAL PRIMARY KEY,
-    title          TEXT,
-    company        TEXT,
-    location       TEXT,
-    date_posted    TEXT,
-    job_url        TEXT UNIQUE,
-    search_keyword TEXT,
-    scraped_at     TEXT,
-    salary         TEXT,
-    contract_type  TEXT,
-    source         TEXT
-);
+This will create the Bronze/Silver/Gold pipeline tables:
 
--- Clean jobs table (managed by ETL pipeline)
-CREATE TABLE IF NOT EXISTS jobs_clean (
-    id             BIGSERIAL PRIMARY KEY,
-    title          TEXT,
-    title_raw      TEXT,
-    company        TEXT,
-    location       TEXT,
-    date_posted    TEXT,
-    category       TEXT,
-    skills         TEXT,
-    job_url        TEXT,
-    search_keyword TEXT,
-    scraped_at     TEXT,
-    source         TEXT,
-    created_at     TIMESTAMPTZ DEFAULT NOW()
-);
+- `jobs` (Bronze raw data)
+- `silver_jobs` (Silver cleaned and validated data)
+- `gold_daily_jobs_snapshot`
+- `gold_company_stats`
+- `gold_location_stats`
+- `gold_job_title_insights`
+- `gold_monthly_trends`
+- `medallion_metadata`
 
--- Permissions
-GRANT ALL ON TABLE jobs TO anon;
-GRANT ALL ON TABLE jobs_clean TO anon;
-GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO anon;
-
--- Indexes for Power BI and recommendation engine
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_category ON jobs_clean(category);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_source   ON jobs_clean(source);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_date     ON jobs_clean(date_posted);
-```
+If the `jobs` table already exists, do not recreate it. Only run the schema for the new `silver_jobs` and `gold_*` tables.
 
 ### 4. Build and initialize Airflow
 
@@ -182,7 +156,7 @@ job_airflow_scheduler   running
 ### Airflow UI
 Open **http://localhost:8080** — login: `admin` / `admin`
 
-- Find the DAG `daily_job_scraping`
+- Find the DAG `medallion_daily_pipeline`
 - Toggle it **ON**
 - Click **▶ Trigger DAG** to run manually
 
@@ -192,16 +166,19 @@ The pipeline runs automatically every day at **12:00 UTC**.
 
 ```
 extract_linkedin       ─┐
-                        ├─► push_to_db ─► run_etl
+                        ├─► push_to_bronze
 extract_france_travail ─┘
+                        └─► silver_transform ─► gold_transform ─► monitor_medallion
 ```
 
 | Task | Description |
 |------|-------------|
 | `extract_linkedin` | Scrapes LinkedIn via Selenium (timeout: 60 min) |
 | `extract_france_travail` | Calls France-Travail API (timeout: 10 min) |
-| `push_to_db` | Pushes raw jobs to Supabase `jobs` table |
-| `run_etl` | Cleans, deduplicates, enriches → `jobs_clean` |
+| `push_to_bronze` | Pushes raw jobs to Supabase `jobs` table |
+| `silver_transform` | Cleans, enriches, validates → `silver_jobs` |
+| `gold_transform` | Aggregates Silver data into `gold_*` tables |
+| `monitor_medallion` | Logs pipeline completion status |
 
 ### Watch Chrome scraping live
 Open **http://localhost:7900** to see the Selenium browser in action.
