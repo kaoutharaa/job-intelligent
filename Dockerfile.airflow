@@ -7,3 +7,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir \
     --constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-3.11.txt \
     -r requirements.txt
+
+# Install spaCy models for CV parsing
+RUN python -m spacy download fr_core_news_md && \
+    python -m spacy download en_core_web_md

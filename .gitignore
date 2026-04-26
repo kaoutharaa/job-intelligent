@@ -26,3 +26,8 @@ scrapers/data/
 *.sqlite
 
 
+
+venv/
+venv_recommender/
+__pycache__/
+*.pyc
