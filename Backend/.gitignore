@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+logs/
+
+# Data files
+*.db
+*.csv
+*.json
+
+# Env
+.env
+
+# Others
+.DS_Store
+
+# Airflow logs 
+logs/
+
+
+# Local data outputs
+scrapers/data/
+*.csv
+*.json
+*.db
+*.sqlite
+
+
+
+venv/
+venv_recommender/
+__pycache__/
+*.pyc

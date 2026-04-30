@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommender - Trouvez la meilleure offre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .upload-section {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .upload-box {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+        
+        .upload-box:hover {
+            background: #eef2ff;
+            border-color: #764ba2;
+        }
+        
+        .upload-box.active {
+            background: #e0e7ff;
+            border-color: #667eea;
+        }
+        
+        .upload-box input[type="file"] {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .upload-box h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .upload-box p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            color: #667eea;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        button.secondary {
+            background: #e0e7ff;
+            color: #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .cv-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .cv-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .cv-info-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cv-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cv-info-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .job-score {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            float: right;
+        }
+        
+        .job-title {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 10px;
+            clear: both;
+        }
+        
+        .job-company {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .job-meta {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .job-meta-item {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .job-skills {
+            margin-top: 10px;
+        }
+        
+        .job-skills h4 {
+            font-size: 0.9em;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #667eea;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+        
+        .job-url {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .job-url a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .job-url a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+        }
+        
+        .info {
+            background: #eef;
+            color: #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .slider-group {
+            margin-top: 20px;
+        }
+        
+        .slider-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .value-display {
+            color: #667eea;
+            font-weight: bold;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💼 Job Recommender</h1>
+            <p>Déposez votre CV pour découvrir les meilleures offres d'emploi qui vous correspondent</p>
+        </header>
+        
+        <div class="upload-section">
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📄</div>
+                <h2>Déposez votre CV ici</h2>
+                <p>ou cliquez pour sélectionner</p>
+                <p style="font-size: 0.9em;">Formats supportés: PDF, DOCX</p>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.doc">
+                <div class="file-name" id="fileName"></div>
+            </div>
+            
+            <div class="controls">
+                <div class="slider-group" style="flex: 1; min-width: 200px;">
+                    <label for="topK">
+                        Nombre de résultats
+                        <span class="value-display" id="topKValue">10</span>
+                    </label>
+                    <input type="range" id="topK" min="1" max="50" value="10">
+                </div>
+                
+                <div class="slider-group" style="flex: 1; min-width: 200px;">
+                    <label for="alpha">
+                        Sémantique vs Mots-clés (α)
+                        <span class="value-display" id="alphaValue">0.7</span>
+                    </label>
+                    <input type="range" id="alpha" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="submitBtn" disabled>🔍 Trouver les meilleures offres</button>
+                <button class="secondary" id="clearBtn">↺ Effacer</button>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Analyse en cours... Cela peut prendre quelques secondes</p>
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="results" class="results-section">
+            <div id="cvInfo"></div>
+            <h2 style="color: white; margin-bottom: 20px;">
+                ✨ Offres recommandées
+            </h2>
+            <div id="jobsList" class="jobs-grid"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = "http://localhost:8000";
+        
+        const uploadBox = document.getElementById("uploadBox");
+        const fileInput = document.getElementById("fileInput");
+        const fileName = document.getElementById("fileName");
+        const submitBtn = document.getElementById("submitBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const loading = document.getElementById("loading");
+        const error = document.getElementById("error");
+        const results = document.getElementById("results");
+        const topK = document.getElementById("topK");
+        const alpha = document.getElementById("alpha");
+        const topKValue = document.getElementById("topKValue");
+        const alphaValue = document.getElementById("alphaValue");
+        
+        let selectedFile = null;
+        
+        uploadBox.addEventListener("click", () => fileInput.click());
+        uploadBox.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            uploadBox.classList.add("active");
+        });
+        uploadBox.addEventListener("dragleave", () => {
+            uploadBox.classList.remove("active");
+        });
+        uploadBox.addEventListener("drop", (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove("active");
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener("change", (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        topK.addEventListener("input", () => {
+            topKValue.textContent = topK.value;
+        });
+        
+        alpha.addEventListener("input", () => {
+            alphaValue.textContent = alpha.value;
+        });
+        
+        function handleFile(file) {
+            selectedFile = file;
+            fileName.textContent = `✓ ${file.name}`;
+            fileName.style.display = "block";
+            submitBtn.disabled = false;
+        }
+        
+        clearBtn.addEventListener("click", () => {
+            selectedFile = null;
+            fileInput.value = "";
+            fileName.style.display = "none";
+            fileName.textContent = "";
+            submitBtn.disabled = true;
+            results.style.display = "none";
+            error.style.display = "none";
+        });
+        
+        submitBtn.addEventListener("click", async () => {
+            if (!selectedFile) return;
+            
+            loading.style.display = "block";
+            error.style.display = "none";
+            results.style.display = "none";
+            
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+            formData.append("top_k", topK.value);
+            formData.append("alpha", alpha.value);
+            
+            try {
+                const response = await fetch(`${API_URL}/recommend/cv`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Erreur ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data);
+            } catch (err) {
+                error.textContent = `❌ Erreur: ${err.message}`;
+                error.style.display = "block";
+            } finally {
+                loading.style.display = "none";
+            }
+        });
+        
+        function displayResults(data) {
+            // Display CV info
+            let cvHtml = `
+                <div class="cv-info">
+                    <h3>📋 Votre profil extrait</h3>
+            `;
+            if (data.cv_info) {
+                cvHtml += `
+                    ${data.cv_info.full_name ? `<div class="cv-info-item"><div class="cv-info-label">Nom</div><div>${data.cv_info.full_name}</div></div>` : ""}
+                    ${data.cv_info.current_title ? `<div class="cv-info-item"><div class="cv-info-label">Poste actuel</div><div>${data.cv_info.current_title}</div></div>` : ""}
+                    ${data.cv_info.years_experience ? `<div class="cv-info-item"><div class="cv-info-label">Expérience</div><div>${data.cv_info.years_experience} ans</div></div>` : ""}
+                    ${data.cv_info.skills_found.length > 0 ? `<div class="cv-info-item"><div class="cv-info-label">Compétences</div><div>${data.cv_info.skills_found.join(", ")}</div></div>` : ""}
+                    ${data.cv_info.languages_found.length > 0 ? `<div class="cv-info-item"><div class="cv-info-label">Langues</div><div>${data.cv_info.languages_found.join(", ")}</div></div>` : ""}
+                `;
+            }
+            cvHtml += `</div>`;
+            document.getElementById("cvInfo").innerHTML = cvHtml;
+            
+            // Display jobs
+            let jobsHtml = "";
+            if (data.recommendations.length === 0) {
+                jobsHtml = `<div class="info">Aucune offre correspondante trouvée. Essayez avec un CV différent.</div>`;
+            } else {
+                data.recommendations.forEach((job, idx) => {
+                    jobsHtml += `
+                        <div class="job-card">
+                            <div class="job-score">${(job.score * 100).toFixed(0)}%</div>
+                            <div class="job-title">${job.title}</div>
+                            ${job.company ? `<div class="job-company">${job.company}</div>` : ""}
+                            <div class="job-meta">
+                                ${job.location ? `<div class="job-meta-item">📍 ${job.location}</div>` : ""}
+                                ${job.contract ? `<div class="job-meta-item">📅 ${job.contract}</div>` : ""}
+                            </div>
+                            ${job.skills && job.skills.length > 0 ? `
+                                <div class="job-skills">
+                                    <h4>Compétences requises:</h4>
+                                    ${job.skills.map(s => `<span class="skill-tag">${s}</span>`).join("")}
+                                </div>
+                            ` : ""}
+                            ${job.url ? `<div class="job-url"><a href="${job.url}" target="_blank">Voir l'offre →</a></div>` : ""}
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById("jobsList").innerHTML = jobsHtml;
+            
+            results.style.display = "block";
+        }
+    </script>
+</body>
+</html>
