@@ -21,6 +21,7 @@ import random
 import logging
 import os
 from datetime import datetime
+import re
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ def build_url(keyword: str, location: str, start: int = 0) -> str:
     return (
         f"https://www.linkedin.com/jobs/search/"
         f"?keywords={kw}&location={loc}&start={start}"
-        f"&f_TPR=r604800"   # 30 days — change to r604800 for daily runs
+           # 30 days — change to r604800 for daily runs
     )
 
 
@@ -138,13 +139,28 @@ def parse_jobs(html: str, keyword: str) -> list[dict]:
         if not title:
             continue
 
+        # --- NEW URL EXTRACTION LOGIC ---
         url = txt(".base-card__full-link", attr="href")
+        clean_url = ""
+        
+        if url:
+            if "currentJobId=" in url:
+                # Extract the exact ID and build a clean direct link
+                match = re.search(r"currentJobId=(\d+)", url)
+                if match:
+                    clean_url = f"https://www.linkedin.com/jobs/view/{match.group(1)}"
+                else:
+                    clean_url = url.split("?")[0]
+            else:
+                # If it's already a clean view link, just strip tracking
+                clean_url = url.split("?")[0]
+
         jobs.append({
             "title":          title,
             "company":        txt(".base-search-card__subtitle"),
             "location":       txt(".job-search-card__location"),
             "date_posted":    txt("time", attr="datetime"),
-            "job_url":        url.split("?")[0] if url else "",
+            "job_url":        clean_url,  # <--- Use the cleaned URL here
             "search_keyword": keyword,
             "scraped_at":     datetime.utcnow().isoformat(),
             "salary":         "",

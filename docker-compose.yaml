@@ -1,29 +1,22 @@
-
-
-# ─── SHARED AIRFLOW CONFIG ─────────────────────────────────────────────────────
 x-airflow-common: &airflow-common
   build:
     context: .
     dockerfile: Dockerfile.airflow
-    network: host
   environment:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:password@postgres:5432/job_intelligent
     AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
     AIRFLOW__WEBSERVER__SECRET_KEY: ${SECRET_KEY}
-    FT_CLIENT_ID: ${FT_CLIENT_ID_api}
-    FT_CLIENT_SECRET: ${FT_CLIENT_SECRET_api}
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
-    # Passed to scrapers and db.py
     SELENIUM_URL: http://selenium:4444/wd/hub
     DB_HOST: postgres
     DB_PORT: 5432
     DB_NAME: job_intelligent
     DB_USER: admin
     DB_PASS: password
-    SUPABASE_API_URL: "https://egegkouscvcqylndljxp.supabase.co"
-    SUPABASE_API_KEY: "sb_publishable_Q2hyipulXlvHMIZXeUeVbA_Tlv1ANDs"
+    FT_CLIENT_ID: ${FT_CLIENT_ID_api}
+    FT_CLIENT_SECRET: ${FT_CLIENT_SECRET_api}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./scrapers:/opt/airflow/scrapers
@@ -36,10 +29,8 @@ x-airflow-common: &airflow-common
   networks:
     - job_net
 
-# ─── SERVICES ──────────────────────────────────────────────────────────────────
 services:
 
-  # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
     image: postgres:15
     container_name: job_postgres
@@ -60,28 +51,45 @@ services:
     networks:
       - job_net
 
-  # ── Selenium Chrome ─────────────────────────────────────────────────────────
   selenium:
     image: selenium/standalone-chrome:latest
     container_name: job_selenium
     shm_size: '2gb'
     ports:
-      - "4444:4444"   # Selenium Grid API
-      - "7900:7900"   # VNC — open http://localhost:7900 to watch Chrome live
+      - "4444:4444"
+      - "7900:7900"
     environment:
-      SE_NODE_MAX_SESSIONS: 8        # allow up to 8 parallel browser sessions
-      SE_NODE_SESSION_TIMEOUT: 300   # kill idle sessions after 5 minutes
+      SE_NODE_MAX_SESSIONS: 8
+      SE_NODE_SESSION_TIMEOUT: 300
     networks:
       - job_net
 
-  # ── Airflow Init (runs once, then exits) ────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: job_api
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: job_intelligent
+      DB_USER: admin
+      DB_PASS: password
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - job_net
+    restart: always
+
   airflow-init:
     <<: *airflow-common
     container_name: job_airflow_init
     command: bash -c "airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@jobintelligent.com"
     restart: "no"
 
-  # ── Airflow Webserver ────────────────────────────────────────────────────────
   airflow-webserver:
     <<: *airflow-common
     container_name: job_airflow_webserver
@@ -90,14 +98,12 @@ services:
       - "8080:8080"
     restart: always
 
-  # ── Airflow Scheduler ────────────────────────────────────────────────────────
   airflow-scheduler:
     <<: *airflow-common
     container_name: job_airflow_scheduler
     command: scheduler
     restart: always
 
-# ─── VOLUMES & NETWORKS ────────────────────────────────────────────────────────
 volumes:
   pg_data:
 

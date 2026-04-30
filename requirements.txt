@@ -6,3 +6,7 @@ numpy
 matplotlib
 seaborn
 psycopg2-binary
+fastapi
+uvicorn
+sqlalchemy
+scikit-learn
