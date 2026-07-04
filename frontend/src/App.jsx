@@ -1,4 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const API_BASE = "http://localhost:8000";
@@ -94,7 +109,7 @@ const styles = `
   .nav-steps li.active { color: var(--text); font-weight: 500; }
   .nav-steps li:hover { color: var(--text); }
 
-  .theme-toggle {
+  .theme-toggle, .language-toggle {
     background: var(--bg3);
     border: 1px solid var(--border);
     color: var(--text);
@@ -109,7 +124,7 @@ const styles = `
     gap: 0.5rem;
     transition: all 0.2s;
   }
-  .theme-toggle:hover {
+  .theme-toggle:hover, .language-toggle:hover {
     border-color: var(--accent);
     color: var(--accent);
     box-shadow: 0 4px 12px rgba(108,99,255,0.1);
@@ -500,6 +515,25 @@ const styles = `
   }
   .layer-name { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
   .layer-value { font-family: 'Syne', sans-serif; font-size: 1.2rem; margin-top: 0.3rem; }
+  .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .chart-card { min-height: 340px; }
+  .chart-wrap { width: 100%; height: 280px; }
+  .chart-empty {
+    height: 280px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: var(--bg3);
+    font-size: 0.88rem;
+  }
+  .recharts-default-tooltip {
+    background: var(--bg3) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    color: var(--text) !important;
+  }
 
   @media (max-width: 640px) {
     nav { padding: 1rem 1.5rem; }
@@ -510,11 +544,261 @@ const styles = `
     .stats-bar { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
     section { padding: 3rem 1.5rem; }
     .auth-box { padding: 2rem 1.5rem; border-radius: 0; border-left: none; border-right: none; }
-    .dashboard-grid-2 { grid-template-columns: 1fr; }
+    .dashboard-grid-2, .chart-grid { grid-template-columns: 1fr; }
     .timeline-row { grid-template-columns: 1fr; }
     .dashboard-hero { padding: 1rem; }
   }
 `;
+
+const CHART_COLORS = ["#6c63ff", "#00d4aa", "#ff6b6b", "#f7b731", "#45aaf2", "#a55eea"];
+const chartTextColor = "#7a7a9a";
+const viewPaths = {
+  hero: "/",
+  marketStats: "/marche",
+  form: "/profil",
+  auth: "/connexion",
+  results: "/resultats",
+  loading: "/chargement",
+};
+const pathViews = Object.fromEntries(Object.entries(viewPaths).map(([view, path]) => [path, view]));
+
+const translations = {
+  fr: {
+    navHome: "Accueil",
+    navMarket: "Marché",
+    navProfile: "Mon profil",
+    navResults: "Résultats",
+    logout: "Déconnexion",
+    lightMode: "Mode Clair",
+    darkMode: "Mode Sombre",
+    heroTag: "Propulsé par l'IA sémantique",
+    heroTitleStart: "Trouvez l'emploi",
+    heroTitleEm: "fait pour vous",
+    heroSub: "Importez votre CV et notre système d'analyse sémantique identifie les offres les plus pertinentes parmi des centaines d'opportunités.",
+    analyzeCv: "Analyser mon CV →",
+    learnMore: "En savoir plus",
+    indexedJobs: "Offres indexées",
+    sources: "Sources",
+    categories: "Catégories",
+    loginTitle: "Connexion",
+    registerTitle: "Créer un compte",
+    loginDesc: "Accédez à vos analyses sauvegardées.",
+    registerDesc: "Rejoignez-nous pour sauvegarder vos matchs.",
+    errorPrefix: "Erreur",
+    validationPrefix: "Validation",
+    firstName: "Prénom",
+    lastName: "Nom",
+    email: "Adresse Email",
+    password: "Mot de passe",
+    confirmPassword: "Confirmer le mot de passe",
+    hidePassword: "Masquer",
+    showPassword: "Afficher",
+    loginButton: "Se connecter",
+    registerButton: "Créer le compte",
+    noAccount: "Pas encore de compte ?",
+    createAccountLink: "S'inscrire",
+    hasAccount: "Déjà un compte ?",
+    loginLink: "Se connecter",
+    hello: "Bonjour",
+    profileTitle: "Votre profil",
+    profileDesc: "Plus votre CV est détaillé, plus les recommandations seront précises.",
+    previousAnalysis: "Une analyse précédente a été trouvée.",
+    previousAnalysisDesc: "Voulez-vous consulter vos résultats sauvegardés ?",
+    viewResults: "Voir les résultats",
+    jobTitleLabel: "Titre de poste recherché (optionnel)",
+    cityLabel: "Ville souhaitée",
+    cvLabel: "Votre CV (PDF)",
+    cvHelp: "Notre IA va extraire vos compétences et expériences directement depuis votre CV.",
+    removeCv: "Retirer",
+    dropCvStrong: "Glissez votre CV",
+    dropCvText: "ou cliquez pour parcourir",
+    pdfOnly: "Format PDF uniquement",
+    back: "← Retour",
+    launchAnalysis: "Lancer une nouvelle analyse →",
+    marketInsights: "Insights marché",
+    marketTitle: "Tableau de bord du marché",
+    marketDesc: "Statistiques en temps réel basées sur les offres indexées dans la base.",
+    refresh: "Actualiser",
+    loadingStats: "Chargement des statistiques...",
+    retry: "Réessayer",
+    totalJobs: "Offres totales",
+    activeSources: "Sources actives",
+    topLocation: "Top localisation",
+    topJobs: "Top métiers",
+    demandedSkills: "Compétences demandées",
+    sourceBreakdown: "Répartition par source",
+    categoryBreakdown: "Répartition par catégorie",
+    recentActivity: "Activité récente",
+    frequentJobs: "Métiers les plus fréquents",
+    mostDemandedSkills: "Compétences les plus demandées",
+    noData: "Aucune donnée disponible",
+    noDataSentence: "Aucune donnée disponible.",
+    noActivity: "Aucune activité",
+    offers: "offres",
+    notSpecified: "Non précisé",
+    recently: "Récemment",
+    oneDayAgo: "Il y a un jour",
+    daysAgo: days => `Il y a ${days} jours`,
+    loadingTitle: "Recherche en cours",
+    loadingDesc: "Notre IA analyse votre CV et recherche les meilleures opportunités",
+    loadingSteps: ["Lecture et extraction de votre CV...", "Calcul de la correspondance sémantique...", "Sauvegarde de l'analyse et tri des résultats..."],
+    resultsStep: "Étape 2 / 2 — Résultats",
+    opportunities: "Vos opportunités",
+    matchingOffers: count => <><strong>{count}</strong> offres correspondant à votre profil</>,
+    backToProfile: "← Revenir au profil",
+    all: "Tous",
+    noJobs: "Aucune offre trouvée pour ce profil.",
+    broadenCriteria: "Essayez d'élargir vos critères.",
+    companyFallback: "Entreprise non précisée",
+    viewOffer: "Voir l'offre →",
+    passwordMismatch: "Les mots de passe ne correspondent pas.",
+    registerError: "Erreur lors de la création du compte ou API manquante.",
+    loginError: "Identifiants incorrects ou API manquante.",
+    apiUnavailable: "Impossible de joindre l'API (http://localhost:8000). Vérifiez que le backend est démarré.",
+    dashboardError: "Erreur lors du chargement du dashboard.",
+    profileRequired: "Veuillez renseigner un titre de poste ou importer votre CV.",
+    serverError: "Erreur serveur API",
+    nlpError: "Erreur de connexion avec l'API NLP. Vérifiez que votre backend est bien lancé sur le port 8000.",
+  },
+  en: {
+    navHome: "Home",
+    navMarket: "Market",
+    navProfile: "My profile",
+    navResults: "Results",
+    logout: "Logout",
+    lightMode: "Light Mode",
+    darkMode: "Dark Mode",
+    heroTag: "Powered by semantic AI",
+    heroTitleStart: "Find the job",
+    heroTitleEm: "made for you",
+    heroSub: "Upload your CV and our semantic analysis system identifies the most relevant offers among hundreds of opportunities.",
+    analyzeCv: "Analyze my CV →",
+    learnMore: "Learn more",
+    indexedJobs: "Indexed jobs",
+    sources: "Sources",
+    categories: "Categories",
+    loginTitle: "Login",
+    registerTitle: "Create an account",
+    loginDesc: "Access your saved analyses.",
+    registerDesc: "Join us to save your matches.",
+    errorPrefix: "Error",
+    validationPrefix: "Validation",
+    firstName: "First name",
+    lastName: "Last name",
+    email: "Email address",
+    password: "Password",
+    confirmPassword: "Confirm password",
+    hidePassword: "Hide",
+    showPassword: "Show",
+    loginButton: "Log in",
+    registerButton: "Create account",
+    noAccount: "No account yet?",
+    createAccountLink: "Sign up",
+    hasAccount: "Already have an account?",
+    loginLink: "Log in",
+    hello: "Hello",
+    profileTitle: "Your profile",
+    profileDesc: "The more detailed your CV is, the more accurate the recommendations will be.",
+    previousAnalysis: "A previous analysis was found.",
+    previousAnalysisDesc: "Would you like to view your saved results?",
+    viewResults: "View results",
+    jobTitleLabel: "Target job title (optional)",
+    cityLabel: "Desired city",
+    cvLabel: "Your CV (PDF)",
+    cvHelp: "Our AI will extract your skills and experience directly from your CV.",
+    removeCv: "Remove",
+    dropCvStrong: "Drop your CV",
+    dropCvText: "or click to browse",
+    pdfOnly: "PDF format only",
+    back: "← Back",
+    launchAnalysis: "Start a new analysis →",
+    marketInsights: "Market insights",
+    marketTitle: "Market dashboard",
+    marketDesc: "Real-time statistics based on jobs indexed in the database.",
+    refresh: "Refresh",
+    loadingStats: "Loading statistics...",
+    retry: "Retry",
+    totalJobs: "Total jobs",
+    activeSources: "Active sources",
+    topLocation: "Top location",
+    topJobs: "Top jobs",
+    demandedSkills: "In-demand skills",
+    sourceBreakdown: "Breakdown by source",
+    categoryBreakdown: "Breakdown by category",
+    recentActivity: "Recent activity",
+    frequentJobs: "Most frequent jobs",
+    mostDemandedSkills: "Most in-demand skills",
+    noData: "No data available",
+    noDataSentence: "No data available.",
+    noActivity: "No activity",
+    offers: "offers",
+    notSpecified: "Not specified",
+    recently: "Recently",
+    oneDayAgo: "One day ago",
+    daysAgo: days => `${days} days ago`,
+    loadingTitle: "Searching",
+    loadingDesc: "Our AI is analyzing your CV and looking for the best opportunities",
+    loadingSteps: ["Reading and extracting your CV...", "Calculating semantic match...", "Saving analysis and sorting results..."],
+    resultsStep: "Step 2 / 2 — Results",
+    opportunities: "Your opportunities",
+    matchingOffers: count => <><strong>{count}</strong> offers matching your profile</>,
+    backToProfile: "← Back to profile",
+    all: "All",
+    noJobs: "No jobs found for this profile.",
+    broadenCriteria: "Try broadening your criteria.",
+    companyFallback: "Company not specified",
+    viewOffer: "View offer →",
+    passwordMismatch: "Passwords do not match.",
+    registerError: "Error while creating the account or API missing.",
+    loginError: "Incorrect credentials or API missing.",
+    apiUnavailable: "Unable to reach the API (http://localhost:8000). Check that the backend is running.",
+    dashboardError: "Error while loading the dashboard.",
+    profileRequired: "Please enter a job title or upload your CV.",
+    serverError: "API server error",
+    nlpError: "Connection error with the NLP API. Check that your backend is running on port 8000.",
+  },
+};
+
+function getViewFromLocation() {
+  return pathViews[window.location.pathname] || "hero";
+}
+
+function formatShortDate(value, language = "fr") {
+  if (!value) return "N/A";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(language === "en" ? "en-US" : "fr-FR", { day: "2-digit", month: "short" });
+}
+
+function formatRelativeActivityDate(value, t) {
+  if (!value) return "N/A";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "N/A";
+
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.floor((startOfToday - startOfDate) / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 0) return t.recently;
+  if (diffDays === 1) return t.oneDayAgo;
+  return t.daysAgo(diffDays);
+}
+
+function buildTimelineChartData(timeline, language) {
+  const totalsByDate = new Map();
+  timeline.forEach(item => {
+    const date = item.date_posted || "N/A";
+    totalsByDate.set(date, (totalsByDate.get(date) || 0) + (Number(item.count) || 0));
+  });
+  return Array.from(totalsByDate, ([date, count]) => ({ date, label: formatShortDate(date, language), count }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(-15);
+}
+
+function ChartEmpty({ label }) {
+  return <div className="chart-empty">{label}</div>;
+}
 
 function computeScore(job, profile) {
   let score = 0;
@@ -533,10 +817,10 @@ function computeScore(job, profile) {
   return Math.min(100, Math.round(score));
 }
 
-function JobCard({ job, profile, index }) {
+function JobCard({ job, profile, index, t, language }) {
   const score = job._score !== undefined ? job._score : computeScore(job, profile);
   const skills = (job.skills || "").split(",").map(s => s.trim()).filter(Boolean);
-  const date = job.date_posted ? new Date(job.date_posted).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null;
+  const date = job.date_posted ? new Date(job.date_posted).toLocaleDateString(language === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null;
   const scoreColor = score >= 70 ? "#00d4aa" : score >= 40 ? "#6c63ff" : "#7a7a9a";
   
   const validUrl = job.job_url && !job.job_url.startsWith('http') 
@@ -556,7 +840,7 @@ function JobCard({ job, profile, index }) {
       <div className="job-card-top">
         <div style={{ flex: 1 }}>
           <div className="job-title">{job.title_raw || job.title}</div>
-          <div className="job-company">{job.company || "Entreprise non précisée"}</div>
+          <div className="job-company">{job.company || t.companyFallback}</div>
           {job.category && <span className="cat-chip">{job.category}</span>}
         </div>
         <div className="job-score" style={{ borderColor: `${scoreColor}30`, background: `${scoreColor}10` }}>
@@ -586,25 +870,21 @@ function JobCard({ job, profile, index }) {
         
         {/* NEW: Changed from <a> to <span> since the parent div handles the click now */}
         {job.job_url && (
-          <span className="job-link">Voir l'offre →</span>
+          <span className="job-link">{t.viewOffer}</span>
         )}
       </div>
     </div>
   );
 }
 
-function LoadingState({ step }) {
-  const steps = [
-    "Lecture et extraction de votre CV...",
-    "Calcul de la correspondance sémantique...",
-    "Sauvegarde de l'analyse et tri des résultats...",
-  ];
+function LoadingState({ step, t }) {
+  const steps = t.loadingSteps;
   return (
     <div className="loading-state">
       <div className="loader" />
-      <div className="loading-text">Recherche en cours</div>
+      <div className="loading-text">{t.loadingTitle}</div>
       <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
-        Notre IA analyse votre CV et recherche les meilleures opportunités
+        {t.loadingDesc}
       </p>
       <div className="loading-steps">
         {steps.map((s, i) => (
@@ -621,15 +901,17 @@ function LoadingState({ step }) {
 
 export default function App() {
   const [theme, setTheme] = useState("light");
-  const [view, setView] = useState("hero"); // hero | form | loading | results | auth | marketStats
+  const [language, setLanguage] = useState(() => localStorage.getItem("ji_language") || "fr");
+  const [view, setViewState] = useState(getViewFromLocation); // hero | form | loading | results | auth | marketStats
   const [loadStep, setLoadStep] = useState(0);
-  const [activeFilter, setActiveFilter] = useState("Tous");
+  const [activeFilter, setActiveFilter] = useState(translations.fr.all);
+  const [matchLimit, setMatchLimit] = useState(10);
+  const matchLimitOptions = [10, 20, 30, 50];
 
   // Market dashboard states
   const [marketStats, setMarketStats] = useState(null);
   const [marketSkills, setMarketSkills] = useState([]);
   const [marketTimeline, setMarketTimeline] = useState([]);
-  const [marketLayers, setMarketLayers] = useState({});
   const [marketLoading, setMarketLoading] = useState(false);
   const [marketError, setMarketError] = useState(null);
   const [marketLoaded, setMarketLoaded] = useState(false);
@@ -645,6 +927,25 @@ export default function App() {
   const [jobs, setJobs] = useState([]);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
+  const t = translations[language] || translations.fr;
+
+  const setView = (nextView, replace = false) => {
+    setViewState(nextView);
+    const nextPath = viewPaths[nextView] || viewPaths.hero;
+    if (window.location.pathname !== nextPath) {
+      const method = replace ? "replaceState" : "pushState";
+      window.history[method]({ view: nextView }, "", nextPath);
+    }
+  };
+
+  useEffect(() => {
+    window.history.replaceState({ view }, "", viewPaths[view] || viewPaths.hero);
+    const handlePopState = () => {
+      setViewState(getViewFromLocation());
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Initialize theme & session
   useEffect(() => {
@@ -656,17 +957,32 @@ export default function App() {
     fetch(`${API_BASE}/stats`).then(r => r.json()).then(setStats).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("ji_language", language);
+    setActiveFilter(translations[language]?.all || translations.fr.all);
+  }, [language]);
+
   // Session Management
   const checkSession = () => {
     const sessionStr = localStorage.getItem("ji_session");
     if (sessionStr) {
       const session = JSON.parse(sessionStr);
-      if (Date.now() - session.timestamp < SESSION_DURATION) {
+      if (session.token && Date.now() - session.timestamp < SESSION_DURATION) {
         setUser(session.user);
-        loadSavedAnalysis(session.user.id);
+        loadSavedAnalysis(session.token);
       } else {
         handleLogout();
       }
+    }
+  };
+
+  // Read the bearer token from the current session, if any.
+  const getToken = () => {
+    try {
+      const session = JSON.parse(localStorage.getItem("ji_session") || "null");
+      return session?.token || null;
+    } catch {
+      return null;
     }
   };
 
@@ -679,13 +995,13 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authForm.email, password: authForm.password })
       });
-      if (!res.ok) throw new Error("Identifiants incorrects ou API manquante.");
-      
+      if (!res.ok) throw new Error(t.loginError);
+
       const data = await res.json();
-      const sessionData = { user: data.user, timestamp: Date.now() };
+      const sessionData = { user: data.user, token: data.access_token, timestamp: Date.now() };
       localStorage.setItem("ji_session", JSON.stringify(sessionData));
       setUser(data.user);
-      loadSavedAnalysis(data.user.id);
+      loadSavedAnalysis(data.access_token);
       setView("form");
     } catch (err) {
       setError(err.message);
@@ -696,7 +1012,7 @@ export default function App() {
     e.preventDefault();
     setError(null);
     if (authForm.password !== authForm.confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(t.passwordMismatch);
       return;
     }
     try {
@@ -705,10 +1021,10 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(authForm)
       });
-      if (!res.ok) throw new Error("Erreur lors de la création du compte ou API manquante.");
-      
+      if (!res.ok) throw new Error(t.registerError);
+
       const data = await res.json();
-      const sessionData = { user: data.user, timestamp: Date.now() };
+      const sessionData = { user: data.user, token: data.access_token, timestamp: Date.now() };
       localStorage.setItem("ji_session", JSON.stringify(sessionData));
       setUser(data.user);
       setView("form");
@@ -724,9 +1040,12 @@ export default function App() {
     setView("hero");
   };
 
-  const loadSavedAnalysis = async (userId) => {
+  const loadSavedAnalysis = async (token) => {
+    if (!token) return;
     try {
-      const res = await fetch(`${API_BASE}/analysis/${userId}`);
+      const res = await fetch(`${API_BASE}/analysis/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.jobs && data.jobs.length > 0) {
@@ -734,7 +1053,7 @@ export default function App() {
           setProfile(data.profile);
         }
       }
-    } catch (e) { console.log("Pas d'analyse sauvegardée."); }
+    } catch (e) { console.log("No saved analysis."); }
   };
 
   const loadMarketDashboard = async (force = false) => {
@@ -754,24 +1073,22 @@ export default function App() {
     };
 
     try {
-      const [statsData, skillsData, timelineData, layersData] = await Promise.all([
+      const [statsData, skillsData, timelineData] = await Promise.all([
         fetchJson(`${API_BASE}/stats`, null),
         fetchJson(`${API_BASE}/stats/skills?limit=12`, { skills: [] }),
         fetchJson(`${API_BASE}/stats/timeline`, { timeline: [] }),
-        fetchJson(`${API_BASE}/layers`, { layers: {} }),
       ]);
 
       if (!statsData) {
-        throw new Error("Impossible de joindre l'API (http://localhost:8000). Vérifiez que le backend est démarré.");
+        throw new Error(t.apiUnavailable);
       }
 
       setMarketStats(statsData);
       setMarketSkills(skillsData.skills || []);
       setMarketTimeline((timelineData.timeline || []).slice(0, 15));
-      setMarketLayers(layersData.layers || {});
       setMarketLoaded(true);
     } catch (err) {
-      setMarketError(err.message || "Erreur lors du chargement du dashboard.");
+      setMarketError(err.message || t.dashboardError);
     } finally {
       setMarketLoading(false);
     }
@@ -782,6 +1099,10 @@ export default function App() {
     loadMarketDashboard();
   };
 
+  useEffect(() => {
+    if (view === "marketStats") loadMarketDashboard();
+  }, [view]);
+
   const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
   const updateProfile = (key, val) => {
     setProfileError(null);
@@ -790,7 +1111,7 @@ export default function App() {
 
   const handleSubmit = async () => {
     if (!profile.cv && !profile.titre.trim()) {
-      setProfileError("Veuillez renseigner un titre de poste ou importer votre CV.");
+      setProfileError(t.profileRequired);
       return;
     }
 
@@ -801,17 +1122,21 @@ export default function App() {
     try {
       setLoadStep(1); 
       const formData = new FormData();
-      formData.append("title", profile.titre);
-      formData.append("location", profile.ville);
+      formData.append("title", profile.titre.trim());
+      formData.append("location", profile.ville.trim());
       if (profile.cv) formData.append("cv", profile.cv);
-      if (user) formData.append("user_id", user.id); // Send user ID to save the analysis
 
-      const response = await fetch(`${API_BASE}/recommend`, {
+      // Authenticated calls save the analysis; the user is derived from the token.
+      const token = getToken();
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const response = await fetch(`${API_BASE}/recommend?limit=50`, {
         method: 'POST',
-        body: formData, 
+        headers,
+        body: formData,
       });
 
-      if (!response.ok) throw new Error("Erreur serveur API");
+      if (!response.ok) throw new Error(t.serverError);
       
       setLoadStep(2); 
       const data = await response.json();
@@ -823,13 +1148,27 @@ export default function App() {
       setJobs(scoredJobs);
       setView("results");
     } catch (err) {
-      setError("Erreur de connexion avec l'API NLP. Vérifiez que votre backend est bien lancé sur le port 8000.");
+      setError(t.nlpError);
       setView("form");
     }
   };
 
-  const categories = ["Tous", ...new Set(jobs.map(j => j.category).filter(Boolean))];
-  const filteredJobs = activeFilter === "Tous" ? jobs : jobs.filter(j => j.category === activeFilter);
+  const requestedTitleTerms = profile.titre.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const titleFilteredJobs = requestedTitleTerms.length === 0
+    ? jobs
+    : jobs.filter(job => {
+        const jobTitle = `${job.title || ""} ${job.title_raw || ""}`.toLowerCase();
+        return requestedTitleTerms.every(term => jobTitle.includes(term));
+      });
+  const categories = [t.all, ...new Set(titleFilteredJobs.map(j => j.category).filter(Boolean))];
+  const categoryFilteredJobs = activeFilter === t.all ? titleFilteredJobs : titleFilteredJobs.filter(j => j.category === activeFilter);
+  const filteredJobs = categoryFilteredJobs.slice(0, matchLimit);
+
+  const topTitlesChartData = (marketStats?.top_titles || []).slice(0, 8).map(row => ({ name: row.title || t.notSpecified, count: Number(row.count) || 0 }));
+  const skillsChartData = marketSkills.slice(0, 10).map(row => ({ name: row.skill || t.notSpecified, count: Number(row.count) || 0 }));
+  const categoryChartData = (marketStats?.by_category || []).map(row => ({ name: row.category || t.notSpecified, count: Number(row.count) || 0 }));
+  const sourceChartData = (marketStats?.by_source || []).map(row => ({ name: row.source || t.notSpecified, count: Number(row.count) || 0 }));
+  const timelineChartData = buildTimelineChartData(marketTimeline, language);
 
   const navigateToProfile = () => {
     if (user) {
@@ -846,16 +1185,19 @@ export default function App() {
         <div className="nav-logo" onClick={() => setView("hero")} style={{ cursor: "pointer" }}>Job<span>Intelligent</span></div>
         <div className="nav-right">
           <ul className="nav-steps">
-            <li className={view === "hero" ? "active" : ""} onClick={() => setView("hero")}>Accueil</li>
-            <li className={view === "marketStats" ? "active" : ""} onClick={goToMarketStats}>Marché</li>
-            <li className={view === "form" || view === "auth" ? "active" : ""} onClick={navigateToProfile}>Mon profil</li>
-            {jobs.length > 0 && <li className={view === "results" ? "active" : ""} onClick={() => setView("results")}>Résultats</li>}
+            <li className={view === "hero" ? "active" : ""} onClick={() => setView("hero")}>{t.navHome}</li>
+            <li className={view === "marketStats" ? "active" : ""} onClick={goToMarketStats}>{t.navMarket}</li>
+            <li className={view === "form" || view === "auth" ? "active" : ""} onClick={navigateToProfile}>{t.navProfile}</li>
+            {jobs.length > 0 && <li className={view === "results" ? "active" : ""} onClick={() => setView("results")}>{t.navResults}</li>}
           </ul>
           {user && (
-            <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
+            <button className="logout-btn" onClick={handleLogout}>{t.logout}</button>
           )}
+          <button className="language-toggle" onClick={() => setLanguage(prev => prev === "fr" ? "en" : "fr")}>
+            {language === "fr" ? "EN" : "FR"}
+          </button>
           <button className="theme-toggle" onClick={toggleTheme}>
-            {theme === "dark" ? "☀️ Mode Clair" : "🌙 Mode Sombre"}
+            {theme === "dark" ? `☀️ ${t.lightMode}` : `🌙 ${t.darkMode}`}
           </button>
         </div>
       </nav>
@@ -864,30 +1206,27 @@ export default function App() {
       {view === "hero" && (
         <div className="hero">
           <div className="hero-glow" />
-          <span className="hero-tag">Propulsé par l'IA sémantique</span>
-          <h1>Trouvez l'emploi<br /><em>fait pour vous</em></h1>
-          <p className="hero-sub">
-            Importez votre CV et notre système d'analyse sémantique identifie
-            les offres les plus pertinentes parmi des centaines d'opportunités.
-          </p>
+          <span className="hero-tag">{t.heroTag}</span>
+          <h1>{t.heroTitleStart}<br /><em>{t.heroTitleEm}</em></h1>
+          <p className="hero-sub">{t.heroSub}</p>
           <div className="hero-actions">
-            <button className="btn-primary" onClick={navigateToProfile}>Analyser mon CV →</button>
-            <button className="btn-secondary" onClick={goToMarketStats}>En savoir plus</button>
+            <button className="btn-primary" onClick={navigateToProfile}>{t.analyzeCv}</button>
+            <button className="btn-secondary" onClick={goToMarketStats}>{t.learnMore}</button>
           </div>
 
           {stats && (
             <div className="stats-bar" id="stats">
               <div className="stat-item">
-                <div className="stat-num">{stats.total_jobs?.toLocaleString("fr-FR") || "—"}</div>
-                <div className="stat-label">Offres indexées</div>
+                <div className="stat-num">{stats.total_jobs?.toLocaleString(language === "en" ? "en-US" : "fr-FR") || "—"}</div>
+                <div className="stat-label">{t.indexedJobs}</div>
               </div>
               <div className="stat-item">
                 <div className="stat-num">{stats.by_source?.length || 2}</div>
-                <div className="stat-label">Sources</div>
+                <div className="stat-label">{t.sources}</div>
               </div>
               <div className="stat-item">
                 <div className="stat-num">{stats.by_category?.length || "—"}</div>
-                <div className="stat-label">Catégories</div>
+                <div className="stat-label">{t.categories}</div>
               </div>
             </div>
           )}
@@ -898,14 +1237,14 @@ export default function App() {
       {view === "auth" && (
         <section>
           <div className="auth-box">
-            <h2>{authMode === "login" ? "Connexion" : "Créer un compte"}</h2>
+            <h2>{authMode === "login" ? t.loginTitle : t.registerTitle}</h2>
             <p className="section-desc" style={{ marginBottom: "1.5rem" }}>
-              {authMode === "login" ? "Accédez à vos analyses sauvegardées." : "Rejoignez-nous pour sauvegarder vos matchs."}
+              {authMode === "login" ? t.loginDesc : t.registerDesc}
             </p>
 
             {error && (
               <div style={{ background: "rgba(255,107,107,0.1)", border: "1px solid rgba(255,107,107,0.3)", borderRadius: 10, padding: "1rem", marginBottom: "1.5rem", color: "#ff8c8c", fontSize: "0.9rem" }}>
-                Erreur: {error}
+                {t.errorPrefix}: {error}
               </div>
             )}
 
@@ -913,23 +1252,23 @@ export default function App() {
               {authMode === "register" && (
                 <div className="form-row">
                   <div className="field">
-                    <label>Prénom</label>
+                    <label>{t.firstName}</label>
                     <input type="text" placeholder="Ex: Khalil" required onChange={e => setAuthForm({...authForm, firstName: e.target.value})} />
                   </div>
                   <div className="field">
-                    <label>Nom</label>
+                    <label>{t.lastName}</label>
                     <input type="text" placeholder="Hamimid" required onChange={e => setAuthForm({...authForm, lastName: e.target.value})} />
                   </div>
                 </div>
               )}
               <div className="field">
-                <label>Adresse Email</label>
+                <label>{t.email}</label>
                 <input type="email" placeholder="khalil@ensah.ma" required onChange={e => setAuthForm({...authForm, email: e.target.value})} />
               </div>
 
               {/* CHAMPS MOT DE PASSE MODIFIÉS */}
               <div className="field">
-                <label>Mot de passe</label>
+                <label>{t.password}</label>
                 <div className="password-wrapper">
                   <input 
                     type={showPassword ? "text" : "password"} 
@@ -938,14 +1277,14 @@ export default function App() {
                     onChange={e => setAuthForm({...authForm, password: e.target.value})} 
                   />
                   <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? "Masquer" : "Afficher"}
+                    {showPassword ? t.hidePassword : t.showPassword}
                   </button>
                 </div>
               </div>
 
               {authMode === "register" && (
                 <div className="field">
-                  <label>Confirmer le mot de passe</label>
+                  <label>{t.confirmPassword}</label>
                   <div className="password-wrapper">
                     <input 
                       type={showPassword ? "text" : "password"} 
@@ -954,22 +1293,22 @@ export default function App() {
                       onChange={e => setAuthForm({...authForm, confirmPassword: e.target.value})} 
                     />
                     <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? "Masquer" : "Afficher"}
+                      {showPassword ? t.hidePassword : t.showPassword}
                     </button>
                   </div>
                 </div>
               )}
               
               <button type="submit" className="btn-primary" style={{ marginTop: "1rem", width: "100%", justifyContent: "center" }}>
-                {authMode === "login" ? "Se connecter" : "Créer le compte"}
+                {authMode === "login" ? t.loginButton : t.registerButton}
               </button>
             </form>
 
             <div className="auth-toggle">
               {authMode === "login" ? (
-                <>Pas encore de compte ? <span onClick={() => { setAuthMode("register"); setError(null); }}>S'inscrire</span></>
+                <>{t.noAccount} <span onClick={() => { setAuthMode("register"); setError(null); }}>{t.createAccountLink}</span></>
               ) : (
-                <>Déjà un compte ? <span onClick={() => { setAuthMode("login"); setError(null); }}>Se connecter</span></>
+                <>{t.hasAccount} <span onClick={() => { setAuthMode("login"); setError(null); }}>{t.loginLink}</span></>
               )}
             </div>
           </div>
@@ -979,52 +1318,50 @@ export default function App() {
       {/* ── FORM (Requires Auth) ── */}
       {view === "form" && user && (
         <section>
-          <div className="section-label">Bonjour, {user.firstName}</div>
-          <h2>Votre profil</h2>
-          <p className="section-desc">
-            Plus votre CV est détaillé, plus les recommandations seront précises.
-          </p>
+          <div className="section-label">{t.hello}, {user.firstName}</div>
+          <h2>{t.profileTitle}</h2>
+          <p className="section-desc">{t.profileDesc}</p>
 
           {jobs.length > 0 && (
             <div style={{ background: "rgba(108,99,255,0.08)", border: "1px solid rgba(108,99,255,0.2)", borderRadius: 10, padding: "1rem 1.2rem", marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <strong style={{ color: "var(--accent)" }}>Une analyse précédente a été trouvée.</strong>
-                <p style={{ fontSize: "0.85rem", color: "var(--muted)", margin: 0 }}>Voulez-vous consulter vos résultats sauvegardés ?</p>
+                <strong style={{ color: "var(--accent)" }}>{t.previousAnalysis}</strong>
+                <p style={{ fontSize: "0.85rem", color: "var(--muted)", margin: 0 }}>{t.previousAnalysisDesc}</p>
               </div>
               <button className="btn-primary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }} onClick={() => setView("results")}>
-                Voir les résultats
+                {t.viewResults}
               </button>
             </div>
           )}
 
           {error && (
             <div style={{ background: "rgba(255,107,107,0.1)", border: "1px solid rgba(255,107,107,0.3)", borderRadius: 10, padding: "1rem 1.2rem", marginBottom: "1.5rem", color: "#ff8c8c", fontSize: "0.9rem" }}>
-              Erreur: {error}
+              {t.errorPrefix}: {error}
             </div>
           )}
 
           {profileError && (
             <div style={{ background: "rgba(255,107,107,0.1)", border: "1px solid rgba(255,107,107,0.3)", borderRadius: 10, padding: "1rem 1.2rem", marginBottom: "1.5rem", color: "#ff8c8c", fontSize: "0.9rem" }}>
-              Validation: {profileError}
+              {t.validationPrefix}: {profileError}
             </div>
           )}
 
           <div className="form-grid">
             <div className="form-row">
               <div className="field">
-                <label>Titre de poste recherché *</label>
+                <label>{t.jobTitleLabel}</label>
                 <input type="text" placeholder="Data Engineer, ML Engineer..." value={profile.titre} onChange={e => updateProfile("titre", e.target.value)} />
               </div>
               <div className="field">
-                <label>Ville souhaitée</label>
+                <label>{t.cityLabel}</label>
                 <input type="text" placeholder="Meknès, Casablanca..." value={profile.ville} onChange={e => updateProfile("ville", e.target.value)} />
               </div>
             </div>
 
             <div className="field" style={{ marginTop: "1rem" }}>
-              <label>Votre CV (PDF)</label>
+              <label>{t.cvLabel}</label>
               <p style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "0.5rem" }}>
-                Notre IA va extraire vos compétences et expériences directement depuis votre CV.
+                {t.cvHelp}
               </p>
               {profile.cv ? (
                 <div className="cv-uploaded">
@@ -1033,22 +1370,22 @@ export default function App() {
                     <div className="cv-uploaded-name">{profile.cv.name}</div>
                     <div className="cv-uploaded-size">{(profile.cv.size / 1024).toFixed(0)} Ko</div>
                   </div>
-                  <button className="cv-remove" onClick={() => updateProfile("cv", null)} aria-label="Supprimer le CV">Retirer</button>
+                  <button className="cv-remove" onClick={() => updateProfile("cv", null)} aria-label={t.removeCv}>{t.removeCv}</button>
                 </div>
               ) : (
                 <label className="cv-drop">
                   <input type="file" accept=".pdf" onChange={e => updateProfile("cv", e.target.files[0] || null)} />
                   <div className="cv-icon">CV</div>
-                  <p><strong>Glissez votre CV</strong> ou cliquez pour parcourir</p>
-                  <p style={{ fontSize: "0.8rem", marginTop: "0.3rem" }}>Format PDF uniquement</p>
+                  <p><strong>{t.dropCvStrong}</strong> {t.dropCvText}</p>
+                  <p style={{ fontSize: "0.8rem", marginTop: "0.3rem" }}>{t.pdfOnly}</p>
                 </label>
               )}
             </div>
           </div>
 
           <div className="form-actions">
-            <button className="btn-secondary" onClick={() => setView("hero")}>← Retour</button>
-            <button className="btn-primary" onClick={handleSubmit}>Lancer une nouvelle analyse →</button>
+            <button className="btn-secondary" onClick={() => setView("hero")}>{t.back}</button>
+            <button className="btn-primary" onClick={handleSubmit}>{t.launchAnalysis}</button>
           </div>
         </section>
       )}
@@ -1059,65 +1396,159 @@ export default function App() {
           <div className="dashboard-shell">
             <div className="dashboard-hero">
               <div>
-                <div className="section-label" style={{ marginBottom: "0.45rem" }}>Insights marché</div>
-                <h2>Tableau de bord du marché</h2>
-                <p className="section-desc" style={{ marginBottom: 0 }}>
-                  Statistiques en temps réel basées sur les offres indexées dans la base.
-                </p>
+                <div className="section-label" style={{ marginBottom: "0.45rem" }}>{t.marketInsights}</div>
+                <h2>{t.marketTitle}</h2>
+                <p className="section-desc" style={{ marginBottom: 0 }}>{t.marketDesc}</p>
               </div>
-              <button className="btn-secondary" onClick={() => loadMarketDashboard(true)}>Actualiser</button>
+              <button className="btn-secondary" onClick={() => loadMarketDashboard(true)}>{t.refresh}</button>
             </div>
 
             {marketLoading ? (
               <div className="dashboard-section">
                 <div className="loading-state" style={{ padding: "2.2rem 1rem" }}>
                   <div className="loader" />
-                  <div className="loading-text">Chargement des statistiques...</div>
+                  <div className="loading-text">{t.loadingStats}</div>
                 </div>
               </div>
             ) : marketError ? (
               <div className="dashboard-section" style={{ borderColor: "rgba(255,107,107,0.35)", background: "rgba(255,107,107,0.06)" }}>
                 <div style={{ color: "#ff8c8c", fontSize: "0.92rem" }}>⚠️ {marketError}</div>
                 <div style={{ marginTop: "0.85rem" }}>
-                  <button className="btn-secondary" onClick={() => loadMarketDashboard(true)}>Réessayer</button>
+                  <button className="btn-secondary" onClick={() => loadMarketDashboard(true)}>{t.retry}</button>
                 </div>
               </div>
             ) : marketStats ? (
               <>
                 <div className="dashboard-kpi-grid">
                   <div className="kpi-card">
-                    <div className="kpi-value">{marketStats.total_jobs?.toLocaleString("fr-FR") || "—"}</div>
-                    <div className="kpi-label">Offres totales</div>
+                    <div className="kpi-value">{marketStats.total_jobs?.toLocaleString(language === "en" ? "en-US" : "fr-FR") || "—"}</div>
+                    <div className="kpi-label">{t.totalJobs}</div>
                   </div>
                   <div className="kpi-card">
-                    <div className="kpi-value">{(marketStats.by_source?.length || 0).toLocaleString("fr-FR")}</div>
-                    <div className="kpi-label">Sources actives</div>
+                    <div className="kpi-value">{(marketStats.by_source?.length || 0).toLocaleString(language === "en" ? "en-US" : "fr-FR")}</div>
+                    <div className="kpi-label">{t.activeSources}</div>
                   </div>
                   <div className="kpi-card">
-                    <div className="kpi-value">{(marketStats.by_category?.length || 0).toLocaleString("fr-FR")}</div>
-                    <div className="kpi-label">Catégories</div>
+                    <div className="kpi-value">{(marketStats.by_category?.length || 0).toLocaleString(language === "en" ? "en-US" : "fr-FR")}</div>
+                    <div className="kpi-label">{t.categories}</div>
                   </div>
                   <div className="kpi-card">
                     <div className="kpi-value" style={{ fontSize: "1.15rem" }}>{marketStats.top_locations?.[0]?.location || "—"}</div>
-                    <div className="kpi-label">Top localisation</div>
+                    <div className="kpi-label">{t.topLocation}</div>
+                  </div>
+                </div>
+
+                <div className="chart-grid">
+                  <div className="dashboard-section chart-card">
+                    <div className="dashboard-section-head">
+                      <div className="dashboard-title">{t.topJobs}</div>
+                    </div>
+                    {topTitlesChartData.length > 0 ? (
+                      <div className="chart-wrap">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={topTitlesChartData} margin={{ top: 8, right: 10, left: 0, bottom: 50 }}>
+                            <CartesianGrid stroke="rgba(122,122,154,0.18)" vertical={false} />
+                            <XAxis dataKey="name" tick={{ fill: chartTextColor, fontSize: 11 }} angle={-25} textAnchor="end" interval={0} height={70} />
+                            <YAxis tick={{ fill: chartTextColor, fontSize: 11 }} allowDecimals={false} />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#6c63ff" radius={[8, 8, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : <ChartEmpty label={t.noData} />}
+                  </div>
+
+                  <div className="dashboard-section chart-card">
+                    <div className="dashboard-section-head">
+                      <div className="dashboard-title">{t.demandedSkills}</div>
+                    </div>
+                    {skillsChartData.length > 0 ? (
+                      <div className="chart-wrap">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={skillsChartData} layout="vertical" margin={{ top: 8, right: 18, left: 30, bottom: 8 }}>
+                            <CartesianGrid stroke="rgba(122,122,154,0.18)" horizontal={false} />
+                            <XAxis type="number" tick={{ fill: chartTextColor, fontSize: 11 }} allowDecimals={false} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: chartTextColor, fontSize: 11 }} width={90} />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#00d4aa" radius={[0, 8, 8, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : <ChartEmpty label={t.noData} />}
+                  </div>
+
+                  <div className="dashboard-section chart-card">
+                    <div className="dashboard-section-head">
+                      <div className="dashboard-title">{t.sourceBreakdown}</div>
+                    </div>
+                    {sourceChartData.length > 0 ? (
+                      <div className="chart-wrap">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={sourceChartData} dataKey="count" nameKey="name" innerRadius={55} outerRadius={92} paddingAngle={4}>
+                              {sourceChartData.map((entry, index) => <Cell key={entry.name} fill={CHART_COLORS[index % CHART_COLORS.length]} />)}
+                            </Pie>
+                            <Tooltip />
+                            <Legend wrapperStyle={{ color: chartTextColor, fontSize: 12 }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : <ChartEmpty label={t.noData} />}
+                  </div>
+
+                  <div className="dashboard-section chart-card">
+                    <div className="dashboard-section-head">
+                      <div className="dashboard-title">{t.categoryBreakdown}</div>
+                    </div>
+                    {categoryChartData.length > 0 ? (
+                      <div className="chart-wrap">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={categoryChartData} dataKey="count" nameKey="name" outerRadius={92} label>
+                              {categoryChartData.map((entry, index) => <Cell key={entry.name} fill={CHART_COLORS[index % CHART_COLORS.length]} />)}
+                            </Pie>
+                            <Tooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : <ChartEmpty label={t.noData} />}
+                  </div>
+
+                  <div className="dashboard-section chart-card">
+                    <div className="dashboard-section-head">
+                      <div className="dashboard-title">{t.recentActivity}</div>
+                    </div>
+                    {timelineChartData.length > 0 ? (
+                      <div className="chart-wrap">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={timelineChartData} margin={{ top: 12, right: 18, left: 0, bottom: 8 }}>
+                            <CartesianGrid stroke="rgba(122,122,154,0.18)" vertical={false} />
+                            <XAxis dataKey="label" tick={{ fill: chartTextColor, fontSize: 11 }} />
+                            <YAxis tick={{ fill: chartTextColor, fontSize: 11 }} allowDecimals={false} />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="count" stroke="#ff6b6b" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : <ChartEmpty label={t.noData} />}
                   </div>
                 </div>
 
                 <div className="dashboard-grid-2">
                   <div className="dashboard-section">
                     <div className="dashboard-section-head">
-                      <div className="dashboard-title">Métiers les plus fréquents</div>
+                      <div className="dashboard-title">{t.frequentJobs}</div>
                     </div>
                     <div className="dashboard-list">
                       {(marketStats.top_titles || []).slice(0, 8).map((row, i) => (
                         <div key={i} className="dashboard-list-item">
-                          <div className="dashboard-item-main">{row.title || "Non précisé"}</div>
-                          <div className="dashboard-count-pill">{(row.count || 0).toLocaleString("fr-FR")} offres</div>
+                          <div className="dashboard-item-main">{row.title || t.notSpecified}</div>
+                          <div className="dashboard-count-pill">{(row.count || 0).toLocaleString(language === "en" ? "en-US" : "fr-FR")} {t.offers}</div>
                         </div>
                       ))}
                       {(!marketStats.top_titles || marketStats.top_titles.length === 0) && (
                         <div className="dashboard-list-item">
-                          <div className="timeline-cell">Aucune donnée disponible.</div>
+                          <div className="timeline-cell">{t.noDataSentence}</div>
                         </div>
                       )}
                     </div>
@@ -1125,54 +1556,34 @@ export default function App() {
 
                   <div className="dashboard-section">
                     <div className="dashboard-section-head">
-                      <div className="dashboard-title">Compétences les plus demandées</div>
+                      <div className="dashboard-title">{t.mostDemandedSkills}</div>
                     </div>
                     <div className="dashboard-chip-cloud">
                       {marketSkills.map((s, i) => (
-                        <span key={i} className="dashboard-chip">{s.skill} ({(s.count || 0).toLocaleString("fr-FR")})</span>
+                        <span key={i} className="dashboard-chip">{s.skill} ({(s.count || 0).toLocaleString(language === "en" ? "en-US" : "fr-FR")})</span>
                       ))}
-                      {marketSkills.length === 0 && <span className="dashboard-chip">Aucune donnée disponible</span>}
+                      {marketSkills.length === 0 && <span className="dashboard-chip">{t.noData}</span>}
                     </div>
                   </div>
                 </div>
 
                 <div className="dashboard-section">
                   <div className="dashboard-section-head">
-                    <div className="dashboard-title">Activité récente</div>
+                    <div className="dashboard-title">{t.recentActivity}</div>
                   </div>
                   <div className="timeline-table">
-                    {marketTimeline.map((t, i) => (
+                    {marketTimeline.map((item, i) => (
                       <div key={i} className="timeline-row">
-                        <div className="timeline-cell"><strong>{t.date_posted || "N/A"}</strong></div>
-                        <div className="timeline-cell">{t.source || "N/A"}</div>
-                        <div className="dashboard-count-pill">{(t.count || 0).toLocaleString("fr-FR")} offres</div>
+                        <div className="timeline-cell"><strong>{formatRelativeActivityDate(item.date_posted, t)}</strong></div>
+                        <div className="timeline-cell">{item.source || "N/A"}</div>
+                        <div className="dashboard-count-pill">{(item.count || 0).toLocaleString(language === "en" ? "en-US" : "fr-FR")} {t.offers}</div>
                       </div>
                     ))}
                     {marketTimeline.length === 0 && (
                       <div className="timeline-row">
-                        <div className="timeline-cell"><strong>Aucune activité</strong></div>
+                        <div className="timeline-cell"><strong>{t.noActivity}</strong></div>
                         <div className="timeline-cell">—</div>
                         <div className="dashboard-count-pill">0</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="dashboard-section">
-                  <div className="dashboard-section-head">
-                    <div className="dashboard-title">Couches Medallion</div>
-                  </div>
-                  <div className="layer-grid">
-                    {Object.entries(marketLayers).map(([layer, count]) => (
-                      <div key={layer} className="layer-card">
-                        <div className="layer-name">{layer}</div>
-                        <div className="layer-value">{typeof count === "number" ? count.toLocaleString("fr-FR") : String(count)}</div>
-                      </div>
-                    ))}
-                    {Object.keys(marketLayers).length === 0 && (
-                      <div className="layer-card">
-                        <div className="layer-name">Aucune couche</div>
-                        <div className="layer-value">—</div>
                       </div>
                     )}
                   </div>
@@ -1184,27 +1595,34 @@ export default function App() {
       )}
 
       {/* ── LOADING ── */}
-      {view === "loading" && <LoadingState step={loadStep} />}
+      {view === "loading" && <LoadingState step={loadStep} t={t} />}
 
       {/* ── RESULTS ── */}
       {view === "results" && (
         <section>
-          <div className="section-label">Étape 2 / 2 — Résultats</div>
+          <div className="section-label">{t.resultsStep}</div>
           <div className="results-header">
             <div>
-              <h2>Vos opportunités</h2>
+              <h2>{t.opportunities}</h2>
+              <div className="filters" style={{ margin: "0 0 0.9rem" }}>
+                {matchLimitOptions.map(limit => (
+                  <button key={limit} className={`filter-btn ${matchLimit === limit ? "active" : ""}`} onClick={() => setMatchLimit(limit)}>
+                    Top {limit}
+                  </button>
+                ))}
+              </div>
               <div className="results-count">
-                <strong>{filteredJobs.length}</strong> offres correspondant à votre profil
+                {t.matchingOffers(filteredJobs.length)}
               </div>
             </div>
-            <button className="btn-secondary" onClick={() => { setView("form"); setError(null); }}>← Revenir au profil</button>
+            <button className="btn-secondary" onClick={() => { setView("form"); setError(null); }}>{t.backToProfile}</button>
           </div>
 
           {categories.length > 1 && (
             <div className="filters">
               {categories.map(cat => (
                 <button key={cat} className={`filter-btn ${activeFilter === cat ? "active" : ""}`} onClick={() => setActiveFilter(cat)}>
-                  {cat} <span style={{ marginLeft: "0.3rem", opacity: 0.6 }}>({cat === "Tous" ? jobs.length : jobs.filter(j => j.category === cat).length})</span>
+                  {cat} <span style={{ marginLeft: "0.3rem", opacity: 0.6 }}>({cat === t.all ? titleFilteredJobs.length : titleFilteredJobs.filter(j => j.category === cat).length})</span>
                 </button>
               ))}
             </div>
@@ -1213,12 +1631,12 @@ export default function App() {
           {filteredJobs.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🔍</div>
-              <p>Aucune offre trouvée pour ce profil.</p>
-              <p style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}>Essayez d'élargir vos critères.</p>
+              <p>{t.noJobs}</p>
+              <p style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}>{t.broadenCriteria}</p>
             </div>
           ) : (
             <div className="jobs-grid">
-              {filteredJobs.map((job, i) => <JobCard key={job.id || i} job={job} profile={profile} index={i} />)}
+              {filteredJobs.map((job, i) => <JobCard key={job.id || i} job={job} profile={profile} index={i} t={t} language={language} />)}
             </div>
           )}
         </section>

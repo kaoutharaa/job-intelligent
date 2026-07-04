@@ -1,590 +1,234 @@
-<!-- # Job Intelligent — Daily Job Scraping Pipeline
+# Job Intelligent
 
-Automated data pipeline that scrapes tech job listings from **LinkedIn** and **Indeed Morocco** daily, stores them in **PostgreSQL**, and orchestrates everything with **Apache Airflow** running inside **Docker**.
+A full-stack job-market intelligence platform for **data & AI roles in Morocco**. It scrapes job listings from **LinkedIn** and the **France-Travail API**, refines them through a **Medallion (Bronze → Silver → Gold) ETL pipeline** in PostgreSQL, and serves them through a **FastAPI** backend and a **React** frontend featuring CV-based job recommendations.
 
----
-
-## Project Structure
-
-```
-job_intelligent/
-├── dags/
-│   └── job_scraping_dag.py       # Airflow DAG — daily pipeline
-├── scrapers/
-│   ├── scrapping_linkedin.py     # LinkedIn scraper
-│   ├── scrapping_indeed.py       # Indeed scraper
-│   └── db.py                     # PostgreSQL push helper
-├── sql/
-│   └── init.sql                  # Auto-creates the jobs table
-├── docker-compose.yml            # All services
-├── Dockerfile.airflow            # Custom Airflow image
-├── requirements.txt              # Python dependencies
-└── .env                          # Secret keys (generate before running)
-```
-
----
-
-## Prerequisites
-
-Install these before anything else:
-
-| Tool | Download |
-|------|----------|
-| Docker Desktop | https://www.docker.com/products/docker-desktop |
-| Git | https://git-scm.com |
-| DBeaver (optional, to browse DB) | https://dbeaver.io |
-
-Verify Docker is running:
-```bash
-docker --version
-docker compose version
-```
-
----
-
-## Setup — Step by Step
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/kaoutharaa/job-intelligent.git
-cd job-intelligent
-```
-
-### 2. Generate your secret keys
-
-Run this once in Python (any Python environment):
-
-```python
-from cryptography.fernet import Fernet
-print(Fernet.generate_key().decode())
-```
-
-Create `.env` file and replace the placeholder values:
-
-```env
-FERNET_KEY=paste_your_generated_key_here
-SECRET_KEY=any_random_string_you_choose
-```
-
-> ⚠️ Never commit `.env` to Git. It is already in `.gitignore`.
-
-### 3. Build and initialize
-
-```bash
-# First time only — builds the Docker image and initializes the Airflow database
-docker compose up airflow-init
-```
-
-Wait until you see:
-```
-User "admin" created with role "Admin"
-job_airflow_init exited with code 0
-```
-
-### 4. Start all services
-
-```bash
-docker compose up -d
-```
-
-### 5. Verify everything is running
-
-```bash
-docker compose ps
-```
-
-You should see 4 containers with status `running`:
-
-```
-job_postgres            running   → port 5432
-job_selenium            running   → port 4444
-job_airflow_webserver   running   → port 8080
-job_airflow_scheduler   running
-```
-
----
-
-## Using the Pipeline
-
-### Airflow UI
-Open **http://localhost:8080** in your browser.
-
-- Login: `admin` / `admin`
-- Find the DAG `daily_job_scraping`
-- Toggle it **ON**
-- Click **▶ Trigger DAG** to run it manually
-
-The pipeline runs automatically every day at **12:00 UTC**.
-
-### Pipeline Flow
-
-```
-extract_linkedin ──┐
-                   ├──► push_to_db ──► PostgreSQL
-extract_indeed   ──┘
-```
-
-`extract_linkedin` and `extract_indeed` run **in parallel**, then `push_to_db` merges and inserts all results.
-
-### Watch Chrome scraping live
-Open **http://localhost:7900** to see the Selenium browser in action.
-
----
-
-## Checking the Database
-
-### Option A — Terminal (quick)
-
-```bash
-docker exec -it job_postgres psql -U admin -d job_intelligent
-```
-
-Then run SQL queries:
-
-```sql
--- Total jobs
-SELECT COUNT(*) FROM jobs;
-
--- By source
-SELECT source, COUNT(*) FROM jobs GROUP BY source;
-
--- By keyword
-SELECT search_keyword, COUNT(*) FROM jobs GROUP BY search_keyword ORDER BY COUNT(*) DESC;
-
--- Sample rows
-SELECT title, company, location, source FROM jobs LIMIT 10;
-
--- Exit
-\q
-```
-
-### Option B — DBeaver (visual)
-
-Create a new PostgreSQL connection with:
-
-```
-Host     : localhost
-Port     : 5432
-Database : job_intelligent
-Username : admin
-Password : password
-```
-
----
-
-## Useful Commands
-
-```bash
-# Start everything
-docker compose up -d
-
-# Stop everything (keeps data)
-docker compose down
-
-# Stop and DELETE all data (full reset)
-docker compose down -v
-
-# Rebuild the Airflow image (after changing requirements.txt)
-docker compose build --no-cache
-
-# View live logs
-docker compose logs -f airflow-scheduler
-
-# View logs for a specific container
-docker compose logs -f job_postgres
-```
-
----
-
-## Keywords Scraped
-
-The scrapers currently target **data roles in Morocco**:
-
-- Data Scientist, Data Engineer, Data Analyst
-- Machine Learning Engineer, MLOps Engineer
-- Business Intelligence, NLP Engineer, AI Engineer
-- Data Architect, Big Data Engineer
-
-> To add more keywords, edit the `KEYWORDS` list in `scrapers/scrapping_linkedin.py` and `scrapers/scrapping_indeed.py`, then restart the containers.
-
----
-
-## Database Schema
-
-```sql
-CREATE TABLE jobs (
-    id             SERIAL PRIMARY KEY,
-    title          VARCHAR(255),
-    company        VARCHAR(255),
-    location       VARCHAR(255),
-    date_posted    VARCHAR(100),
-    job_url        TEXT UNIQUE,      -- deduplication key
-    search_keyword VARCHAR(100),
-    scraped_at     TIMESTAMP,
-    salary         VARCHAR(255),     -- Indeed only
-    contract_type  VARCHAR(100),     -- Indeed only
-    source         VARCHAR(50)       -- 'linkedin' or 'indeed'
-);
-```
-
----
-
-## Troubleshooting
-
-**`airflow-init` exits with code 1**
-→ Run `docker compose down -v` then `docker compose up airflow-init` again to reset.
-
-**`push_to_db` fails**
-→ Click the failed task in Airflow UI → Logs tab → check the error message.
-→ Make sure `job_postgres` container is running: `docker compose ps`.
-
-**Scrapers return 0 jobs**
-→ LinkedIn and Indeed may have changed their HTML structure. Check the logs for the specific keyword that failed.
-
-**Docker can't connect to the internet during build**
-→ Open Docker Desktop → Settings → Docker Engine → add `"dns": ["8.8.8.8", "8.8.4.4"]` → Apply & Restart.
-
----
-
-## Tech Stack
-
-| Layer | Tool |
-|-------|------|
-| Orchestration | Apache Airflow 2.10.4 |
-| Scraping | Selenium + BeautifulSoup4 |
-| Browser | Selenium Grid (Chrome) |
-| Database | PostgreSQL 15 |
-| Containerization | Docker + Docker Compose |
-| Language | Python 3.11 | -->
-
-
-
-
-
-
-# Job Intelligent — Daily Job Scraping Pipeline
-
-Automated data pipeline that scrapes tech job listings from **LinkedIn** and **France-Travail** daily, cleans and standardizes them via an ETL pipeline, stores them in **Supabase** (cloud PostgreSQL), and orchestrates everything with **Apache Airflow** running inside **Docker**.
-
----
-
-## Project Structure
-
-```
-job_intelligent/
-├── dags/
-│   └── job_scraping_dag.py        # Airflow DAG — daily pipeline
-├── scrapers/
-│   ├── scrapping_linkedin.py      # LinkedIn scraper
-│   ├── scrapping_france_travail.py # France-Travail scraper
-│   ├── etl_pipeline.py            # ETL — clean + push to jobs_clean
-│   ├── db.py                      # Supabase REST push helper
-│   └── data/                      # Local outputs (CSV, JSON, SQLite)
-│       ├── jobradar_clean.csv     # Power BI ready
-│       ├── jobradar_clean.json    # NLP ready
-│       └── jobradar.db            # SQLite backup
-├── sql/
-│   └── init.sql                   # Airflow PostgreSQL init
-├── docker-compose.yml             # All services
-├── Dockerfile.airflow             # Custom Airflow image
-├── requirements.txt               # Python dependencies
-└── .env                           # Secret keys (never commit)
-```
+Everything is orchestrated by **Apache Airflow** and runs in **Docker Compose**.
 
 ---
 
 ## Architecture
 
 ```
-LinkedIn scraper ──┐
-                   ├──► push_to_db (Supabase: jobs) ──► ETL pipeline ──► Supabase: jobs_clean
-France-Travail  ──┘                                                   ──► CSV / JSON / SQLite
+                     ┌─────────────────────── Airflow DAG: daily_job_scraping ───────────────────────┐
+                     │                                                                                │
+ LinkedIn (Selenium) │  extract_linkedin ─► push_linkedin_bronze ─► bronze_to_silver_linkedin ──┐    │
+                     │                                                                            ├─► silver_to_gold
+ France-Travail (API)│  extract_ft       ─► push_ft_bronze       ─► bronze_to_silver_ft       ──┘    │
+                     └────────────────────────────────────────────────────────────────────────────────┘
+                                                          │
+                                     PostgreSQL (Medallion layers)
+                                     bronze_* → silver_* → gold_jobs
+                                                          │
+                                        FastAPI  ◄────────┘  ──►  React SPA (Vite)
+                                     (jobs, stats, auth, /recommend)
 ```
 
-- `jobs` table — raw scraped data, append-only, managed by Airflow
-- `jobs_clean` table — deduplicated, standardized, enriched with skills & categories
+**Medallion layers**
+- **Bronze** — raw scraped records, one table per source, idempotent by `job_url`.
+- **Silver** — cleaned & standardized (titles, locations, dates, extracted skills, categories), one table per source.
+- **Gold** — `gold_jobs`: unified, globally deduplicated, fully indexed for search, stats, and NLP.
+
+---
+
+## Tech stack
+
+| Layer | Tool |
+|-------|------|
+| Orchestration | Apache Airflow (LocalExecutor) |
+| Scraping | Selenium Grid (Chrome) + BeautifulSoup4 |
+| Ingestion | France-Travail REST API |
+| Storage | PostgreSQL 15 (Medallion) |
+| ETL | Python (pandas) |
+| API | FastAPI + SQLAlchemy |
+| Recommendations | scikit-learn (TF-IDF + cosine similarity), PyPDF2 (CV parsing) |
+| Auth | JWT (PyJWT) + PBKDF2-HMAC password hashing |
+| Frontend | React + Vite |
+| Containerization | Docker + Docker Compose |
+| Language | Python 3.11 |
+
+---
+
+## Repository layout
+
+```
+job-intelligent/
+├── dags/
+│   └── job_scraping_dag.py          # Airflow DAG (daily @ 12:00 UTC)
+├── scrapers/
+│   ├── scrapping_linkedin.py        # LinkedIn scraper (Selenium)
+│   ├── scrapping_france_travail.py  # France-Travail API fetcher
+│   ├── db.py                        # Bronze-layer insert helpers
+│   └── eda_pipeline.py              # Bronze → Silver → Gold ETL
+├── api/
+│   └── api.py                       # FastAPI app (jobs, stats, auth, recommend)
+├── frontend/                        # React + Vite SPA
+├── sql/
+│   └── init.sql                     # Bootstraps all Postgres tables
+├── tests/
+│   └── test_auth.py                 # Password hashing + JWT unit tests
+├── docker-compose.yaml
+├── Dockerfile.api
+├── Dockerfile.airflow
+├── requirements.txt
+└── .env                             # Secrets (never committed)
+```
 
 ---
 
 ## Prerequisites
 
-| Tool | Download |
-|------|----------|
+| Tool | Link |
+|------|------|
 | Docker Desktop | https://www.docker.com/products/docker-desktop |
-| Git | https://git-scm.com |
-| Python 3.11+ | https://www.python.org |
-
-Verify Docker is running:
-```bash
-docker --version
-docker compose version
-```
+| Node.js 18+ (for the frontend) | https://nodejs.org |
+| Python 3.11+ (optional, for local API/tests) | https://www.python.org |
 
 ---
 
-## Setup — Step by Step
+## Setup
 
-### 1. Clone the repository
+### 1. Clone
 
 ```bash
 git clone https://github.com/kaoutharaa/job-intelligent.git
 cd job-intelligent
 ```
 
-### 2. Configure environment variables
-
-Create a `.env` file at the project root:
+### 2. Create your `.env`
 
 ```env
 # Airflow
-FERNET_KEY=paste_your_generated_fernet_key_here
-SECRET_KEY=any_random_string_you_choose
+FERNET_KEY=your_generated_fernet_key
+SECRET_KEY=any_random_string
 
-# France-Travail API
-FT_CLIENT_ID_api=your_france_travail_client_id
-FT_CLIENT_SECRET_api=your_france_travail_client_secret
+# France-Travail API credentials
+FT_CLIENT_ID_api=your_client_id
+FT_CLIENT_SECRET_api=your_client_secret
 
-# Supabase
-SUPABASE_API_URL=https://your-project.supabase.co
-SUPABASE_API_KEY=your_supabase_anon_key
+# API auth
+JWT_SECRET=your_stable_random_secret     # keep constant so sessions survive restarts
+# CORS_ORIGINS=http://localhost:5173      # optional; defaults to local Vite/CRA ports
 ```
 
-Generate your Fernet key:
-```python
-from cryptography.fernet import Fernet
-print(Fernet.generate_key().decode())
+Generate a Fernet key:
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
-> ⚠️ Never commit `.env` to Git. It is already in `.gitignore`.
-
-### 3. Create Supabase tables
-
-Run these once in your **Supabase SQL Editor**:
-
-```sql
--- Raw jobs table (managed by Airflow)
-CREATE TABLE IF NOT EXISTS jobs (
-    id             BIGSERIAL PRIMARY KEY,
-    title          TEXT,
-    company        TEXT,
-    location       TEXT,
-    date_posted    TEXT,
-    job_url        TEXT UNIQUE,
-    search_keyword TEXT,
-    scraped_at     TEXT,
-    salary         TEXT,
-    contract_type  TEXT,
-    source         TEXT
-);
-
--- Clean jobs table (managed by ETL pipeline)
-CREATE TABLE IF NOT EXISTS jobs_clean (
-    id             BIGSERIAL PRIMARY KEY,
-    title          TEXT,
-    title_raw      TEXT,
-    company        TEXT,
-    location       TEXT,
-    date_posted    TEXT,
-    category       TEXT,
-    skills         TEXT,
-    job_url        TEXT,
-    search_keyword TEXT,
-    scraped_at     TEXT,
-    source         TEXT,
-    created_at     TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Permissions
-GRANT ALL ON TABLE jobs TO anon;
-GRANT ALL ON TABLE jobs_clean TO anon;
-GRANT USAGE, SELECT ON SEQUENCE jobs_clean_id_seq TO anon;
-
--- Indexes for Power BI and recommendation engine
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_category ON jobs_clean(category);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_source   ON jobs_clean(source);
-CREATE INDEX IF NOT EXISTS idx_jobs_clean_date     ON jobs_clean(date_posted);
+Generate a JWT secret:
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-### 4. Build and initialize Airflow
+> `.env` is git-ignored — never commit it.
+
+### 3. Initialize Airflow (first run only)
 
 ```bash
-# First time only
 docker compose up airflow-init
 ```
 
-Wait until you see:
-```
-User "admin" created with role "Admin"
-job_airflow_init exited with code 0
-```
+If it exits with code 1, run `docker compose down -v` and retry.
 
-### 5. Start all services
+### 4. Start the stack
 
 ```bash
 docker compose up -d
 ```
 
-### 6. Verify everything is running
+This starts PostgreSQL, Selenium Chrome, the FastAPI service, and the Airflow webserver + scheduler.
+
+### 5. Run the frontend
 
 ```bash
-docker compose ps
-```
-
-Expected output:
-```
-job_postgres            running   → port 5432
-job_selenium            running   → port 4444
-job_airflow_webserver   running   → port 8080
-job_airflow_scheduler   running
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
 
-## Using the Pipeline
+## Service endpoints
 
-### Airflow UI
-Open **http://localhost:8080** — login: `admin` / `admin`
+| Service | URL | Notes |
+|---------|-----|-------|
+| API | http://localhost:8000 | `GET /health`, docs at `/docs` |
+| API docs (Swagger) | http://localhost:8000/docs | |
+| Frontend (Vite dev) | http://localhost:5173 | |
+| Airflow UI | http://localhost:8080 | login `admin` / `admin`, DAG `daily_job_scraping` |
+| Selenium noVNC | http://localhost:7900 | watch the browser scrape live |
 
-- Find the DAG `daily_job_scraping`
-- Toggle it **ON**
-- Click **▶ Trigger DAG** to run manually
-
-The pipeline runs automatically every day at **12:00 UTC**.
-
-### Pipeline Flow
-
-```
-extract_linkedin       ─┐
-                        ├─► push_to_db ─► run_etl
-extract_france_travail ─┘
-```
-
-| Task | Description |
-|------|-------------|
-| `extract_linkedin` | Scrapes LinkedIn via Selenium (timeout: 60 min) |
-| `extract_france_travail` | Calls France-Travail API (timeout: 10 min) |
-| `push_to_db` | Pushes raw jobs to Supabase `jobs` table |
-| `run_etl` | Cleans, deduplicates, enriches → `jobs_clean` |
-
-### Watch Chrome scraping live
-Open **http://localhost:7900** to see the Selenium browser in action.
+> **Compose service names** (`api`, `postgres`, `airflow-scheduler`) are used for `docker compose logs`; **container names** (`job_api`, `job_postgres`, `job_airflow_scheduler`) are used for `docker exec`.
 
 ---
 
-## ETL Pipeline
+## API overview
 
-The ETL can also be run independently outside Airflow:
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `GET` | `/health` | DB connectivity check |
+| `GET` | `/jobs` | List/filter gold jobs (source, category, location, title, pagination) |
+| `GET` | `/jobs/search/{keyword}` | Full-text search (Postgres `tsvector`) |
+| `GET` | `/stats`, `/stats/skills`, `/stats/timeline` | Aggregates for dashboards |
+| `GET` | `/layers` | Row counts per Medallion layer |
+| `POST` | `/recommend` | TF-IDF job matching from a title and/or uploaded CV (PDF) |
+| `POST` | `/register`, `/login` | Return a JWT `access_token` + public user fields |
+| `GET` | `/analysis/me` | Caller's most recent saved analysis (auth required) |
+
+**Auth model:** `/register` and `/login` issue a JWT. Protected routes derive the user id from the bearer token — never from client input. `/recommend` accepts an optional token and only saves history when authenticated.
+
+---
+
+## ETL pipeline
+
+Run the full Medallion ETL outside Airflow:
 
 ```bash
-cd scrapers
-python etl_pipeline.py            # one-time run
-python etl_pipeline.py --schedule # runs daily at 12:30 UTC
+python scrapers/eda_pipeline.py
 ```
 
-### What the ETL does
-
-- Reads all jobs from Supabase `jobs` table
-- Standardizes job titles (e.g. "data eng." → "Data Engineer")
-- Extracts skills from title/company (Python, SQL, Spark, etc.)
-- Categorizes jobs (Data & AI, DevOps & Cloud, Software Dev, etc.)
-- Deduplicates by title + company + location
-- Pushes clean data to Supabase `jobs_clean`
-- Exports CSV, JSON, and SQLite to `scrapers/data/`
+- **Bronze → Silver:** cleans text, standardizes titles, normalizes locations/dates, extracts skills, categorizes jobs (rebuilds each silver table per run).
+- **Silver → Gold:** merges both sources, deduplicates globally by `job_url`, rebuilds `gold_jobs`, and exports `scrapers/data/gold_jobs.csv` and `.json`.
 
 ---
 
-## Checking the Data
-
-### Supabase dashboard
-Go to **https://supabase.com/dashboard/project/your-project-id** → Table Editor
-
-### Local files (after ETL runs)
-```
-scrapers/data/jobradar_clean.csv   → import into Power BI
-scrapers/data/jobradar_clean.json  → use for NLP / recommendation engine
-scrapers/data/jobradar.db          → SQLite backup
-```
-
-### Terminal (quick stats)
-```bash
-docker exec -it job_postgres psql -U admin -d job_intelligent
-```
-
----
-
-## Useful Commands
+## Tests
 
 ```bash
-# Start everything
-docker compose up -d
-
-# Stop everything (keeps data)
-docker compose down
-
-# Stop and DELETE all data (full reset)
-docker compose down -v
-
-# Rebuild the Airflow image
-docker compose build --no-cache
-
-# View live logs
-docker compose logs -f airflow-scheduler
-
-# View ETL logs
-docker compose logs -f job_airflow_scheduler | grep ETL
+python -m pytest tests/ -q
 ```
+
+`tests/test_auth.py` covers password hashing and JWT helpers (no database required).
 
 ---
 
-## Keywords Scraped
+## Useful commands
 
-Currently targeting **data roles in Morocco**:
+```bash
+docker compose up -d                       # start everything
+docker compose down                        # stop (keeps data)
+docker compose down -v                     # stop and wipe the DB volume
+docker compose build api                   # rebuild the API image after code/dep changes
+docker compose logs -f airflow-scheduler   # follow scheduler logs
+docker exec -it job_postgres psql -U admin -d job_intelligent   # DB shell
+```
 
-- Data Scientist, Data Engineer, Data Analyst
-- Machine Learning Engineer, MLOps Engineer
-- Business Intelligence, NLP Engineer, AI Engineer
-- Data Architect, Big Data Engineer
-
-> To add keywords, edit the `KEYWORDS` list in `scrapping_linkedin.py` and `scrapping_france_travail.py`, then restart the containers.
+> The API image bakes in `api/api.py`, so after backend changes run `docker compose build api && docker compose up -d api`. DAG and scraper files are bind-mounted and update live.
 
 ---
 
 ## Troubleshooting
 
-**`airflow-init` exits with code 1**
-→ Run `docker compose down -v` then `docker compose up airflow-init` again.
+**`airflow-init` exits with code 1** → `docker compose down -v`, then `docker compose up airflow-init` again.
 
-**`push_to_db` fails with SUPABASE_API_KEY missing**
-→ Make sure `SUPABASE_API_KEY` is set in `.env` and containers were restarted after adding it.
+**Sessions reset on every API restart** → set a stable `JWT_SECRET` in `.env`; without it the API uses a random per-restart secret.
 
-**ETL returns 0 jobs**
-→ Check that `jobs` table has data in Supabase dashboard first.
+**`/recommend` returns no matches** → confirm `gold_jobs` has data via `GET /layers`; run the ETL if the gold layer is empty.
 
-**Scrapers return 0 jobs**
-→ LinkedIn may have changed their HTML. Check the scheduler logs for details.
-
-**Docker can't connect to the internet during build**
-→ Docker Desktop → Settings → Docker Engine → add `"dns": ["8.8.8.8", "8.8.4.4"]` → Apply & Restart.
+**Scrapers return 0 jobs** → LinkedIn may have changed its HTML; check `docker compose logs -f airflow-scheduler`.
 
 ---
 
-## Tech Stack
+## Domain
 
-| Layer | Tool |
-|-------|------|
-| Orchestration | Apache Airflow 2.10.4 |
-| Scraping | Selenium + BeautifulSoup4 |
-| Browser automation | Selenium Grid (Chrome) |
-| Database (cloud) | Supabase (PostgreSQL) |
-| Database (local) | PostgreSQL 15 + SQLite |
-| ETL | Python (pandas, requests) |
-| Containerization | Docker + Docker Compose |
-| Language | Python 3.11 |
-
----
-
-## Team
-
-Shared Supabase project — both team members read/write the same `jobs` and `jobs_clean` tables.
-To add a new team member: **Supabase dashboard → Organization → Members → Invite**.
+The active target domain is **data / AI and adjacent tech roles, primarily in Morocco** (Data Scientist, Data Engineer, ML/MLOps Engineer, BI, NLP, AI Engineer, Data Architect, Big Data). Adjust the keyword lists in the scrapers to change coverage.

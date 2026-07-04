@@ -9,17 +9,27 @@ Run locally:
 Docker: already included in docker-compose.yml
 """
 
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Depends, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine, text
 from typing import Optional
+from datetime import datetime, timezone, timedelta
 import pandas as pd
 import os
+import io
+import json
+import hashlib
+import secrets
+import logging
+import threading
+import jwt
+import PyPDF2
+from pydantic import BaseModel, EmailStr
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from fastapi import File, Form, UploadFile
-import PyPDF2
-import io
+
+log = logging.getLogger("job_intelligent.api")
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
 
@@ -32,7 +42,31 @@ DB_URL = (
     f"{os.getenv('DB_NAME', 'job_intelligent')}"
 )
 
-engine = create_engine(DB_URL)
+engine = create_engine(DB_URL, pool_pre_ping=True)
+
+# ─── AUTH CONFIG ───────────────────────────────────────────────────────────────
+
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_HOURS = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    # Fall back to an ephemeral secret so local dev still works, but warn loudly:
+    # tokens are invalidated on every restart and this is NOT safe for production.
+    JWT_SECRET = secrets.token_hex(32)
+    log.warning(
+        "JWT_SECRET is not set — using a random ephemeral secret. "
+        "Set JWT_SECRET in the environment for stable, production-safe tokens."
+    )
+
+# Comma-separated list of allowed frontend origins.
+CORS_ORIGINS = [
+    o.strip()
+    for o in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173",
+    ).split(",")
+    if o.strip()
+]
 
 # ─── APP ───────────────────────────────────────────────────────────────────────
 
@@ -44,7 +78,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -62,6 +97,64 @@ def query_df(sql: str, params: dict = None) -> pd.DataFrame:
 
 def df_to_records(df: pd.DataFrame) -> list:
     return df.where(pd.notnull(df), None).to_dict(orient="records")
+
+# ─── SECURITY: PASSWORD HASHING ─────────────────────────────────────────────────
+
+def hash_password(password: str) -> str:
+    salt = secrets.token_hex(16)
+    pwd_hash = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), bytes.fromhex(salt), 100000)
+    return f"{salt}:{pwd_hash.hex()}"
+
+
+def verify_password(password: str, hashed: str) -> bool:
+    try:
+        salt, hash_hex = hashed.split(":")
+    except (ValueError, AttributeError):
+        return False
+    pwd_hash = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), bytes.fromhex(salt), 100000)
+    # Constant-time comparison to avoid timing attacks.
+    return secrets.compare_digest(pwd_hash.hex(), hash_hex)
+
+# ─── SECURITY: JWT TOKENS ───────────────────────────────────────────────────────
+
+def create_access_token(user_id: int) -> str:
+    now = datetime.now(timezone.utc)
+    payload = {
+        "sub": str(user_id),
+        "iat": now,
+        "exp": now + timedelta(hours=JWT_EXPIRE_HOURS),
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+
+def decode_access_token(token: str) -> int:
+    """Return the user id encoded in a valid token, or raise 401."""
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return int(payload["sub"])
+    except (jwt.PyJWTError, KeyError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid or expired token.")
+
+
+_bearer = HTTPBearer(auto_error=False)
+
+
+def get_current_user_id(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+) -> int:
+    """Require a valid bearer token; returns the authenticated user id."""
+    if creds is None:
+        raise HTTPException(status_code=401, detail="Authentication required.")
+    return decode_access_token(creds.credentials)
+
+
+def get_optional_user_id(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+) -> Optional[int]:
+    """Return the authenticated user id if a valid token is present, else None."""
+    if creds is None:
+        return None
+    return decode_access_token(creds.credentials)
 
 # =============================================================================
 # ENDPOINTS
@@ -119,6 +212,11 @@ def get_jobs(
 
     where = " AND ".join(conditions)
 
+    # Total matching rows (ignores pagination) so the frontend can page correctly.
+    total = query_df(
+        f"SELECT COUNT(*) AS n FROM gold_jobs WHERE {where}", params
+    )["n"].iloc[0]
+
     sql = f"""
         SELECT *
         FROM gold_jobs
@@ -131,10 +229,11 @@ def get_jobs(
 
     df = query_df(sql, params)
     return {
-        "total":  len(df),
-        "offset": offset,
-        "limit":  limit,
-        "jobs":   df_to_records(df),
+        "total":    int(total),
+        "returned": len(df),
+        "offset":   offset,
+        "limit":    limit,
+        "jobs":     df_to_records(df),
     }
 
 
@@ -277,30 +376,73 @@ def get_layer_stats():
 
 # ─── NLP ENDPOINTS ─────────────────────────────────────────────────────────────
 
+class _JobIndex:
+    """
+    Caches the fitted TF-IDF corpus over all gold_jobs so /recommend does not
+    refit the vectorizer on every request. Rebuilt only when the gold_jobs row
+    count changes (e.g. after the ETL replaces the table).
+    """
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._rowcount = None
+        self._df = None
+        self._matrix = None
+        self._vectorizer = None
+
+    def get(self):
+        with engine.connect() as conn:
+            rowcount = conn.execute(text("SELECT COUNT(*) FROM gold_jobs")).scalar()
+
+        with self._lock:
+            if self._rowcount == rowcount and self._df is not None:
+                return self._df, self._matrix, self._vectorizer
+
+            df = query_df("SELECT * FROM gold_jobs")
+            if df.empty:
+                self._rowcount = rowcount
+                self._df, self._matrix, self._vectorizer = df, None, None
+                return df, None, None
+
+            nlp_text = (
+                df["title"].fillna("") + " "
+                + df["skills"].fillna("") + " "
+                + df["category"].fillna("")
+            ).str.lower()
+
+            vectorizer = TfidfVectorizer()
+            matrix = vectorizer.fit_transform(nlp_text.tolist())
+
+            self._rowcount = rowcount
+            self._df, self._matrix, self._vectorizer = df, matrix, vectorizer
+            return df, matrix, vectorizer
+
+
+_job_index = _JobIndex()
+
+
 @app.post("/recommend", tags=["NLP"])
 async def recommend_jobs(
     limit: int = Query(10, le=50),
     title: str = Form(""),
     location: str = Form(""),
     cv: UploadFile = File(None),
-    user_id: Optional[int] = Form(None) # Nouveau paramètre
+    user_id: Optional[int] = Depends(get_optional_user_id),
 ):
     """
-    Recommend jobs using TF-IDF.
+    Recommend jobs using TF-IDF over a cached corpus.
     Extracts text directly from the uploaded CV for semantic matching.
+    If the caller is authenticated, the analysis is saved to their history.
     """
-    sql = "SELECT * FROM gold_jobs WHERE 1=1"
-    params = {}
-    if location:
-        sql += " AND LOWER(location) LIKE :location"
-        params["location"] = f"%{location.lower()}%"
-        
-    df_jobs = query_df(sql, params)
-    if df_jobs.empty:
+    title = title.strip()
+    location = location.strip()
+
+    df_all, matrix, vectorizer = _job_index.get()
+    if df_all is None or df_all.empty or vectorizer is None:
         return {"total_found": 0, "jobs": []}
 
     cv_text = ""
-    if cv and cv.filename.endswith('.pdf'):
+    if cv and cv.filename and cv.filename.lower().endswith(".pdf"):
         try:
             pdf_content = await cv.read()
             pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_content))
@@ -309,32 +451,36 @@ async def recommend_jobs(
                 if extracted:
                     cv_text += extracted + " "
         except Exception as e:
-            print(f"Error reading PDF: {e}")
+            log.warning(f"Failed to read uploaded CV PDF: {e}")
 
-    df_jobs['nlp_text'] = (
-        df_jobs['title'].fillna('') + " " + 
-        df_jobs['skills'].fillna('') + " " + 
-        df_jobs['category'].fillna('')
-    ).str.lower()
-    
     user_text = f"{title} {cv_text}".lower()
-    
-    vectorizer = TfidfVectorizer()
-    all_texts = df_jobs['nlp_text'].tolist() + [user_text]
-    tfidf_matrix = vectorizer.fit_transform(all_texts)
-    
-    user_vector = tfidf_matrix[-1]
-    job_vectors = tfidf_matrix[:-1]
-    similarities = cosine_similarity(user_vector, job_vectors)[0]
-    
-    df_jobs['score'] = (similarities * 100).round(1)
-    matched_jobs = df_jobs[df_jobs['score'] > 0].sort_values(by='score', ascending=False).head(limit)
-    matched_jobs = matched_jobs.drop(columns=['nlp_text'])
 
-    # Formatage des résultats en liste de dictionnaires
+    # Score the whole corpus against the user, then apply text filters in pandas.
+    user_vector = vectorizer.transform([user_text])
+    similarities = cosine_similarity(user_vector, matrix)[0]
+
+    df_jobs = df_all.copy()
+    df_jobs["score"] = (similarities * 100).round(1)
+
+    # Filter: every title term must appear in title or title_raw; location LIKE.
+    haystack = (
+        df_jobs["title"].fillna("") + " " + df_jobs.get("title_raw", "").fillna("")
+    ).str.lower()
+    for term in [t for t in title.lower().split() if t]:
+        df_jobs = df_jobs[haystack.loc[df_jobs.index].str.contains(term, regex=False)]
+    if location:
+        df_jobs = df_jobs[
+            df_jobs["location"].fillna("").str.lower().str.contains(location.lower(), regex=False)
+        ]
+
+    matched_jobs = (
+        df_jobs[df_jobs["score"] > 0]
+        .sort_values(by="score", ascending=False)
+        .head(limit)
+    )
     results_list = df_to_records(matched_jobs)
 
-    # ─── SAUVEGARDE EN BASE DE DONNÉES ───
+    # ─── Save to history (only for authenticated users) ───
     if user_id:
         try:
             with engine.begin() as conn:
@@ -346,11 +492,12 @@ async def recommend_jobs(
                     {
                         "user_id": user_id,
                         "profile_data": json.dumps({"titre": title, "ville": location}),
-                        "jobs_results": json.dumps(results_list)
-                    }
+                        # default=str handles non-JSON types like date_posted (datetime.date).
+                        "jobs_results": json.dumps(results_list, default=str),
+                    },
                 )
         except Exception as e:
-            print(f"Erreur lors de la sauvegarde de l'analyse : {e}")
+            log.error(f"Failed to save analysis for user {user_id}: {e}")
 
     return {
         "total_found": len(matched_jobs),
@@ -376,53 +523,49 @@ def get_standardized_titles():
     return {"titles": df_to_records(df)}
 
 
-import hashlib
-import secrets
-import json
-from pydantic import BaseModel
-
-# ─── SÉCURITÉ ET MODÈLES D'AUTH ────────────────────────────────────────────────
-def hash_password(password: str) -> str:
-    salt = secrets.token_hex(16)
-    # Utilisation de pbkdf2_hmac pour un hachage hautement sécurisé
-    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), bytes.fromhex(salt), 100000)
-    return f"{salt}:{pwd_hash.hex()}"
-
-def verify_password(password: str, hashed: str) -> bool:
-    salt, hash_hex = hashed.split(':')
-    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), bytes.fromhex(salt), 100000)
-    return pwd_hash.hex() == hash_hex
+# ─── AUTH MODELS ───────────────────────────────────────────────────────────────
 
 class RegisterRequest(BaseModel):
     firstName: str
     lastName: str
-    email: str
+    email: EmailStr
     password: str
 
 class LoginRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
+def _auth_response(user) -> dict:
+    """Build the standard auth payload: a bearer token plus public user fields."""
+    return {
+        "access_token": create_access_token(user.id),
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "firstName": user.first_name,
+            "lastName": user.last_name,
+            "email": user.email,
+        },
+    }
 
 # ─── AUTHENTIFICATION & UTILISATEURS ───────────────────────────────────────────
 
 @app.post("/register", tags=["Auth"])
 def register_user(req: RegisterRequest):
+    if len(req.password) < 8:
+        raise HTTPException(status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères.")
     hashed_pw = hash_password(req.password)
     try:
-        # engine.begin() s'assure que la transaction est bien sauvegardée (commit)
         with engine.begin() as conn:
-            # Vérifier si l'email existe déjà
             existing = conn.execute(
-                text("SELECT id FROM users WHERE email = :email"), 
-                {"email": req.email}
+                text("SELECT id FROM users WHERE email = :email"),
+                {"email": req.email},
             ).fetchone()
-            
+
             if existing:
                 raise HTTPException(status_code=400, detail="Cet email est déjà utilisé.")
 
-            # Insérer le nouvel utilisateur
             result = conn.execute(
                 text("""
                     INSERT INTO users (first_name, last_name, email, password_hash)
@@ -433,16 +576,17 @@ def register_user(req: RegisterRequest):
                     "first_name": req.firstName,
                     "last_name": req.lastName,
                     "email": req.email,
-                    "password_hash": hashed_pw
-                }
+                    "password_hash": hashed_pw,
+                },
             )
             user = result.fetchone()
+    except HTTPException:
+        raise
     except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
+        log.error(f"Registration DB error: {e}")
         raise HTTPException(status_code=500, detail="Erreur base de données.")
 
-    return {"user": {"id": user.id, "firstName": user.first_name, "lastName": user.last_name, "email": user.email}}
+    return _auth_response(user)
 
 
 @app.post("/login", tags=["Auth"])
@@ -450,23 +594,22 @@ def login_user(req: LoginRequest):
     with engine.connect() as conn:
         user = conn.execute(
             text("SELECT id, first_name, last_name, email, password_hash FROM users WHERE email = :email"),
-            {"email": req.email}
+            {"email": req.email},
         ).fetchone()
 
-    # Vérification du mot de passe
     if not user or not verify_password(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect.")
 
-    return {"user": {"id": user.id, "firstName": user.first_name, "lastName": user.last_name, "email": user.email}}
+    return _auth_response(user)
 
 
-@app.get("/analysis/{user_id}", tags=["Auth"])
-def get_user_analysis(user_id: int):
+@app.get("/analysis/me", tags=["Auth"])
+def get_my_analysis(user_id: int = Depends(get_current_user_id)):
+    """Return the caller's most recent saved analysis (derived from the token)."""
     with engine.connect() as conn:
-        # Récupère l'analyse la plus récente pour cet utilisateur
         analysis = conn.execute(
             text("SELECT profile_data, jobs_results FROM user_analyses WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 1"),
-            {"user_id": user_id}
+            {"user_id": user_id},
         ).fetchone()
 
     if not analysis:
@@ -474,5 +617,5 @@ def get_user_analysis(user_id: int):
 
     return {
         "profile": json.loads(analysis.profile_data) if isinstance(analysis.profile_data, str) else analysis.profile_data,
-        "jobs": json.loads(analysis.jobs_results) if isinstance(analysis.jobs_results, str) else analysis.jobs_results
+        "jobs": json.loads(analysis.jobs_results) if isinstance(analysis.jobs_results, str) else analysis.jobs_results,
     }

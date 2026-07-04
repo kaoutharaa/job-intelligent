@@ -102,6 +102,32 @@ CREATE TABLE IF NOT EXISTS gold_jobs (
     processed_at   TIMESTAMP DEFAULT NOW()
 );
 
+
+-- Table pour stocker les informations de connexion et le profil des utilisateurs
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table pour sauvegarder les résultats de l'algorithme NLP (Persistance)
+CREATE TABLE IF NOT EXISTS user_analyses (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    profile_data JSONB NOT NULL,    -- Stocke les critères de recherche (Titre, Ville) au format JSON
+    jobs_results JSONB NOT NULL,    -- Stocke le tableau complet des offres "matchées" au format JSON
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Si un utilisateur supprime son compte, on supprime aussi son historique
+    CONSTRAINT fk_user 
+        FOREIGN KEY (user_id) 
+        REFERENCES users (id) 
+        ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_gold_category  ON gold_jobs(category);
 CREATE INDEX IF NOT EXISTS idx_gold_source    ON gold_jobs(source);
 CREATE INDEX IF NOT EXISTS idx_gold_date      ON gold_jobs(date_posted);
@@ -109,3 +135,5 @@ CREATE INDEX IF NOT EXISTS idx_gold_location  ON gold_jobs(location);
 CREATE INDEX IF NOT EXISTS idx_gold_title     ON gold_jobs(title);
 CREATE INDEX IF NOT EXISTS idx_gold_keyword   ON gold_jobs(search_keyword);
 CREATE INDEX IF NOT EXISTS idx_gold_scraped   ON gold_jobs(scraped_at);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_analyses_user_id ON user_analyses(user_id);

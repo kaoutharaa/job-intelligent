@@ -75,6 +75,8 @@ services:
       DB_NAME: job_intelligent
       DB_USER: admin
       DB_PASS: password
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}
     ports:
       - "8000:8000"
     depends_on:

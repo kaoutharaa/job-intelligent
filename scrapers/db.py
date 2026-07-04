@@ -22,6 +22,9 @@ DB_URL = (
     f"{os.getenv('DB_NAME', 'job_intelligent')}"
 )
 
+# Reuse a single engine across calls instead of creating one per push.
+engine = create_engine(DB_URL, pool_pre_ping=True)
+
 BRONZE_COLUMNS = [
     "title",
     "company",
@@ -43,7 +46,6 @@ def _push_to_bronze(jobs: list[dict], table: str) -> None:
         log.warning(f"[DB] No jobs to push to {table}.")
         return
 
-    engine = create_engine(DB_URL)
     df = pd.DataFrame(jobs)
 
     for col in BRONZE_COLUMNS:
@@ -53,13 +55,14 @@ def _push_to_bronze(jobs: list[dict], table: str) -> None:
     df = df[BRONZE_COLUMNS]
     df = df[df["job_url"].str.strip() != ""]
 
-    inserted = 0
-    skipped  = 0
+    inserted = 0   # rows actually written
+    duplicate = 0  # rows skipped by ON CONFLICT (already present)
+    failed = 0     # rows that raised an error
 
     with engine.begin() as conn:
         for _, row in df.iterrows():
             try:
-                conn.execute(
+                result = conn.execute(
                     text(f"""
                         INSERT INTO {table}
                             (title, company, location, date_posted, job_url,
@@ -71,12 +74,19 @@ def _push_to_bronze(jobs: list[dict], table: str) -> None:
                     """),
                     row.to_dict()
                 )
-                inserted += 1
+                # rowcount is 1 when a row was inserted, 0 when the conflict skipped it.
+                if result.rowcount and result.rowcount > 0:
+                    inserted += 1
+                else:
+                    duplicate += 1
             except Exception as e:
                 log.error(f"[DB] Failed to insert into {table}: {e}")
-                skipped += 1
+                failed += 1
 
-    log.info(f"[DB][{table}] Done — {inserted} inserted, {skipped} skipped.")
+    log.info(
+        f"[DB][{table}] Done — {inserted} inserted, "
+        f"{duplicate} duplicates, {failed} failed."
+    )
 
 
 def push_linkedin_to_bronze(jobs: list[dict]) -> None:
@@ -94,7 +104,6 @@ def push_ft_to_bronze(jobs: list[dict]) -> None:
 def get_stats() -> None:
     """Print row counts across all medallion layers."""
     try:
-        engine = create_engine(DB_URL)
         tables = [
             "bronze_linkedin",
             "bronze_france_travail",

@@ -10,3 +10,7 @@ fastapi
 uvicorn
 sqlalchemy
 scikit-learn
+PyPDF2
+PyJWT
+email-validator
+pytest

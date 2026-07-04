@@ -13,7 +13,12 @@ __pycache__/
 # Others
 .DS_Store
 
-# Airflow logs 
+# Local notes / reports (not part of the project)
+*.pdf
+latex.txt
+latex_changes_summary.md
+
+# Airflow logs
 logs/
 
 

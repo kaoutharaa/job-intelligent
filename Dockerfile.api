@@ -10,7 +10,9 @@ RUN pip install --no-cache-dir \
     pandas==2.2.1 \
     scikit-learn \
     python-multipart \
-    PyPDF2
+    PyPDF2 \
+    PyJWT \
+    email-validator
 
 COPY api/api.py .
 EXPOSE 8000

@@ -43,26 +43,6 @@ KEYWORDS = [
     "Computer Vision Engineer",
     "AI Engineer",
 
-    # Software Development
-    "Software Engineer",
-    "Backend Developer",
-    "Frontend Developer",
-    "Full Stack Developer",
-    "Software Developer",
-
-    # DevOps & Cloud
-    "DevOps Engineer",
-    "Cloud Engineer",
-
-    # Cybersecurity
-    "Cybersecurity Engineer",
-    "Security Analyst",
-
-    # Management
-    "Product Manager",
-    "Scrum Master",
-    "Chef de projet",
-
     # French variants — important for Morocco market
     "Ingénieur Data",
     "Analyste Data",
