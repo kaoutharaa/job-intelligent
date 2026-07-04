@@ -13,8 +13,7 @@ __pycache__/
 # Others
 .DS_Store
 
-# Local notes / reports (not part of the project)
-*.pdf
+# Local notes (not part of the project)
 latex.txt
 latex_changes_summary.md
 
