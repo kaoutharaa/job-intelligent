@@ -167,6 +167,13 @@ def root():
     return {"status": "ok", "api": "Job Intelligent", "version": "1.0.0"}
 
 
+@app.get("/live", tags=["Health"])
+def live():
+    """Liveness probe: the process answers. Deliberately does NOT touch the DB,
+    so a database outage makes pods unready instead of restarting them."""
+    return {"status": "alive"}
+
+
 @app.get("/health", tags=["Health"])
 def health():
     try:

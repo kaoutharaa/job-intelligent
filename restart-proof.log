@@ -1,0 +1,115 @@
+Preuve de redemarrage - namespace job-intelligent (Minikube) - 2026-11-19 21:03:41
+
+### Etat initial  (21:03:41)
+NAME                                READY   STATUS      RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+airflow-init-dd6mt                  0/1     Completed   0             6d21h   <none>        minikube   <none>           <none>
+airflow-scheduler-7f49f8b8f-qshl7   1/1     Running     0             83s     10.244.0.14   minikube   <none>           <none>
+airflow-webserver-65649b44b-zkff7   1/1     Running     1 (49m ago)   6d21h   10.244.0.9    minikube   <none>           <none>
+api-644cdb4c7f-pfjjp                1/1     Running     0             110s    10.244.0.12   minikube   <none>           <none>
+api-644cdb4c7f-zw85j                1/1     Running     1 (49m ago)   6d23h   10.244.0.7    minikube   <none>           <none>
+frontend-5b655c7dc5-2wrsm           1/1     Running     3 (48m ago)   6d23h   10.244.0.3    minikube   <none>           <none>
+frontend-5b655c7dc5-nkjpr           1/1     Running     3 (48m ago)   6d23h   10.244.0.2    minikube   <none>           <none>
+postgres-0                          1/1     Running     0             92s     10.244.0.13   minikube   <none>           <none>
+selenium-769d84cfd5-csh7m           1/1     Running     1 (49m ago)   6d23h   10.244.0.4    minikube   <none>           <none>
+
+### Scenario 1: stop PID 1 (uvicorn) in api-644cdb4c7f-pfjjp  (restartCount=0)
+pod/api-644cdb4c7f-pfjjp condition met
+restartCount: 0 -> 1
+
+    Last State:     Terminated
+      Reason:       Completed
+      Exit Code:    0
+    Restart Count:  1
+  Type     Reason     Age                 From               Message
+
+
+### Scenario 2: delete pod api-644cdb4c7f-pfjjp
+pod "api-644cdb4c7f-pfjjp" deleted from job-intelligent namespace
+
+### Juste apres la suppression (nouveau pod en creation)  (21:03:55)
+NAME                                READY   STATUS      RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+airflow-init-dd6mt                  0/1     Completed   0             6d21h   <none>        minikube   <none>           <none>
+airflow-scheduler-7f49f8b8f-qshl7   1/1     Running     0             98s     10.244.0.14   minikube   <none>           <none>
+airflow-webserver-65649b44b-zkff7   1/1     Running     1 (49m ago)   6d21h   10.244.0.9    minikube   <none>           <none>
+api-644cdb4c7f-qj6jl                0/1     Running     0             4s      10.244.0.15   minikube   <none>           <none>
+api-644cdb4c7f-zw85j                1/1     Running     1 (49m ago)   6d23h   10.244.0.7    minikube   <none>           <none>
+frontend-5b655c7dc5-2wrsm           1/1     Running     3 (48m ago)   6d23h   10.244.0.3    minikube   <none>           <none>
+frontend-5b655c7dc5-nkjpr           1/1     Running     3 (48m ago)   6d23h   10.244.0.2    minikube   <none>           <none>
+postgres-0                          1/1     Running     0             107s    10.244.0.13   minikube   <none>           <none>
+selenium-769d84cfd5-csh7m           1/1     Running     1 (49m ago)   6d23h   10.244.0.4    minikube   <none>           <none>
+Waiting for deployment "api" rollout to finish: 1 of 2 updated replicas are available...
+deployment "api" successfully rolled out
+
+### Deployment revenu a 2/2  (21:03:59)
+NAME                                READY   STATUS      RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+airflow-init-dd6mt                  0/1     Completed   0             6d21h   <none>        minikube   <none>           <none>
+airflow-scheduler-7f49f8b8f-qshl7   1/1     Running     0             101s    10.244.0.14   minikube   <none>           <none>
+airflow-webserver-65649b44b-zkff7   1/1     Running     1 (49m ago)   6d21h   10.244.0.9    minikube   <none>           <none>
+api-644cdb4c7f-qj6jl                1/1     Running     0             7s      10.244.0.15   minikube   <none>           <none>
+api-644cdb4c7f-zw85j                1/1     Running     1 (49m ago)   6d23h   10.244.0.7    minikube   <none>           <none>
+frontend-5b655c7dc5-2wrsm           1/1     Running     3 (48m ago)   6d23h   10.244.0.3    minikube   <none>           <none>
+frontend-5b655c7dc5-nkjpr           1/1     Running     3 (48m ago)   6d23h   10.244.0.2    minikube   <none>           <none>
+postgres-0                          1/1     Running     0             110s    10.244.0.13   minikube   <none>           <none>
+selenium-769d84cfd5-csh7m           1/1     Running     1 (49m ago)   6d23h   10.244.0.4    minikube   <none>           <none>
+
+### Scenario 3: write a row, delete postgres-0, read it back
+NOTICE:  relation "k8s_proof" already exists, skipping
+CREATE TABLE
+INSERT 0 1
+gold_jobs avant suppression : 659
+pod "postgres-0" deleted from job-intelligent namespace
+pod/postgres-0 condition met
+             note             |             at
+------------------------------+----------------------------
+ restart-proof-20261119210359 | 2026-11-19 20:03:59.773273
+(1 row)
+
+gold_jobs apres recreation  : 659
+
+### Scenario 4: delete Airflow scheduler pod airflow-scheduler-7f49f8b8f-qshl7
+pod "airflow-scheduler-7f49f8b8f-qshl7" deleted from job-intelligent namespace
+Waiting for deployment "airflow-scheduler" rollout to finish: 0 of 1 updated replicas are available...
+deployment "airflow-scheduler" successfully rolled out
+pod/airflow-scheduler-7f49f8b8f-jfdmm condition met
+Nouveau pod : airflow-scheduler-7f49f8b8f-jfdmm
+
+dag_id             | fileloc                               | owners          | is_paused
+daily_job_scraping | /opt/airflow/dags/job_scraping_dag.py | job_intelligent | False
+
+
+### Etat final  (21:04:54)
+NAME                                READY   STATUS      RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+airflow-init-dd6mt                  0/1     Completed   0             6d21h   <none>        minikube   <none>           <none>
+airflow-scheduler-7f49f8b8f-jfdmm   1/1     Running     0             46s     10.244.0.17   minikube   <none>           <none>
+airflow-webserver-65649b44b-zkff7   1/1     Running     1 (50m ago)   6d21h   10.244.0.9    minikube   <none>           <none>
+api-644cdb4c7f-qj6jl                1/1     Running     0             62s     10.244.0.15   minikube   <none>           <none>
+api-644cdb4c7f-zw85j                1/1     Running     1 (50m ago)   6d23h   10.244.0.7    minikube   <none>           <none>
+frontend-5b655c7dc5-2wrsm           1/1     Running     3 (49m ago)   6d23h   10.244.0.3    minikube   <none>           <none>
+frontend-5b655c7dc5-nkjpr           1/1     Running     3 (49m ago)   6d23h   10.244.0.2    minikube   <none>           <none>
+postgres-0                          1/1     Running     0             53s     10.244.0.16   minikube   <none>           <none>
+selenium-769d84cfd5-csh7m           1/1     Running     1 (50m ago)   6d23h   10.244.0.4    minikube   <none>           <none>
+71s         Normal    Started                        pod/api-644cdb4c7f-pfjjp                  Container started
+67s         Warning   Unhealthy                      pod/api-644cdb4c7f-pfjjp                  Startup probe failed: Get "http://10.244.0.12:8000/live": dial tcp 10.244.0.12:8000: connect: connection refused
+62s         Normal    SuccessfulCreate               replicaset/api-644cdb4c7f                 Created pod: api-644cdb4c7f-qj6jl
+61s         Normal    Created                        pod/api-644cdb4c7f-qj6jl                  Container created
+61s         Normal    Scheduled                      pod/api-644cdb4c7f-qj6jl                  Successfully assigned job-intelligent/api-644cdb4c7f-qj6jl to minikube
+61s         Normal    Pulled                         pod/api-644cdb4c7f-qj6jl                  Container image "job-intelligent/api:1.0" already present on machine and can be accessed by the pod
+61s         Normal    Started                        pod/api-644cdb4c7f-qj6jl                  Container started
+60s         Normal    Killing                        pod/api-644cdb4c7f-pfjjp                  Stopping container api
+54s         Normal    Killing                        pod/postgres-0                            Stopping container postgres
+53s         Normal    Scheduled                      pod/postgres-0                            Successfully assigned job-intelligent/postgres-0 to minikube
+53s         Normal    SuccessfulCreate               statefulset/postgres                      Create Pod postgres-0 in StatefulSet postgres successful
+53s         Normal    Started                        pod/postgres-0                            Container started
+53s         Normal    Pulled                         pod/postgres-0                            Container image "postgres:15" already present on machine and can be accessed by the pod
+53s         Normal    Created                        pod/postgres-0                            Container created
+47s         Warning   Unhealthy                      pod/api-644cdb4c7f-zw85j                  Readiness probe failed: HTTP probe failed with statuscode: 500
+46s         Normal    Killing                        pod/airflow-scheduler-7f49f8b8f-qshl7     Stopping container scheduler
+46s         Normal    SuccessfulCreate               replicaset/airflow-scheduler-7f49f8b8f    Created pod: airflow-scheduler-7f49f8b8f-jfdmm
+46s         Normal    Started                        pod/airflow-scheduler-7f49f8b8f-jfdmm     Container started
+46s         Normal    Created                        pod/airflow-scheduler-7f49f8b8f-jfdmm     Container created
+46s         Normal    Pulled                         pod/airflow-scheduler-7f49f8b8f-jfdmm     Container image "job-intelligent/airflow:1.0" already present on machine and can be accessed by the pod
+46s         Normal    Scheduled                      pod/airflow-scheduler-7f49f8b8f-jfdmm     Successfully assigned job-intelligent/airflow-scheduler-7f49f8b8f-jfdmm to minikube
+31s         Normal    Started                        pod/airflow-scheduler-7f49f8b8f-jfdmm     Container started
+31s         Normal    Created                        pod/airflow-scheduler-7f49f8b8f-jfdmm     Container created
+31s         Normal    Pulled                         pod/airflow-scheduler-7f49f8b8f-jfdmm     Container image "job-intelligent/airflow:1.0" already present on machine and can be accessed by the pod
+16s         Warning   Unhealthy                      pod/airflow-scheduler-7f49f8b8f-jfdmm     Startup probe failed: Get "http://10.244.0.17:8974/health": dial tcp 10.244.0.17:8974: connect: connection refused

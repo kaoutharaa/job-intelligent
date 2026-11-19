@@ -1,0 +1,69 @@
+{{- if .Values.selenium.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: selenium
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: selenium }
+  template:
+    metadata:
+      labels: { app: selenium }
+    spec:
+      containers:
+        - name: selenium
+          image: {{ .Values.images.selenium }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: webdriver
+              containerPort: 4444
+            - name: novnc
+              containerPort: 7900
+          env:
+            - name: SE_NODE_MAX_SESSIONS
+              value: {{ .Values.selenium.maxSessions | quote }}
+            - name: SE_NODE_OVERRIDE_MAX_SESSIONS
+              value: "true"
+            - name: SE_NODE_SESSION_TIMEOUT
+              value: "300"
+          resources: {{- toYaml .Values.selenium.resources | nindent 12 }}
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+          startupProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.selenium.shmSize }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selenium
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: selenium
+spec:
+  selector: { app: selenium }
+  ports:
+    - name: webdriver
+      port: 4444
+      targetPort: webdriver
+    - name: novnc
+      port: 7900
+      targetPort: novnc
+{{- end }}

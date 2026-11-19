@@ -16,7 +16,9 @@ import {
 } from "recharts";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const API_BASE = "http://localhost:8000";
+// In Kubernetes the image is built with VITE_API_BASE=/api and nginx proxies
+// /api/* to the API Service; in local dev it falls back to the API port.
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────

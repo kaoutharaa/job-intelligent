@@ -1,0 +1,84 @@
+# Default values for the job-intelligent chart.
+# Secrets are NOT stored here: pass them at install time (see scripts/deploy-helm.ps1)
+# or point existingSecret to a Secret you created yourself.
+
+imagePullPolicy: IfNotPresent   # images are built locally into minikube
+
+images:
+  api:      job-intelligent/api:1.0
+  frontend: job-intelligent/frontend:1.0
+  airflow:  job-intelligent/airflow:1.0
+  postgres: postgres:15
+  selenium: selenium/standalone-chrome:4.25.0
+
+# Non-sensitive configuration (ConfigMap "app-config")
+config:
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_NAME: job_intelligent
+  DB_USER: admin
+  JWT_EXPIRE_HOURS: "24"
+  CORS_ORIGINS: "http://localhost:5173,http://localhost:8080"
+
+# Secret "app-secrets". All keys are required unless existingSecret is set.
+existingSecret: ""
+secrets:
+  DB_PASS: ""
+  JWT_SECRET: ""
+  FERNET_KEY: ""             # Airflow: 32 random bytes, url-safe base64
+  SECRET_KEY: ""             # Airflow webserver
+  AIRFLOW_ADMIN_PASSWORD: ""
+  FT_CLIENT_ID: ""           # France Travail API
+  FT_CLIENT_SECRET: ""
+
+postgres:
+  storage: 1Gi
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
+
+api:
+  replicas: 2
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: "1",  memory: 768Mi }
+
+frontend:
+  replicas: 2
+  nodePort: 30080
+  resources:
+    requests: { cpu: 50m,  memory: 32Mi }
+    limits:   { cpu: 200m, memory: 128Mi }
+
+selenium:
+  enabled: true
+  maxSessions: 4             # = MAX_WORKERS in scrapers/scrapping_linkedin.py
+  shmSize: 1Gi
+  resources:
+    requests: { cpu: 500m, memory: 1Gi }
+    limits:   { cpu: "2",  memory: 3Gi }
+
+airflow:
+  enabled: true
+  config:
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+    AIRFLOW__CORE__PARALLELISM: "4"
+    AIRFLOW__CORE__HOSTNAME_CALLABLE: airflow.utils.net.get_host_ip_address
+    AIRFLOW__WEBSERVER__WORKERS: "2"
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
+    AIRFLOW__SCHEDULER__SCHEDULER_HEALTH_CHECK_SERVER_PORT: "8974"
+  webserver:
+    nodePort: 30081
+    resources:
+      requests: { cpu: 200m, memory: 768Mi }
+      limits:   { cpu: "1",  memory: 1536Mi }
+  scheduler:
+    resources:
+      requests: { cpu: 300m, memory: 768Mi }
+      limits:   { cpu: "2",  memory: 2Gi }
+  init:
+    resources:
+      requests: { cpu: 100m, memory: 256Mi }
+      limits:   { cpu: "1",  memory: 1Gi }

@@ -1,0 +1,131 @@
+{{- if .Values.airflow.enabled }}
+# One-shot DB migration + admin user, run by Helm after every install/upgrade.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: airflow-init
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: airflow-init
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels: { app: airflow-init }
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: airflow-init
+          image: {{ .Values.images.airflow }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          command: ["bash", "-c"]
+          args:
+            - |
+              airflow db migrate &&
+              (airflow users create --username admin --password "$AIRFLOW_ADMIN_PASSWORD" \
+                 --firstname Admin --lastname User --role Admin \
+                 --email admin@jobintelligent.com || echo "admin user already exists")
+          {{- include "ji.airflowEnv" . | nindent 10 }}
+          resources: {{- toYaml .Values.airflow.init.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: airflow-webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: airflow-webserver }
+  template:
+    metadata:
+      labels: { app: airflow-webserver }
+      annotations: {{- include "ji.checksums" . | nindent 8 }}
+    spec:
+      initContainers:
+        {{- include "ji.waitForMigrations" . | nindent 8 }}
+      containers:
+        - name: webserver
+          image: {{ .Values.images.airflow }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          args: ["webserver"]
+          ports:
+            - name: http
+              containerPort: 8080
+          {{- include "ji.airflowEnv" . | nindent 10 }}
+          resources: {{- toYaml .Values.airflow.webserver.resources | nindent 12 }}
+          startupProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-webserver
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: airflow-webserver
+spec:
+  type: NodePort
+  selector: { app: airflow-webserver }
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      nodePort: {{ .Values.airflow.webserver.nodePort }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-scheduler
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: airflow-scheduler
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate        # never two schedulers sharing /tmp handoff files
+  selector:
+    matchLabels: { app: airflow-scheduler }
+  template:
+    metadata:
+      labels: { app: airflow-scheduler }
+      annotations: {{- include "ji.checksums" . | nindent 8 }}
+    spec:
+      initContainers:
+        {{- include "ji.waitForMigrations" . | nindent 8 }}
+      containers:
+        - name: scheduler
+          image: {{ .Values.images.airflow }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          args: ["scheduler"]
+          ports:
+            - name: health
+              containerPort: 8974
+            - name: logs
+              containerPort: 8793
+          {{- include "ji.airflowEnv" . | nindent 10 }}
+          resources: {{- toYaml .Values.airflow.scheduler.resources | nindent 12 }}
+          startupProbe:
+            httpGet: { path: /health, port: health }
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: { path: /health, port: health }
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+{{- end }}

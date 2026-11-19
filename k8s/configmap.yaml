@@ -1,0 +1,15 @@
+# Non-sensitive configuration shared by the API (and Postgres for DB/user names).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: job-intelligent
+data:
+  DB_HOST: postgres          # Service name of the database
+  DB_PORT: "5432"
+  DB_NAME: job_intelligent
+  DB_USER: admin
+  JWT_EXPIRE_HOURS: "24"
+  # The frontend calls the API through its own nginx (/api), so the browser
+  # never makes cross-origin calls. These origins only matter for direct access.
+  CORS_ORIGINS: "http://localhost:5173,http://localhost:8080"

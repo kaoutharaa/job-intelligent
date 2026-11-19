@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: api
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels: { app: api }
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }
+  template:
+    metadata:
+      labels: { app: api }
+      annotations: {{- include "ji.checksums" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: api
+          image: {{ .Values.images.api }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef: { name: app-config }
+          env:
+            - name: DB_PASS
+              valueFrom: { secretKeyRef: { name: {{ include "ji.secretName" . }}, key: DB_PASS } }
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "ji.secretName" . }}, key: JWT_SECRET } }
+          resources: {{- toYaml .Values.api.resources | nindent 12 }}
+          startupProbe:
+            httpGet: { path: /live, port: http }
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:            # process only: a DB outage must not restart the API
+            httpGet: { path: /live, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:           # DB reachable -> receives traffic
+            httpGet: { path: /health, port: http }
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels: {{- include "ji.labels" . | nindent 4 }}
+    app: api
+spec:
+  type: ClusterIP
+  selector: { app: api }
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

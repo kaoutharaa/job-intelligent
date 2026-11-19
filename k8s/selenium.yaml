@@ -1,0 +1,69 @@
+# Selenium standalone Chrome, used by the LinkedIn scraper (SELENIUM_URL=http://selenium:4444/wd/hub)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium
+  namespace: job-intelligent
+  labels: { app: selenium }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: selenium }
+  template:
+    metadata:
+      labels: { app: selenium }
+    spec:
+      containers:
+        - name: selenium
+          image: selenium/standalone-chrome:4.25.0
+          ports:
+            - name: webdriver
+              containerPort: 4444
+            - name: novnc
+              containerPort: 7900
+          env:
+            - name: SE_NODE_MAX_SESSIONS      # = MAX_WORKERS in scrapping_linkedin.py
+              value: "4"
+            - name: SE_NODE_OVERRIDE_MAX_SESSIONS
+              value: "true"
+            - name: SE_NODE_SESSION_TIMEOUT
+              value: "300"
+          resources:
+            requests: { cpu: 500m, memory: 1Gi }
+            limits:   { cpu: "2",  memory: 3Gi }   # 4 Chrome instances
+          volumeMounts:
+            - name: dshm               # replaces docker's shm_size
+              mountPath: /dev/shm
+          startupProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet: { path: /status, port: webdriver }
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi        # the scraper passes --disable-dev-shm-usage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selenium
+  namespace: job-intelligent
+  labels: { app: selenium }
+spec:
+  selector: { app: selenium }
+  ports:
+    - name: webdriver
+      port: 4444
+      targetPort: webdriver
+    - name: novnc            # watch the browser: port-forward 7900, password "secret"
+      port: 7900
+      targetPort: novnc

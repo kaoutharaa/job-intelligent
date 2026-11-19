@@ -1,0 +1,8 @@
+Job Intelligent est déployé dans le namespace {{ .Release.Namespace }}.
+
+  Etat des pods :   kubectl -n {{ .Release.Namespace }} get pods
+  Application   :   minikube service frontend -n {{ .Release.Namespace }}   (NodePort {{ .Values.frontend.nodePort }})
+{{- if .Values.airflow.enabled }}
+  Airflow       :   minikube service airflow-webserver -n {{ .Release.Namespace }}   (NodePort {{ .Values.airflow.webserver.nodePort }}, login admin)
+  Lancer le DAG :   kubectl -n {{ .Release.Namespace }} exec deploy/airflow-scheduler -c scheduler -- airflow dags trigger daily_job_scraping
+{{- end }}

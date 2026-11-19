@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/__pycache__
+chromedriver-win64
+logs
+k8s
+scrapers/data
+*.pdf
+*.log
+.env

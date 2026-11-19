@@ -1,0 +1,28 @@
+# Deploy everything with:  kubectl apply -k .
+# (kept at the repo root so it can read sql/init.sql without duplicating it)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: job-intelligent
+
+resources:
+  - k8s/namespace.yaml
+  - k8s/configmap.yaml
+  - k8s/postgres.yaml
+  - k8s/api.yaml
+  - k8s/frontend.yaml
+  - k8s/selenium.yaml
+  - k8s/airflow.yaml
+
+configMapGenerator:
+  - name: postgres-init
+    files:
+      - init.sql=sql/init.sql
+
+secretGenerator:
+  - name: app-secrets
+    envs:
+      - k8s/secrets.env       # copy from k8s/secrets.env.example
+
+generatorOptions:
+  labels:
+    app.kubernetes.io/part-of: job-intelligent

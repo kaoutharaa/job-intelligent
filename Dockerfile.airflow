@@ -7,3 +7,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir \
     --constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-3.11.txt \
     -r requirements.txt
+
+# Bake the pipeline code into the image (Kubernetes has no bind mounts).
+# docker-compose still mounts ./dags and ./scrapers over these paths for live editing.
+# scrapers/ must be writable: eda_pipeline.py exports gold_jobs.csv/json to scrapers/data/.
+COPY --chown=airflow:root dags/     /opt/airflow/dags/
+COPY --chown=airflow:root scrapers/ /opt/airflow/scrapers/
